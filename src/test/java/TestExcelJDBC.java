@@ -5,7 +5,7 @@ public class TestExcelJDBC {
     public static void main(String[] args) {
         try {
             // 加载驱动
-            String driver = "com.daicy.exceljdbc.jdbc.xlDriver";
+            String driver = "com.jsdiff.excel.jdbc.xlDriver";
             Class.forName(driver);
             System.out.println("Excel JDBC Driver loaded successfully");
 

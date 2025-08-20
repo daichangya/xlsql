@@ -14,11 +14,20 @@ ExcelJDBC 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询�
 在 `pom.xml` 中添加以下依赖：
 ```xml
 <dependency>
-    <groupId>com.daicy</groupId>
+    <groupId>com.jsdiff</groupId>
     <artifactId>exceljdbc</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
+
+#### 1. 清理项目
+mvn clean
+
+#### 2. 强制更新并编译
+mvn compile -U
+
+#### 3. 打包
+mvn package
 
 ### 2. 连接数据库
 ```java
@@ -28,10 +37,10 @@ import java.sql.DriverManager;
 public class Main {
     public static void main(String[] args) throws Exception {
         // 注册驱动
-        Class.forName("com.daicy.exceljdbc.jdbc.xlDriver");
+        Class.forName("com.jsdiff.excel.jdbc.xlDriver");
         
         // 创建连接
-        String url = "jdbc:xl:file:/path/to/your/excel.xls";
+        String url = "jdbc:jsdiff:excel::/path";
         Connection conn = DriverManager.getConnection(url);
         System.out.println("连接成功！");
     }

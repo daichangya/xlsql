@@ -7,7 +7,7 @@ public class TestXlsql {
         try {
             System.out.println("Current working directory: " + System.getProperty("user.dir"));
 
-            String driver = "com.daicy.exceljdbc.jdbc.xlDriver";
+            String driver = "com.jsdiff.excel.jdbc.xlDriver";
             System.out.println("Loading driver: " + driver);
 
             Class<?> driverClass = Class.forName(driver);

@@ -17,7 +17,7 @@ mvn clean install
 ```
 ├── src/
 │   ├── main/java/            # 核心代码
-│   │   ├── com/daicy/exceljdbc/
+│   │   ├── com/jsdiff/excel/
 │   │   │   ├── database/     # 数据库连接模块
 │   │   │   ├── jdbc/         # JDBC驱动实现
 │   │   │   ├── ui/           # 命令行界面
@@ -37,7 +37,7 @@ mvn clean install
 ### JDBC驱动模块 (`xlDriver`)
 - **职责**：实现 `java.sql.Driver` 接口
 - **规范**：
-  - 驱动类名：`com.daicy.exceljdbc.jdbc.xlDriver`
+  - 驱动类名：`com.jsdiff.excel.jdbc.xlDriver`
   - URL格式：`jdbc:xl:file:/path/to/excel.xls`
 
 ## 4. 测试指南
@@ -64,15 +64,3 @@ mvn verify  # 运行所有测试
 ## 7. 问题排查
 - 查看日志文件：`logs/xlsql.log`
 - 启用调试模式：在配置文件中设置 `debug=true`
-
-# 1. 清理项目
-mvn clean
-
-# 2. 删除本地仓库中的HSQLDB
-rm -rf ~/.m2/repository/org/hsqldb
-
-# 3. 强制更新并编译
-mvn compile -U
-
-# 4. 打包
-mvn package
