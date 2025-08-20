@@ -1,4 +1,10 @@
 # ExcelJDBC
+## 微信公众号
+
+扫码关注微信公众号，Java码界探秘。
+![Java码界探秘](http://images.jsdiff.com/qrcode_for_gh_1e2587cc42b1_258_1587996055777.jpg)
+
+[https://jsdiff.com/](https://jsdiff.com/)
 
 ## 项目概述
 ExcelJDBC 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操作 Excel 文件。它将 Excel 文件视为数据库表，支持标准的 JDBC 接口，方便开发者集成到现有项目中。
