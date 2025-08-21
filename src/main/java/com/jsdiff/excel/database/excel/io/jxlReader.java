@@ -20,10 +20,7 @@
 package com.jsdiff.excel.database.excel.io;
 
 import com.jsdiff.excel.database.*;
-import com.jsdiff.excel.database.excel.IExcelReader;
-import com.jsdiff.excel.database.excel.IExcelStore;
-import com.jsdiff.excel.database.excel.xlWorkbook;
-import com.jsdiff.excel.database.excel.xlXlsFilter;
+import com.jsdiff.excel.database.excel.*;
 import jxl.*;
 
 import java.io.File;
@@ -69,23 +66,23 @@ public class jxlReader implements IExcelReader {
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
 
-            if (file.getName().toLowerCase().endsWith(".xls")) {
+            if (file.isDirectory()) {
+                // 递归处理子目录
+                readWorkbooksRecursive(rootDir, file);
+            } else
+                if (file.getName().toLowerCase().endsWith(".xls")) {
                 // 处理.xls文件
                 try {
-                    Workbook workbook = Workbook.getWorkbook(file);
-                    // 生成相对于根目录的路径作为工作簿名称
-                    String relativePath = getRelativePath(rootDir, file);
-                    String name = relativePath.substring(0, relativePath.lastIndexOf('.'));
-                    // 将路径分隔符替换为下划线或其他合法字符
-                    name = name.replace(File.separatorChar, '_');
-
-                    ASubFolder obj = new xlWorkbook(rootDir, name);
-                    store.getStore().put(name.toUpperCase(), obj);
-                } catch (jxl.read.biff.BiffException jxle) {
-                    logger.info(file + "-java excel api reports: '" +
-                            jxle.getMessage() + "' ..?");
-                    continue;
-                } catch (IOException ioe) {
+                    //根据file 信息 创建 xlXlsInfo 对象
+                    xlXlsInfo info = xlXlsInfo.createXlXlsInfo( file);
+                    ASubFolder obj = new xlWorkbook(file.getParentFile(), info.getName());
+                    if(!store.getStore().containsKey(info.getName().toUpperCase())){
+                        store.getStore().put(info.getName().toUpperCase(), obj);
+                    }else {
+                        logger.warning(file + " already exists");
+                    }
+                }catch (Exception ioe) {
+                    ioe.printStackTrace();
                     logger.warning(file + "-ioe exception: '" +
                             ioe.getMessage() + "' continuing..");
                     continue;

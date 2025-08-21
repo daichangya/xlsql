@@ -25,6 +25,8 @@
  */
 package com.jsdiff.excel.database.excel;
 
+import com.jsdiff.excel.database.ASubFolder;
+
 import java.util.Map;
 
 /**
@@ -38,5 +40,5 @@ public interface IExcelStore {
      *
      * @return Map
      */
-    public Map getStore();
+    public Map<String, ASubFolder> getStore();
 }

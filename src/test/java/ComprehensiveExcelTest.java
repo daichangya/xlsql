@@ -3,7 +3,7 @@ import java.sql.*;
 
 public class ComprehensiveExcelTest {
 
-    public static final String DATA_XLS = "test.xls";
+    public static final String DATA_XLS = "test1.xls";
 
     public static void main(String[] args) {
         try {
