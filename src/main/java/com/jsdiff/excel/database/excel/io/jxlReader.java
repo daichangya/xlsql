@@ -69,10 +69,7 @@ public class jxlReader implements IExcelReader {
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
 
-            if (file.isDirectory()) {
-                // 递归处理子目录
-                readWorkbooksRecursive(rootDir, file);
-            } else if (file.getName().toLowerCase().endsWith(".xls")) {
+            if (file.getName().toLowerCase().endsWith(".xls")) {
                 // 处理.xls文件
                 try {
                     Workbook workbook = Workbook.getWorkbook(file);

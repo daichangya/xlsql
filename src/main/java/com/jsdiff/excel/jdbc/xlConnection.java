@@ -571,6 +571,7 @@ public abstract class xlConnection implements Connection, Constants {
                 i++;
             }
         } catch (xlDatabaseException xe) {
+            xe.printStackTrace();
             throw new SQLException(xe.getMessage());
         }
     }
