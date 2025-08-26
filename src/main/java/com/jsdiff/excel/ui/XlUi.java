@@ -49,7 +49,7 @@ public class XlUi {
 
     // jsdiff... make private:
     Options options;
-    AExporter exporter;
+    private AExporter exporter;
     xlInstance instance;
     Connection con;
     CommandLine commandline;
@@ -65,7 +65,7 @@ public class XlUi {
 
     /**
      * Parse and execute.
-     * @throws xlException when parse excepton
+     * @throws xlException when parse exception
      */
     public final void doIt() throws xlException {
         try {
@@ -81,10 +81,39 @@ public class XlUi {
                 state = (newstate > 0) ? newstate : state;
                 setState(state);
             } else {
-                throw new xlException("?.."); // cannot happen
+                throw new xlException("无法解析命令，请输入 -h 查看帮助信息");
             }
+        } catch (MissingArgumentException e) {
+            String option = e.getOption().getOpt();
+            if (option == null) {
+                option = e.getOption().getLongOpt();
+            }
+
+            if ("c".equals(option)) {
+                throw new xlException("选项 -c 需要指定配置名称，例如: -c myconfig");
+            } else if ("open".equals(option)) {
+                throw new xlException("选项 -open 需要指定数据库路径，例如: -open /path/to/excel/files");
+            } else if ("read".equals(option)) {
+                throw new xlException("选项 -read 需要指定数据库路径，例如: -read /path/to/excel/files");
+            } else if ("engine".equals(option)) {
+                throw new xlException("选项 -engine 需要指定操作和引擎名称，例如: -engine SET hsqldb");
+            } else if ("set".equals(option)) {
+                throw new xlException("选项 -set 需要指定参数和值，例如: -set database /path/to/files");
+            } else if ("show".equals(option)) {
+                throw new xlException("选项 -show 需要指定要显示的参数，例如: -show ALL 或 -show engine");
+            } else if ("export".equals(option)) {
+                throw new xlException("选项 -export 需要完整的导出参数，例如: -export ALL AS hsqldb TO out");
+            } else if ("dir2xl".equals(option)) {
+                throw new xlException("选项 -dir2xl 需要完整的目录导入参数，例如: -dir2xl all in /path as list to schema.table");
+            } else if ("script".equals(option)) {
+                throw new xlException("选项 -script 需要指定脚本文件路径，例如: -script /path/to/script.sql");
+            } else {
+                throw new xlException("选项 -" + option + " 需要额外参数，请输入 -h 查看帮助信息");
+            }
+        } catch (UnrecognizedOptionException e) {
+            throw new xlException("未知选项: " + e.getOption() + "，请输入 -h 查看帮助信息");
         } catch (ParseException pe) {
-            throw new xlException(pe.getMessage());
+            throw new xlException("命令解析错误: " + pe.getMessage() + "，请输入 -h 查看帮助信息");
         }
     }
 
@@ -166,6 +195,7 @@ public class XlUi {
                 // do parsing and execution
                 doIt();
             } catch (xlException pe) {
+                pe.printStackTrace();
                 System.err.println("..? Enter h for help \n");
 
                 continue;
@@ -209,7 +239,10 @@ public class XlUi {
 
         if (state == IDLE) {
             options = new Options();
-            options.addOption("c", true, "[ config ]");
+            // 修改 -c 选项为可选参数
+            Option connectOption = new Option("c", true, "[ config ]");
+            connectOption.setOptionalArg(true); // 设置参数为可选
+            options.addOption(connectOption);
             options.addOption("h", false, "help");
             options.addOption("quit", false, "end xldba session");
             options.addOption("t", false, "display time");
@@ -257,6 +290,14 @@ public class XlUi {
             options.addOption("script", true, "[ file ] run SQL script");
             options.addOption("t", false, "display time");
         }
+    }
+
+    public AExporter getExporter() {
+        return exporter;
+    }
+
+    public void setExporter(AExporter exporter) {
+        this.exporter = exporter;
     }
 }
 

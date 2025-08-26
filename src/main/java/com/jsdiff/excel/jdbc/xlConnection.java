@@ -19,11 +19,11 @@
 */
 package com.jsdiff.excel.jdbc;
 
-//import com.jsdiff.exceljdbc.database.export.ASqlFormatter;
-//import com.jsdiff.exceljdbc.database.sql.ASqlParser;
-//import com.jsdiff.exceljdbc.database.sql.ASqlSelect;
-//import com.jsdiff.exceljdbc.database.xlDatabaseException;
-//import com.jsdiff.exceljdbc.database.xlDatabaseFactory;
+//import com.jsdiff.excel.database.export.ASqlFormatter;
+//import com.jsdiff.excel.database.sql.ASqlParser;
+//import com.jsdiff.excel.database.sql.ASqlSelect;
+//import com.jsdiff.excel.database.xlDatabaseException;
+//import com.jsdiff.excel.database.xlDatabaseFactory;
 
 import com.jsdiff.excel.database.*;
 import com.jsdiff.excel.database.export.*;
@@ -565,7 +565,7 @@ public abstract class xlConnection implements Connection, Constants {
 
             while (l.hasNext()) {
                 String sql = (String) l.next();
-                System.out.println("sql=" + sql);
+                logger.info("sql=" + sql);
                 stm.executeUpdate(sql);
 //                stm.executeUpdate((String) l.next());
                 i++;

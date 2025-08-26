@@ -21,8 +21,7 @@ package com.jsdiff.excel.util;
 
 import java.io.File;
 import java.util.List;
-import java.util.Vector;
-
+import java.util.ArrayList;
 
 /**
  * Adds recursive listFiles method to java.io.File
@@ -95,7 +94,7 @@ public class xlFile extends File {
         File[] ret;
 
         if (this.isDirectory()) {
-            List v = new Vector();
+            List v = new ArrayList();
             v = filelist(v, this, selection, recursive);
 
             Object[] o = v.toArray();

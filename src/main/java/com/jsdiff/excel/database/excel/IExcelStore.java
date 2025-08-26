@@ -41,4 +41,8 @@ public interface IExcelStore {
      * @return Map
      */
     public Map<String, ASubFolder> getStore();
+
+    default void addStore(String name, ASubFolder subfolder){
+        getStore().put(name, subfolder);
+    }
 }

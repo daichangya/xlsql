@@ -21,7 +21,7 @@ package com.jsdiff.excel.database.excel.io;
 
 import com.jsdiff.excel.database.*;
 import com.jsdiff.excel.database.excel.*;
-import jxl.*;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -69,15 +69,14 @@ public class jxlReader implements IExcelReader {
             if (file.isDirectory()) {
                 // 递归处理子目录
                 readWorkbooksRecursive(rootDir, file);
-            } else
-                if (file.getName().toLowerCase().endsWith(".xls")) {
+            } else{
                 // 处理.xls文件
                 try {
                     //根据file 信息 创建 xlXlsInfo 对象
                     xlXlsInfo info = xlXlsInfo.createXlXlsInfo( file);
-                    ASubFolder obj = new xlWorkbook(file.getParentFile(), info.getName());
+                    ASubFolder obj = new xlWorkbook(file, info.getName());
                     if(!store.getStore().containsKey(info.getName().toUpperCase())){
-                        store.getStore().put(info.getName().toUpperCase(), obj);
+                        store.addStore(info.getName().toUpperCase(), obj);
                     }else {
                         logger.warning(file + " already exists");
                     }

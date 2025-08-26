@@ -36,7 +36,7 @@ public abstract class AFolder {
     protected File directory;
     protected static final Logger logger = Logger.getAnonymousLogger();
     protected static final String NOARGS = "xlSQL: no such argument(s).";
-    protected Map subfolders = new HashMap();
+    private Map subfolders = new HashMap();
 
     /**
      * Creates a new xlFolder object.
@@ -51,4 +51,12 @@ public abstract class AFolder {
     }
 
     protected abstract void readSubFolders(File dir) throws xlDatabaseException;
+
+    public Map<String,ASubFolder> getSubfolders() {
+        return subfolders;
+    }
+
+    public void addSubfolders(String name, ASubFolder subfolder) {
+        subfolders.put(name, subfolder);
+    }
 }

@@ -54,7 +54,7 @@ public class xlReader extends AReader implements IExcelReader, IExcelStore {
      * @return Map containing xlWorkbook objects
      */
     public Map getStore() {
-        return subfolders;
+        return super.getSubfolders();
     }
 
     /**

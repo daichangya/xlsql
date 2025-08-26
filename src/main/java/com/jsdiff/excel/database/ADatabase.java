@@ -61,8 +61,8 @@ public abstract class ADatabase extends AExporter {
         String subfolderU = subfolder.toUpperCase();
         String docnameU = docname.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder sF = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder sF = (ASubFolder) getSubfolders().get(subfolderU);
 
             if (sF.files.containsKey(docnameU)) {
                 AFile doc = (AFile) sF.files.get(docnameU);
@@ -91,7 +91,7 @@ public abstract class ADatabase extends AExporter {
         sqlSelect = query;
 
         // execute xlSubFolfer.close() for all subfolder objects
-        Iterator i = subfolders.values().iterator();
+        Iterator i = getSubfolders().values().iterator();
 
         while (i.hasNext()) {
             ASubFolder wb;
@@ -113,8 +113,8 @@ public abstract class ADatabase extends AExporter {
 
         if (tableExists(subfolderU, docnameU)) {
 
-            if (subfolders.containsKey(subfolderU)) {
-                ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+            if (getSubfolders().containsKey(subfolderU)) {
+                ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
 
 
                 //jsdiff...
@@ -154,8 +154,8 @@ public abstract class ADatabase extends AExporter {
         // key in Uppercase, don't touch case for name
         String workbookU = workbook.toUpperCase();
 
-        if (subfolders.containsKey(workbookU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(workbookU);
+        if (getSubfolders().containsKey(workbookU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(workbookU);
             if (!workbook.equals(wb.getSubFolderName())) {
                 ret = true;
             }
@@ -184,8 +184,8 @@ public abstract class ADatabase extends AExporter {
     public boolean tableExists(String subfolder, String docname) {
         boolean ret = false;
 
-        if (subfolders.containsKey(subfolder)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolder);
+        if (getSubfolders().containsKey(subfolder)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolder);
 
             if (wb.files.containsKey(docname)) {
                 AFile doc = (AFile) wb.files.get(docname);
@@ -209,8 +209,8 @@ public abstract class ADatabase extends AExporter {
     public void touchSchema(String subfolder) {
         String subfolderU = subfolder.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
             wb.bDirty[xlConstants.UPDATE] = true;
         } else {
             throw new IllegalArgumentException(NOARGS);
@@ -229,8 +229,8 @@ public abstract class ADatabase extends AExporter {
         String subfolderU = subfolder.toUpperCase();
         String docnameU = docname.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
 
             if (wb.files.containsKey(docnameU)) {
                 AFile doc = (AFile) wb.files.get(docnameU);
@@ -257,12 +257,12 @@ public abstract class ADatabase extends AExporter {
         // key in Uppercase, don't touch case for name
         String workbookU = workbook.toUpperCase();
 
-        if (subfolders.containsKey(workbookU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(workbookU);
+        if (getSubfolders().containsKey(workbookU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(workbookU);
             wb.setDirty(UPDATE, true);
         } else {
             ASubFolder obj = subFolderFactory(directory, workbook);
-            subfolders.put(workbookU, obj);
+            addSubfolders(workbookU, obj);
         }
     }
 
@@ -279,8 +279,8 @@ public abstract class ADatabase extends AExporter {
         String workbookU = workbook.toUpperCase();
         String sheetU = sheet.toUpperCase();
 
-        if (subfolders.containsKey(workbookU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(workbookU);
+        if (getSubfolders().containsKey(workbookU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(workbookU);
 
             if (wb.getFiles().containsKey(sheetU)) {
                 AFile sh = (AFile) wb.getFiles().get(sheetU);

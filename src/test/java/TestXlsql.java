@@ -1,16 +1,20 @@
 import java.sql.*;
 import java.util.Enumeration;
-import java.util.Properties;
+
+import static com.jsdiff.excel.jdbc.Constants.DRIVER;
+import static com.jsdiff.excel.jdbc.Constants.URL_PFX_XLS;
+
 
 public class TestXlsql {
+
     public static void main(String[] args) {
         try {
             System.out.println("Current working directory: " + System.getProperty("user.dir"));
 
-            String driver = "com.jsdiff.excel.jdbc.xlDriver";
-            System.out.println("Loading driver: " + driver);
 
-            Class<?> driverClass = Class.forName(driver);
+            System.out.println("Loading driver: " + DRIVER);
+
+            Class<?> driverClass = Class.forName(DRIVER);
             Driver d = (Driver) driverClass.newInstance();
 
             // 显式注册驱动程序
@@ -25,7 +29,7 @@ public class TestXlsql {
                 System.out.println("  - " + registeredDriver.getClass().getName());
             }
 
-            String protocol = "jdbc:jsdiff:excel";
+            String protocol = URL_PFX_XLS;
             String database = System.getProperty("user.dir");
             String url = protocol + ":" + database;
             System.out.println("URL: " + url);

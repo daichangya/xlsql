@@ -31,9 +31,11 @@ import java.util.logging.Logger;
  * @author daichangya
  */
 public abstract class AFile {
-    protected static final Logger logger = Logger.getAnonymousLogger();    protected File directory;
-    protected String subFolderName;
-    protected String fileName;
+    protected static final Logger logger = Logger.getAnonymousLogger();
+    private File file;
+    private FileType fileType;
+    private String fileName;
+    private String sheetName;
     protected boolean validAsSqlTable;
     protected int columnCount;
     protected int rowCount;
@@ -41,17 +43,19 @@ public abstract class AFile {
     protected String[] columnTypes;
     protected boolean[] isChanged = new boolean[3];
 
-    protected AFile(File dir, String folder, String name) throws xlDatabaseException {
-        directory = dir;
-        subFolderName = folder;
-        fileName = name;
+    protected AFile(File file, String fileName, String sheetName) throws xlDatabaseException {
+        this.file = file;
+        this.fileName = fileName;
+        this.sheetName = sheetName;
+        this.fileType = FileType.getFileType(file);
         validAsSqlTable = readFile();
     }
 
-    protected AFile(File dir, String folder, String name, boolean bdirty) {
-        directory = dir;
-        subFolderName = folder;
-        fileName = name;
+    protected AFile(File file, String fileName, String sheetName, boolean bdirty) {
+        this.file = file;
+        this.fileName = fileName;
+        this.sheetName = sheetName;
+        this.fileType = FileType.getFileType(file);
         validAsSqlTable = true;
         rowCount = 1;
         isChanged[xlConstants.ADD] = bdirty;
@@ -114,7 +118,7 @@ public abstract class AFile {
      * @return Value of property sName.
      */
     String getSName() {
-        return fileName;
+        return sheetName;
     }
     
     /**
@@ -144,4 +148,20 @@ public abstract class AFile {
     public void setIsChanged(int i, boolean val) {
         isChanged[i] = val;
     }
-}    
+
+    public File getFile() {
+        return file;
+    }
+
+    public FileType getFileType() {
+        return fileType;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getSheetName() {
+        return sheetName;
+    }
+}

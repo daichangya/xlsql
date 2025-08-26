@@ -61,12 +61,12 @@ public class CmdDir2xl implements IStateCommand {
         try {
             validate();
 
-            File[] f = path.listFiles(selection, recursive);
+            File[] files = path.listFiles(selection, recursive);
             ASqlFormatter sqlformat = xlSqlFormatterFactory.create(dialect);
 
             Statement stm = xldba.con.createStatement();
             String[] col = {"PATH", "NAME"};
-            String[] typ = {"VARCHAR", "VARCHAR"};
+            String[] typ = {"VARCHAR(500)", "VARCHAR(500)"};
             String[] val = {null, null};
             String sql;
 
@@ -79,12 +79,12 @@ public class CmdDir2xl implements IStateCommand {
             stm.execute(sql);
 
             // END SQL
-            for (int i = 0; i < f.length; i++) {
+            for (int i = 0; i < files.length; i++) {
 
                 // BEGIN SQL
                 //    INSERT INTO "BOOK.SHEET" VALUES (?path?, ?name?);
-                val[0] = f[i].getPath();
-                val[1] = f[i].getName();
+                val[0] = files[i].getPath();
+                val[1] = files[i].getName();
                 sql = sqlformat.wInsert(schema, table, col, typ, val);
                 stm.execute(sql);
             }
@@ -93,6 +93,7 @@ public class CmdDir2xl implements IStateCommand {
         } catch (xlException xe) {
             System.out.println(xe.getMessage());
         } catch (SQLException sqe) {
+            sqe.printStackTrace();
             System.out.println(sqe.getMessage() + ":" + sqe.getSQLState() 
                                     + "' existing table..??");
         } finally {

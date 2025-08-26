@@ -1,0 +1,58 @@
+# IDE specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Build artifacts
+target/
+build/
+out/
+dist/
+
+# Dependency directories
+node_modules/
+bower_components/
+jspm_packages/
+
+# Log files
+*.log
+logs/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# Local configuration files
+*.properties
+*.cfg
+
+# Excel temporary files
+~$*.xls
+~$*.xlsx
+
+# Test coverage reports
+coverage/
+*.lcov
+
+# Binaries
+*.class
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Documentation
+*.pdf
+*.docx
+*.pptx

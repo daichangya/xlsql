@@ -19,7 +19,7 @@
 */
 package com.jsdiff.excel.jdbc;
 
-//import com.jsdiff.exceljdbc.database.xlEngineDriver;
+//import com.jsdiff.excel.database.xlEngineDriver;
 import com.jsdiff.excel.database.xlException;
 import com.jsdiff.excel.database.xlInstance;
 

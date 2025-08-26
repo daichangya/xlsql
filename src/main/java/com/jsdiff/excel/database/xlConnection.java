@@ -19,6 +19,8 @@
 */
 package com.jsdiff.excel.database;
 
+import com.jsdiff.excel.jdbc.Constants;
+
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -32,6 +34,7 @@ import java.sql.SQLException;
  * @author $author$
  */
 public class xlConnection {
+
     /**
      * @param database Path to database directory
      *
@@ -43,10 +46,8 @@ public class xlConnection {
     public static Connection create(String database) throws SQLException, 
                                                             xlException {
         try {
-            String driver = "com.jsdiff.exceljdbc.jdbc.xlDriver";
-            Driver d = (Driver) Class.forName(driver).newInstance();
-            String protocol = "jdbc:jsdiff:excel";
-            String url = protocol + ":" + database;
+            Driver d = (Driver) Class.forName(Constants.DRIVER).newInstance();
+            String url = Constants.URL_PFX_XLS + database;
             return DriverManager.getConnection(url);
         } catch (ClassNotFoundException nfe) {
             throw new xlException("driver not found. Classpath set ?");

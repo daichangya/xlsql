@@ -38,38 +38,40 @@ public abstract class ASubFolder {
     protected static final int ADD = 0;
     protected static final int UPDATE = 1;
     protected static final int DELETE = 2;
-    protected File directory;
+    private File file;
+    private FileType fileType;
     protected ASqlSelect sqlSelect;
-    protected String subFolderName;
+    private String fileName;;
     protected Map files = new HashMap();
     protected Map validfiles = new HashMap();
     protected boolean[] bDirty = new boolean[3];
-    protected String relativePath; // 存储相对路径
+//    protected String relativePath; // 存储相对路径
 
 
     /**
      * Creates a new xlSubFolder object.
      * 
-     * @param dir DOCUMENT ME!
+     * @param file DOCUMENT ME!
      * @param name DOCUMENT ME!
      */
-    public ASubFolder(File dir, String name) throws xlDatabaseException {
-        directory = dir;
-        subFolderName = name;
-        this.relativePath = name.replace('_', File.separatorChar);
+    public ASubFolder(File file, String name) throws xlDatabaseException {
+        this.file = file;
+        this.fileName = name;
+        this.fileType = FileType.getFileType(file);
         readFiles();
     }
 
     /**
      * Creates a new xlSubFolder object.
      * 
-     * @param dir DOCUMENT ME!
+     * @param file DOCUMENT ME!
      * @param name DOCUMENT ME!
      * @param dirty DOCUMENT ME!
      */
-    public ASubFolder(File dir, String name, boolean dirty) {
-        directory = dir;
-        subFolderName = name;
+    public ASubFolder(File file, String name, boolean dirty) {
+        this.file = file;
+        this.fileName = name;
+        this.fileType = FileType.getFileType(file);
         bDirty[ADD] = dirty;
     }
 
@@ -119,7 +121,15 @@ public abstract class ASubFolder {
      * @return Value of property subFolderName.
      */
     public String getSubFolderName() {
-        return subFolderName;
+        return fileName;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public FileType getFileType() {
+        return fileType;
     }
 
     protected abstract void readFiles() throws xlDatabaseException;

@@ -7,11 +7,15 @@
 package com.jsdiff.excel.jdbc;
 
 import com.jsdiff.excel.database.sql.ICommand;
+import com.jsdiff.excel.database.xlInstance;
 
 import java.sql.*;
+import java.util.logging.Logger;
 
 
 public class xlStatement implements Statement {
+
+    private static final Logger log = Logger.getLogger(xlStatement.class.getName());
     //~ Constructors �����������������������������������������������������������
     
     protected xlConnection xlCon;
@@ -78,6 +82,7 @@ public class xlStatement implements Statement {
             ICommand cmd = xlCon.xlsql.parseSql(sqlCommand[i]);
             if (cmd.execAllowed()) {
                 // dbStm may throw an SQLException..., pass on to client
+                log.info("xlSQL: execute " + sqlCommand[i]);
                 ret = dbStm.execute(sqlCommand[i]);
                 cmd.execute();
             }

@@ -43,7 +43,7 @@ public class XlUiParser {
 
         // now lets interrogate the options and create command objects
         if (xldba.commandline.hasOption("cat")) {
-            ret = new CmdCat(xldba.exporter);
+            ret = new CmdCat(xldba.getExporter());
         } else if (xldba.commandline.hasOption("close")) {
             ret = new CmdClose(xldba);
         } else if (xldba.commandline.hasOption("c")) {

@@ -23,6 +23,7 @@ import com.jsdiff.excel.database.export.*;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -42,7 +43,7 @@ public abstract class AExporter extends AReader {
     private AReader reader;
     private ASqlFormatter formatter;
     private IExportHandler handler;
-    private List lines = new Vector();
+    private List lines = new ArrayList();
     
     /**
      * Creates a new Exporter object.
@@ -61,6 +62,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create();
         export();
         //handler.write(lines);
+        handler.close();
     }
     
     public void export(String schema, int format, PrintStream ps) throws xlDatabaseException {
@@ -69,6 +71,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create();
         exportSchema(schema);
         //handler.write(lines);
+        handler.close();
     }
     
     public void export(String schema, String table, int format, PrintStream ps) throws xlDatabaseException {
@@ -77,6 +80,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create();
         exportTable(schema, table);
         //handler.write(lines);
+        handler.close();
     }
 
     public void export(int format, File exportfile) throws xlDatabaseException {
@@ -85,6 +89,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create(exportfile);
         export();
         //handler.write(lines);
+        handler.close();
     }
 
     public void export(String schema, int format, File exportfile) throws xlDatabaseException {
@@ -93,6 +98,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create(exportfile);
         exportSchema(schema);
         //handler.write(lines);
+        handler.close();
     }
 
     public void export(String schema, String table, int format, File exportfile)
@@ -102,6 +108,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create(exportfile);
         exportTable(schema, table);
         //handler.write(lines);
+        handler.close();
     }
     
     public void export(int format, java.sql.Connection jdbc) throws xlDatabaseException {
@@ -110,6 +117,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create(jdbc);
         export();
         //handler.write(lines);
+        handler.close();
     }
     
     public void export(String schema, int format, java.sql.Connection jdbc) throws xlDatabaseException {
@@ -118,6 +126,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create(jdbc);
         exportSchema(schema);
         //handler.write(lines);
+        handler.close();
     }
     
     public void export(String schema, String table, int format, java.sql.Connection jdbc) throws xlDatabaseException {
@@ -126,6 +135,7 @@ public abstract class AExporter extends AReader {
         handler = xlExportHandlerFactory.create(jdbc);
         exportTable(schema, table);
         //handler.write(lines);
+        handler.close();
     }
     
     private void createFormatter(int format) {

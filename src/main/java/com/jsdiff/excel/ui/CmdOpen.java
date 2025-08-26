@@ -23,6 +23,9 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import static com.jsdiff.excel.jdbc.Constants.DRIVER;
+import static com.jsdiff.excel.jdbc.Constants.URL_PFX_XLS;
+
 
 /**
  * Open command.
@@ -61,11 +64,9 @@ public class CmdOpen implements IStateCommand {
                 xldba.instance.setDatabase(database);
             }
 
-            String driver = "com.jsdiff.exceljdbc.jdbc.xlDriver";
-            Driver d = (Driver) Class.forName(driver).newInstance();
+            Driver d = (Driver) Class.forName(DRIVER).newInstance();
             ExcelDriver ed = new ExcelDriver(d);
-            String protocol = "jdbc:jsdiff:excel";
-            String url = protocol + ":" + database;
+            String url = URL_PFX_XLS + database;
             xldba.con = ed.connect(url, new Properties());
             ret = xldba.OPEN;
             System.out.println(database + " open");

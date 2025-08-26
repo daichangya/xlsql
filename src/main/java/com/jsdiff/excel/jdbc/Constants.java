@@ -22,10 +22,12 @@ package com.jsdiff.excel.jdbc;
 public interface Constants {
     //~ Static variables/initializers ������������������������������������������
     public static final String APP = "xlSQL> ";
-    
+
+    public static final String DRIVER = "com.jsdiff.excel.jdbc.xlDriver";
+
     public static final String DRIVER_NAME = "jsdiff/xlSQL Excel JDBC Driver";
     public static final String DRIVER_RELEASE = "beta:Y8";
-    public static final String DRIVER_CLASS = "com.jsdiff.exceljdbc.jdbc.jdbcDriverXls";
+    public static final String DRIVER_CLASS = "com.jsdiff.excel.jdbc.jdbcDriverXls";
     public static final int MAJOR_VERSION = 0;
     public static final int MINOR_VERSION = 0;
     public static final String URL_PFX_XLS = "jdbc:jsdiff:excel:";
@@ -40,4 +42,5 @@ public interface Constants {
     public static final String XLSQL_RELEASE = "beta:X1";
     
     public static final String URL = "url";
+
 }

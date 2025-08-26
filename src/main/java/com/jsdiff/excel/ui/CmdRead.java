@@ -55,7 +55,7 @@ public class CmdRead implements IStateCommand {
                 database = xldba.commandline.getOptionValue("read");
                 xldba.instance.setDatabase(database);
             }
-            xldba.exporter = xldba.instance.getExporter(database);
+            xldba.setExporter(xldba.instance.getExporter(database));
             System.out.println("JDBC Driver bypass: " + database
                                + " opened for read");
             ret = xldba.READ;

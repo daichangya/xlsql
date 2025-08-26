@@ -19,18 +19,17 @@
 */
 package com.jsdiff.excel.database;
 
-import org.jconfig.*;
-import org.jconfig.event.*;
-import org.jconfig.handler.*;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -44,16 +43,19 @@ import java.util.logging.SimpleFormatter;
  * Changed by Csongor Nyulas (csny):
  *      - no unnecessary usage of the xlEngineDriver
  *      - initialization problems with existing configuration file solved
+ * Modified to use Properties instead of XML configuration
  */
-public class xlInstance implements ConfigurationListener {
-    private static Logger logger;
+public class xlInstance {
+    private static Logger logger = Logger.getLogger(xlInstance.class.getName());
     private static xlInstance instance;
-    private static final String XLSQL = "xlsql";
-    private String name;
+    private static final String XLSQL_DEFAULT_PATH = System.getProperty("user.home") +File.separator+".xlsql";
+    private static final String XLSQL_DEFAULT_CONFIG_PATH = "xlsql_config.properties";
+    private static final String XLSQL_DEFAULT_LOG_PATH = "xlsql.log";
+
+    private String configFileName;
     private File file;
-    private XMLFileHandler handler;
-    private ConfigurationManager cm;
-    private Configuration config;
+    private Properties configProps;
+    private boolean configModified = false;
 
     //
     private String log;
@@ -75,10 +77,7 @@ public class xlInstance implements ConfigurationListener {
      * @throws xlException [Tbd. When?]
      */
     public static xlInstance getInstance() throws xlException {
-        xlInstance ret;
-        ret = getInstance(XLSQL);
-
-        return ret;
+        return getInstance(XLSQL_DEFAULT_CONFIG_PATH);
     }
 
     /**
@@ -90,7 +89,7 @@ public class xlInstance implements ConfigurationListener {
     /**
      * Creates an xlInstance
      *
-     * @param cfg name of configuration [cfg]_config.xml on disk
+     * @param cfg name of configuration [cfg]_config.properties on disk
      *
      * @return xlInstance
      *
@@ -100,7 +99,7 @@ public class xlInstance implements ConfigurationListener {
         xlInstance ret = null;
 
         if (cfg == null) {
-            cfg = XLSQL;
+            cfg = XLSQL_DEFAULT_CONFIG_PATH;
         }
 
         if (instance == null) {
@@ -113,51 +112,34 @@ public class xlInstance implements ConfigurationListener {
     }
 
     private xlInstance(String cfg) throws xlException {
-        logger = Logger.getLogger(this.getClass().getName());
         instance = this;
-        name = cfg;
+        configFileName = cfg;
+        configProps = new Properties();
 
         try {
-            // 首先尝试从系统属性获取配置文件路径
-            String configPath = System.getProperty("xlsql.config.path");
-            if (configPath != null && !configPath.isEmpty()) {
-                file = new File(configPath);
-            } else {
-                // 尝试在当前目录查找配置文件
-                file = new File("xlsql_config.xml");
-
-                // 如果当前目录没有配置文件，尝试从 resources 复制默认配置
-                if (!file.exists()) {
-                    copyDefaultConfigFromResources();
-                }
+            if(null == configFileName || configFileName.isEmpty()){
+                // 尝试从系统属性获取配置文件路径
+                configFileName = System.getProperty("xlsql.config.path", configFileName);
             }
-
-            handler = new XMLFileHandler();
-            handler.setFile(file);
-
-            cm = ConfigurationManager.getInstance();
-
-            if (file.exists()) {
-                cm.load(handler, name);
-                config = ConfigurationManager.getConfiguration(name);
-                config.addConfigurationListener(this);
-
-                engine = config.getProperty("engine", null, "general");
-                config.setCategory(engine, true);
-                logger.info("Configuration file: " + file.getAbsolutePath() + " loaded");
-            } else {
+            if(null == configFileName || configFileName.isEmpty()){
                 // 创建默认配置
                 createDefaultConfiguration();
+            }else {
+                file = new File(configFileName);
             }
-        } catch (ConfigurationManagerException cme) {
-            config = ConfigurationManager.getConfiguration(name);
-        } catch (Exception e) {
-            try {
-                // 如果从 resources 复制失败，创建默认配置
-                createDefaultConfiguration();
-            }catch (Exception e1){
 
+            if (file.exists()) {
+                loadProperties();
+                logger.info("Configuration file: " + file.getAbsolutePath() + " loaded");
+            }else {
+                if(!XLSQL_DEFAULT_CONFIG_PATH.equals(configFileName)){
+                    logger.warning("Configuration file: " + file.getAbsolutePath() + " not found");
+                }
+                createDefaultConfiguration();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.warning("Failed to create default configuration: " + e.getMessage());
         }
 
         setupLogging();
@@ -165,54 +147,68 @@ public class xlInstance implements ConfigurationListener {
     }
 
     /**
-     * 从 resources 复制默认配置文件
+     * 加载 Properties 配置文件
      */
-    private void copyDefaultConfigFromResources() throws IOException {
-        // 从 classpath 获取默认配置文件
-        InputStream defaultConfigStream = getClass().getClassLoader()
-                .getResourceAsStream("xlsql_config.xml");
+    private void loadProperties() throws IOException {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+            configProps.load(reader);
+        }
+    }
 
-        if (defaultConfigStream != null) {
-            // 复制到当前目录
-            try (FileOutputStream fos = new FileOutputStream("xlsql_config.xml")) {
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = defaultConfigStream.read(buffer)) > 0) {
-                    fos.write(buffer, 0, length);
-                }
+    /**
+     * 保存 Properties 配置文件
+     */
+    private void saveProperties() {
+        try {
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                configProps.store(fos, "xlSQL Configuration");
             }
-            defaultConfigStream.close();
-            logger.info("Default configuration copied from resources");
+            configModified = false;
+        } catch (IOException e) {
+            logger.warning("Failed to save configuration: " + e.getMessage());
         }
     }
 
     /**
      * 创建默认配置
      */
-    private void createDefaultConfiguration() throws ConfigurationManagerException {
-        config = ConfigurationManager.getConfiguration(name);
-        config.addConfigurationListener(this);
+    private void createDefaultConfiguration() {
+        file = getFile(getDefaultConfigPath());
+        this.engine = "hsqldb";
+        this.database = System.getProperty("user.dir");
+        this.log = getDefaultLogPath();
+        setProperty("general.database", database);
+        setProperty("general.engine", engine);
+        setProperty("general.log", log);
 
-        assert (config.isNew());
+        setProperty("hsqldb.driver", "org.hsqldb.jdbcDriver");
+        setProperty("hsqldb.url", "jdbc:hsqldb:.");
+        setProperty("hsqldb.schema", "");
+        setProperty("hsqldb.user", "sa");
+        setProperty("hsqldb.password", "");
 
-        config.setCategory("general", true);
 
-        String engine = "hsqldb";
-        setLog(getDefaultLogPath());
-        setDatabase(System.getProperty("user.dir"));
-
-        this.engine = engine;
-        config.setProperty("engine", engine);
-        addEngine(engine);
-        config.setCategory(engine, true);
-
-        setDriver("org.hsqldb.jdbcDriver");
-        setUrl("jdbc:hsqldb:.");
-        setSchema("");
-        setUser("sa");
-        setPassword("");
-        config.setCategory(getEngine(), true);
         logger.info("Default configuration created.");
+        saveProperties();
+    }
+
+    /**
+     * 设置配置属性
+     */
+    private void setProperty(String key, String value) {
+        if (value != null) {
+            configProps.setProperty(key, value);
+        } else {
+            configProps.remove(key);
+        }
+        configModified = true;
+    }
+
+    /**
+     * 获取配置属性
+     */
+    private String getProperty(String key, String defaultValue) {
+        return configProps.getProperty(key, defaultValue);
     }
 
     /**
@@ -220,18 +216,47 @@ public class xlInstance implements ConfigurationListener {
      */
     private void setupLogging() throws xlException {
         try {
-            if (getLog() == null) {
-                setLog(getDefaultLogPath());
+            String logPath = getLog();
+            if (logPath == null || logPath.isEmpty()) {
+                logPath = getDefaultLogPath();
+                setLog(logPath);
             }
+            File logFile = getFile(logPath);
 
             boolean append = true;
-            FileHandler loghandler = new FileHandler(getLog(), append);
+            FileHandler loghandler = new FileHandler(logPath, append);
             loghandler.setFormatter(new SimpleFormatter());
             logger.addHandler(loghandler);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new xlException("error while creating logfile");
         }
     }
+
+    private static File getFile(String logPath) {
+        // 确保日志文件的父目录存在
+        File logFile = new File(logPath);
+        File logDir = logFile.getParentFile();
+        if (logDir != null && !logDir.exists()) {
+            logDir.mkdirs(); // 创建所有必要的父目录
+        }
+        return logFile;
+    }
+
+
+    /**
+     * 获取默认配置路径
+     * @return 获取默认配置路径
+     */
+    private String getDefaultConfigPath() {
+        String configPath = System.getProperty("xlsql.config.path");
+        if (configPath != null && !configPath.isEmpty()) {
+            return configPath;
+        }
+        // 默认使用用户目录下的日志文件
+        return XLSQL_DEFAULT_PATH + File.separator + XLSQL_DEFAULT_CONFIG_PATH;
+    }
+
 
     /**
      * 获取默认日志路径
@@ -243,15 +268,7 @@ public class xlInstance implements ConfigurationListener {
             return logPath;
         }
         // 默认使用用户目录下的日志文件
-        return System.getProperty("user.dir") + File.separator + "xlsql.log";
-    }
-    /**
-     * get log property
-     *
-     * @return log
-     */
-    public String getLog() {
-        return config.getProperty("log", getDefaultLogPath(), "general");
+        return XLSQL_DEFAULT_PATH + File.separator + XLSQL_DEFAULT_LOG_PATH;
     }
 
     /**
@@ -259,9 +276,17 @@ public class xlInstance implements ConfigurationListener {
      *
      * @return log
      */
+    public String getLog() {
+        return getProperty("general.log", getDefaultLogPath());
+    }
+
+    /**
+     * get database property
+     *
+     * @return database
+     */
     public String getDatabase() {
-        return config.getProperty("database", System.getProperty("user.dir"),
-                                  "general");
+        return getProperty("general.database", System.getProperty("user.dir"));
     }
 
     /**
@@ -284,10 +309,8 @@ public class xlInstance implements ConfigurationListener {
                 ret = xlDatabaseFactory.createExporter(f);
             } catch (xlDatabaseException xde) {
                 throw new xlException("xlSQL/db reports '" + xde.getMessage()
-                                      + "'");
+                        + "'");
             }
-
-            ;
         } else {
             throw new IllegalArgumentException(); //desc
         }
@@ -307,7 +330,7 @@ public class xlInstance implements ConfigurationListener {
 
         try {
             ret = xlDatabaseFactory.createDatabase(new File(getDatabase()),
-                                                   this);
+                    this);
         } catch (xlDatabaseException xde) {
             throw new xlException(xde.getMessage());
         }
@@ -330,8 +353,6 @@ public class xlInstance implements ConfigurationListener {
             Driver d = (Driver) Class.forName(classname).newInstance();
             logger.info("OK. " + classname + " loaded.");
             logger.info("=> registering driver: " + classname);
-//csny:       xlEngineDriver was eliminated because it was unnecessary
-//            DriverManager.registerDriver(new xlEngineDriver(d));
             DriverManager.registerDriver(d);
             logger.info("OK. ");
 
@@ -339,7 +360,7 @@ public class xlInstance implements ConfigurationListener {
             String user = getUser();
             String password = getPassword();
             logger.info("=> connecting to: " + user + "/" + password + "@"
-                        + url);
+                    + url);
             ret = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException nfe) {
             logger.warning("Driver not found. Classpath set?");
@@ -349,7 +370,7 @@ public class xlInstance implements ConfigurationListener {
             logger.warning("Illegal access. Have sources been modified?");
         } catch (SQLException sqe) {
             logger.warning("java.sql package reports: '" + sqe.getMessage()
-                           + ":" + sqe.getSQLState() + "' ..?");
+                    + ":" + sqe.getSQLState() + "' ..?");
         }
 
         return ret;
@@ -361,7 +382,8 @@ public class xlInstance implements ConfigurationListener {
      * @return DOCUMENT ME!
      */
     public String[] getEngines() {
-        return config.getCategoryNames();
+        // 简化实现，返回固定引擎列表
+        return new String[]{"general", "hsqldb"};
     }
 
     /**
@@ -371,11 +393,9 @@ public class xlInstance implements ConfigurationListener {
      */
     public void addEngine(String engine) {
         this.engine = engine;
-        config.setCategory(engine, true);
-        config.setProperty("engine", engine, "general");
+        setProperty("general.engine", engine);
 
-
-        //
+        // 初始化引擎相关属性
         setDriver("");
         setUrl("");
         setSchema("");
@@ -389,9 +409,13 @@ public class xlInstance implements ConfigurationListener {
      * @param engine DOCUMENT ME!
      */
     public void removeEngine(String engine) {
-        if (engine.equalsIgnoreCase(engine)) {
-            config.removeCategory(engine);
-        }
+        // 移除引擎相关属性
+        configProps.remove(engine + ".driver");
+        configProps.remove(engine + ".url");
+        configProps.remove(engine + ".schema");
+        configProps.remove(engine + ".user");
+        configProps.remove(engine + ".password");
+        configModified = true;
     }
 
     /**
@@ -402,11 +426,10 @@ public class xlInstance implements ConfigurationListener {
      * @throws IllegalStateException DOCUMENT ME!
      */
     public String getEngine() {
-        String ret;
-        ret = config.getProperty("engine", null, "general");
+        String ret = getProperty("general.engine", null);
 
         if (ret == null) {
-            throw new IllegalStateException(); //desc
+            throw new IllegalStateException("Engine not configured");
         }
 
         return ret;
@@ -418,7 +441,7 @@ public class xlInstance implements ConfigurationListener {
      * @return driver
      */
     public String getDriver() {
-        return config.getProperty("driver", engine);
+        return getProperty(getEngine() + ".driver", "");
     }
 
     /**
@@ -427,7 +450,7 @@ public class xlInstance implements ConfigurationListener {
      * @return url
      */
     public String getUrl() {
-        return config.getProperty("url", engine);
+        return getProperty(getEngine() + ".url", "");
     }
 
     /**
@@ -436,7 +459,7 @@ public class xlInstance implements ConfigurationListener {
      * @return schema
      */
     public String getSchema() {
-        return config.getProperty("schema", engine);
+        return getProperty(getEngine() + ".schema", "");
     }
 
     /**
@@ -445,7 +468,7 @@ public class xlInstance implements ConfigurationListener {
      * @return user
      */
     public String getUser() {
-        return config.getProperty("user", engine);
+        return getProperty(getEngine() + ".user", "");
     }
 
     /**
@@ -454,7 +477,7 @@ public class xlInstance implements ConfigurationListener {
      * @return password
      */
     public String getPassword() {
-        return config.getProperty("password", engine);
+        return getProperty(getEngine() + ".password", "");
     }
 
     /**
@@ -473,7 +496,10 @@ public class xlInstance implements ConfigurationListener {
      */
     public void setLog(String log) {
         this.log = log;
-        config.setProperty("log", log, "general");
+        setProperty("general.log", log);
+        if (configModified) {
+            saveProperties();
+        }
     }
 
     /**
@@ -484,21 +510,13 @@ public class xlInstance implements ConfigurationListener {
      * @throws xlException DOCUMENT ME!
      */
     public void setEngine(String newengine) throws xlException {
-        String[] engines = getEngines();
-        boolean found = false;
-
-        for (int i = 0; i < engines.length; i++) {
-            if (newengine.equalsIgnoreCase(engines[i])) {
-                found = true;
-
-                break;
-            }
-        }
-
-        if (found) {
+        // 简化验证
+        if (newengine != null && !newengine.isEmpty()) {
             this.engine = newengine;
-            config.setProperty("engine", newengine, "general");
-            config.setCategory(newengine, true);
+            setProperty("general.engine", newengine);
+            if (configModified) {
+                saveProperties();
+            }
         } else {
             throw new xlException("Engine " + newengine + "..?! Verify.");
         }
@@ -511,7 +529,10 @@ public class xlInstance implements ConfigurationListener {
      */
     public void setDatabase(String database) {
         this.database = database;
-        config.setProperty("database", database, "general");
+        setProperty("general.database", database);
+        if (configModified) {
+            saveProperties();
+        }
     }
 
     /**
@@ -521,8 +542,10 @@ public class xlInstance implements ConfigurationListener {
      */
     public void setDriver(String driver) {
         this.driver = driver;
-        config.setCategory(engine, true);
-        config.setProperty("driver", driver, engine);
+        setProperty(getEngine() + ".driver", driver);
+        if (configModified) {
+            saveProperties();
+        }
     }
 
     /**
@@ -532,8 +555,10 @@ public class xlInstance implements ConfigurationListener {
      */
     public void setUrl(String url) {
         this.url = url;
-        config.setCategory(engine, true);
-        config.setProperty("url", url, engine);
+        setProperty(getEngine() + ".url", url);
+        if (configModified) {
+            saveProperties();
+        }
     }
 
     /**
@@ -543,8 +568,10 @@ public class xlInstance implements ConfigurationListener {
      */
     public void setSchema(String schema) {
         this.schema = schema;
-        config.setCategory(engine, true);
-        config.setProperty("schema", schema, engine);
+        setProperty(getEngine() + ".schema", schema);
+        if (configModified) {
+            saveProperties();
+        }
     }
 
     /**
@@ -554,8 +581,10 @@ public class xlInstance implements ConfigurationListener {
      */
     public void setUser(String user) {
         this.user = user;
-        config.setCategory(engine, true);
-        config.setProperty("user", user, engine);
+        setProperty(getEngine() + ".user", user);
+        if (configModified) {
+            saveProperties();
+        }
     }
 
     /**
@@ -565,50 +594,9 @@ public class xlInstance implements ConfigurationListener {
      */
     public void setPassword(String password) {
         this.password = password;
-        config.setCategory(engine, true);
-        config.setProperty("password", password, engine);
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param e DOCUMENT ME!
-     */
-    public void configurationChanged(org.jconfig.event.ConfigurationChangedEvent e) {
-        saveConfig();
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param categoryChangedEvent DOCUMENT ME!
-     */
-    public void categoryChanged(org.jconfig.event.CategoryChangedEvent categoryChangedEvent) {
-        saveConfig();
-    }
-
-    /**
-     * DOCUMENT ME!
-     *
-     * @param propertyChangedEvent DOCUMENT ME!
-     */
-    public void propertyChanged(org.jconfig.event.PropertyChangedEvent propertyChangedEvent) {
-        saveConfig();
-    }
-
-    private void saveConfig() {
-        try {
-            if (config.isNew()) {
-                cm.save(handler, config);
-            } else {
-                cm.save(name);
-                cm.save(handler, config);
-            }
-        } catch (ConfigurationManagerException cfe) {
-            logger.warning("xlSQL> -WRN: ConfigurationManagerException ..?");
+        setProperty(getEngine() + ".password", password);
+        if (configModified) {
+            saveProperties();
         }
-
-        config.resetCreated();
     }
 }
-

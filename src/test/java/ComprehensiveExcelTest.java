@@ -1,6 +1,9 @@
 import java.io.File;
 import java.sql.*;
 
+import static com.jsdiff.excel.jdbc.Constants.DRIVER;
+import static com.jsdiff.excel.jdbc.Constants.URL_PFX_XLS;
+
 public class ComprehensiveExcelTest {
 
     public static final String DATA_XLS = "test1.xls";
@@ -31,11 +34,10 @@ public class ComprehensiveExcelTest {
     
     private static void testExcelQuery() throws Exception {
         // 加载驱动
-        String driver = "com.jsdiff.excel.jdbc.xlDriver";
-        Class.forName(driver);
+        Class.forName(DRIVER);
         
         // 连接到当前目录
-        String url = "jdbc:jsdiff:excel:" + System.getProperty("user.dir");
+        String url = URL_PFX_XLS + System.getProperty("user.dir");
         Connection con = DriverManager.getConnection(url);
         
         System.out.println("=== Excel查询测试 ===");
@@ -57,7 +59,7 @@ public class ComprehensiveExcelTest {
         Statement stmt = con.createStatement();
         
         System.out.println("\n=== 查询文件 ==="+DATA_XLS);
-        ResultSet rs = stmt.executeQuery("SELECT * FROM \"test.Sheet1\" LIMIT 1");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\" LIMIT 1");
         
         // 显示列信息
         int columnCount = rs.getMetaData().getColumnCount();

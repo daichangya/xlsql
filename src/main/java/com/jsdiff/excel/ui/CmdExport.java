@@ -76,11 +76,11 @@ public class CmdExport implements IStateCommand {
                 case OUT:
 
                     if (all) {
-                        xldba.exporter.export(format, toOut);
+                        xldba.getExporter().export(format, toOut);
                     } else if (table.equals("")) {
-                        xldba.exporter.export(schema, format, toOut);
+                        xldba.getExporter().export(schema, format, toOut);
                     } else {
-                        xldba.exporter.export(schema, table, format, toOut);
+                        xldba.getExporter().export(schema, table, format, toOut);
                     }
 
                     break;
@@ -88,11 +88,11 @@ public class CmdExport implements IStateCommand {
                 case FILE:
 
                     if (all) {
-                        xldba.exporter.export(format, toFile);
+                        xldba.getExporter().export(format, toFile);
                     } else if (table.equals("")) {
-                        xldba.exporter.export(schema, format, toFile);
+                        xldba.getExporter().export(schema, format, toFile);
                     } else {
-                        xldba.exporter.export(schema, table, format, toFile);
+                        xldba.getExporter().export(schema, table, format, toFile);
                     }
 
                     break;
@@ -100,11 +100,11 @@ public class CmdExport implements IStateCommand {
                 case JDBC:
 
                     if (all) {
-                        xldba.exporter.export(format, toCon);
+                        xldba.getExporter().export(format, toCon);
                     } else if (table.equals("")) {
-                        xldba.exporter.export(schema, format, toCon);
+                        xldba.getExporter().export(schema, format, toCon);
                     } else {
-                        xldba.exporter.export(schema, table, format, toCon);
+                        xldba.getExporter().export(schema, table, format, toCon);
                     }
 
                 default:
@@ -190,7 +190,10 @@ public class CmdExport implements IStateCommand {
                 xldba.instance.setEngine(tmp[0]);
             } else {
                 // File
-                String[] ext = {"xml"};
+                String[] ext = {"txt"};
+                if(format == XML) {
+                    ext = new String[]{"xml"};
+                }
                 File f = xlFile.settle(to, ext);
                 handler = FILE;
                 toFile = f;

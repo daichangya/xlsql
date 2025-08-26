@@ -56,8 +56,8 @@ public abstract class AReader extends AFolder {
         String subfolderU = subfolder.toUpperCase();
         String docnameU = docname.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
 
             if (wb.files.containsKey(docnameU)) {
                 AFile doc = (AFile) wb.files.get(docnameU);
@@ -92,8 +92,8 @@ public abstract class AReader extends AFolder {
         String subfolderU = subfolder.toUpperCase();
         String docnameU = docname.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
 
             if (wb.files.containsKey(docnameU)) {
                 AFile doc = (AFile) wb.files.get(docnameU);
@@ -128,8 +128,8 @@ public abstract class AReader extends AFolder {
         String subfolderU = subfolder.toUpperCase();
         String docnameU = docname.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
 
             if (wb.files.containsKey(docnameU)) {
                 AFile doc = (AFile) wb.files.get(docnameU);
@@ -155,12 +155,12 @@ public abstract class AReader extends AFolder {
      * @return DOCUMENT ME!
      */
     public String[] getSchemas() {
-        String[] s = (String[]) subfolders.keySet().toArray(new String[0]);
+        String[] s = (String[]) getSubfolders().keySet().toArray(new String[0]);
         String[] ret = new String[s.length];
 
         for (int i = 0; i < s.length; i++) {
-            ASubFolder wb = (ASubFolder) subfolders.get(s[i]);
-            ret[i] = wb.subFolderName;
+            ASubFolder wb = (ASubFolder) getSubfolders().get(s[i]);
+            ret[i] = wb.getSubFolderName();
         }
 
         return ret;
@@ -179,8 +179,8 @@ public abstract class AReader extends AFolder {
         String[] ret = { "" };
         String subfolderU = subfolder.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
             String[] t = (String[]) wb.validfiles.keySet()
                                                  .toArray(new String[0]);
             String[] tables = new String[t.length];
@@ -218,8 +218,8 @@ public abstract class AReader extends AFolder {
         String subfolderU = subfolder.toUpperCase();
         String docnameU = docname.toUpperCase();
 
-        if (subfolders.containsKey(subfolderU)) {
-            ASubFolder wb = (ASubFolder) subfolders.get(subfolderU);
+        if (getSubfolders().containsKey(subfolderU)) {
+            ASubFolder wb = (ASubFolder) getSubfolders().get(subfolderU);
 
             if (wb.files.containsKey(docnameU)) {
                 AFile doc = (AFile) wb.files.get(docnameU);

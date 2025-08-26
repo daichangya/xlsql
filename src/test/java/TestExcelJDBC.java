@@ -1,16 +1,17 @@
 import java.sql.*;
-import java.io.*;
+
+import static com.jsdiff.excel.jdbc.Constants.DRIVER;
+import static com.jsdiff.excel.jdbc.Constants.URL_PFX_XLS;
 
 public class TestExcelJDBC {
     public static void main(String[] args) {
         try {
             // 加载驱动
-            String driver = "com.jsdiff.excel.jdbc.xlDriver";
-            Class.forName(driver);
+            Class.forName(DRIVER);
             System.out.println("Excel JDBC Driver loaded successfully");
 
             // 测试连接
-            String url = "jdbc:jsdiff:excel:/Users/changyadai/IdeaProjects/exceljdbc";
+            String url = URL_PFX_XLS + System.getProperty("user.dir");
             Connection conn = DriverManager.getConnection(url);
             System.out.println("Connection established successfully");
 

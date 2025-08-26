@@ -19,6 +19,8 @@
 */
 package com.jsdiff.excel.database.excel;
 
+import com.jsdiff.excel.database.FileType;
+
 import java.io.File;
 import java.io.FilenameFilter;
 /**
@@ -26,7 +28,6 @@ import java.io.FilenameFilter;
  * https://excel.jsdiff.com/servlets/ProjectIssues issue 33 )
 */
 public class xlXlsFilter implements FilenameFilter {
-    protected static final String XLS = ".xls";
 
     public boolean accept(File dir, String name) {
         File file = new File(dir, name);
@@ -34,10 +35,10 @@ public class xlXlsFilter implements FilenameFilter {
         if (file.isDirectory()) {
             return true;
         }
-        String ext = "";
+        FileType fileType = null;
         if (name.length() > 3) {
-            ext = name.substring(name.length() - 4, name.length());
+           fileType = FileType.getByValue(file.getName().substring(file.getName().lastIndexOf(".") + 1));
         }
-        return (ext.equalsIgnoreCase(XLS));
+        return FileType.XLS.equals(fileType) || FileType.XLSX.equals(fileType);
     }
 }

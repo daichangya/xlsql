@@ -22,19 +22,19 @@ package com.jsdiff.excel.database.excel;
 
 import com.jsdiff.excel.database.*;
 import com.jsdiff.excel.database.sql.ASqlSelect;
-import jxl.*;
-import jxl.write.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.TimeZone;
 
 
@@ -56,26 +56,26 @@ public class xlSheet extends AFile {
     /**
      * 创建一个新的 xlSheet 对象。
      *
-     * @param dir 包含 Excel 文件的（相对）根目录
-     * @param folder 工作簿名称（不带扩展名）
-     * @param name Excel 中的工作表标识符
+     * @param file  Excel 文件
+     * @param fileName 工作簿名称（不带扩展名）
+     * @param sheetName Excel 中的工作表标识符
      *
      * @throws xlDatabaseException 当此对象无法实例化时抛出异常
      */
-    xlSheet(File dir, String folder, String name) throws xlDatabaseException {
-        super(dir, folder, name);
+    xlSheet(File file, String fileName, String sheetName) throws xlDatabaseException {
+        super(file, fileName, sheetName);
     }
 
     /**
      * 创建一个新的 xlSheet 对象。
      *
-     * @param dir 包含 Excel 文件的（相对）根目录
-     * @param folder 工作簿名称（不带扩展名）
-     * @param name Excel 中的工作表标识符
+     * @param file Excel 文件
+     * @param fileName 工作簿名称（不带扩展名）
+     * @param sheetName Excel 中的工作表标识符
      * @param bdirty 脏标记
      */
-    xlSheet(File dir, String folder, String name, boolean bdirty) {
-        super(dir, folder, name, bdirty);
+    xlSheet(File file, String fileName, String sheetName, boolean bdirty) {
+        super(file, fileName, sheetName, bdirty);
     }
 
     /**
@@ -84,23 +84,23 @@ public class xlSheet extends AFile {
      * @return JXL 库中的 Sheet 对象
      * @throws xlDatabaseException 当读取 Excel 文件失败时抛出异常
      */
-    private jxl.Sheet getSheet() throws xlDatabaseException {
-        // 性能问题？最好先修复 JXL.ow。 :-)
-        Sheet ret = null;
-
+    private Sheet getSheet() throws xlDatabaseException {
+        Workbook wb =  null;
         try {
-            File f = new File(directory.getPath() + File.separator +
-                    subFolderName + XLS);
-            ret = Workbook.getWorkbook(f).getSheet(fileName);
-        } catch (IOException ioe) {
-            throw new xlDatabaseException("xlSQL: -excel> IO 错误: " +
-                    ioe.getMessage());
-        } catch (jxl.read.biff.BiffException biffe) {
-            throw new xlDatabaseException("xlSQL: -excel> BIFF 错误: " +
-                    biffe.getMessage());
+            if (FileType.XLSX.equals(getFileType())) {
+                wb = new XSSFWorkbook(getFile());
+            } else if (FileType.XLS.equals(getFileType())) {
+                // 需要引入HSSFWorkbook
+                wb = new HSSFWorkbook(new FileInputStream(getFile()));
+            } else {
+                logger.warning("xlSQL: Unsupported file format for: " + getFile().getPath());
+            }
+            return wb.getSheet(getSheetName());
+        } catch (IOException | InvalidFormatException e) {
+            throw new xlDatabaseException("xlSQL: -excel> ERR: " + e.getMessage());
+        }finally {
+            IOUtils.closeQuietly(wb);
         }
-
-        return ret;
     }
 
     /**
@@ -111,67 +111,40 @@ public class xlSheet extends AFile {
      *
      * @throws xlDatabaseException 数据库错误
      */
-    public void close(Object subOut, ASqlSelect select)
-            throws xlDatabaseException {
-        Sheet workSheet;
+    public void close(Object subOut, ASqlSelect select) throws xlDatabaseException {
+        Workbook wb = (Workbook) subOut;
         ResultSet rs;
-        WritableWorkbook wbOut = (WritableWorkbook) subOut;
 
         if (isChanged[xlConstants.ADD]) {
+            String fileName = getFileName();
             // 添加操作：创建工作表
-            workSheet = wbOut.createSheet(fileName, wbOut.getNumberOfSheets());
-
-            WritableSheet wsh = (WritableSheet) workSheet;
-
+            Sheet sheet = wb.createSheet(fileName);
             try {
-                rs = select.QueryData(subFolderName, fileName);
+                rs = select.QueryData(fileName, fileName);
+                write(sheet, rs);
             } catch (SQLException sqe) {
                 throw new xlDatabaseException(sqe.getMessage());
             }
-
-            // 创建新的空工作表
-            write(wsh, rs);
         } else if (isChanged[xlConstants.UPDATE]) {
+            String fileName = getFileName();
             // 更新操作：先删除再重新创建工作表
-            int i;
-            WritableSheet _s;
-
-            // 根据名称查找工作表索引
-            for (i = 0; i < wbOut.getNumberOfSheets(); i++) {
-                _s = wbOut.getSheet(i);
-
-                if (_s.getName().equals(fileName)) {
-                    break;
-                }
+            int sheetIndex = wb.getSheetIndex(fileName);
+            if (sheetIndex != -1) {
+                wb.removeSheetAt(sheetIndex);
             }
-
-            // 删除工作表
-            wbOut.removeSheet(i);
-
+            Sheet sheet = wb.createSheet(fileName);
             try {
-                rs = select.QueryData(subFolderName, fileName);
+                rs = select.QueryData(fileName, fileName);
+                write(sheet, rs);
             } catch (SQLException sqe) {
                 throw new xlDatabaseException(sqe.getMessage());
             }
-
-            // 创建新的空工作表
-            write(wbOut.createSheet(fileName, i), rs);
         } else if (isChanged[xlConstants.DELETE]) {
             // 删除操作：根据名称删除工作表
-            int i;
-            WritableSheet _s;
-
-            // 根据名称查找工作表索引
-            for (i = 0; i < wbOut.getNumberOfSheets(); i++) {
-                _s = wbOut.getSheet(i);
-
-                if (_s.getName().equals(fileName)) {
-                    break;
-                }
+            int sheetIndex = wb.getSheetIndex(getFileName());
+            if (sheetIndex != -1) {
+                wb.removeSheetAt(sheetIndex);
             }
-
-            // 删除工作表
-            wbOut.removeSheet(i);
         }
     }
 
@@ -184,135 +157,75 @@ public class xlSheet extends AFile {
     protected boolean readFile() throws xlDatabaseException {
         Sheet sheet = getSheet();
         boolean ret = true;
-        columnCount = sheet.getColumns(); // 获取列数
-        rowCount = sheet.getRows();       // 获取行数
+        columnCount = sheet.getRow(0).getPhysicalNumberOfCells(); // 获取列数
+        rowCount = sheet.getPhysicalNumberOfRows();               // 获取行数
 
         // 验证工作表：列数或行数为 0 的工作表无效
-        for (int z = 0; z < 1; z++) {
-            if ((columnCount == 0) || (rowCount == 0)) {
+        if (columnCount == 0 || rowCount == 0) {
+            ret = false;
+        } else {
+            // 检查标题行
+            Row headerRow = sheet.getRow(0);
+            if (headerRow == null || headerRow.getPhysicalNumberOfCells() != columnCount) {
                 ret = false;
-                break;
-            }
-
-            // 检查"标题行"，包含不完整或空单元格的工作表无效
-            Cell[] c = sheet.getRow(0); // 获取第一行（标题行）
-
-            if ((c.length == 0) || (c.length != columnCount)) {
-                ret = false;
-                break;
-            }
-
-            // 标题行有效，将数据传输到 columnNames 数组
-            columnNames = new String[c.length];
-            columnTypes = new String[c.length];
-
-            // 检查每个列的标题，确保 CREATE TABLE 在所有 SQL 方言中都被接受
-            for (int i = 0; i < c.length; i++) {
-                // 标题必须是 LABEL 类型，否则无效
-                if (c[i].getType() != CellType.LABEL) {
-                    ret = false;
-                    break;
-                }
-
-                // 列名必须匹配正则表达式模式（"^[A-Za-z0-9._-]{1,30}+$"）
-                // 如果至少有一列不匹配，则表无效
-//                if (!c[i].getContents().matches("^[A-Za-z0-9._-]{1,30}+$")) {
-//                    ret = false;
-//                    break;
-//                }
-
-                // 列名有效，传输数据
-                columnNames[i] = c[i].getContents();
-            }
-
-            // Bug 修复：问题 163 - 重复的列名
-            if (!ret) {
-                break;
-            }
-
-            // 检查所有列名是否不同
-            HashMap index = new HashMap();
-            String key;
-            String value;
-
-            for (int n = 0; n < columnNames.length; n++) {
-                key = columnNames[n].toUpperCase();
-                value = columnNames[n];
-
-                if (index.containsKey(key)) {
-                    ret = false;
-                    break;
-                } else {
-                    index.put(key, value);
-                }
-            }
-
-            if (!ret) {
-                break;
-            }
-
-            // 获取数据行用于类型检测
-            Cell[] t;
-
-            if (rowCount == 1) {
-                // 只有标题行，没有数据行
-                t = c;
-                logger.warning(fileName + " 没有数据，假设为 VARCHAR 类型");
             } else {
-                // 检查第一行数据：确定数据类型
-                t = sheet.getRow(1);
+                columnNames = new String[columnCount];
+                columnTypes = new String[columnCount];
 
-                // 当值的数量少于列数时
-                if (t.length != c.length) {
-                    logger.warning(fileName
-                            + " 可能包含无效数据，继续处理...");
-                    // 无法评估所有列，初始化为 VARCHAR
-                    for (int k = 0; k < columnTypes.length; k++) {
-                        columnTypes[k] = "VARCHAR";
+                // 检查列名是否有效
+                for (int i = 0; i < columnCount; i++) {
+                    Cell cell = headerRow.getCell(i);
+                    if (cell == null || cell.getCellType() != CellType.STRING) {
+                        ret = false;
+                        break;
+                    }
+                    columnNames[i] = cell.getStringCellValue();
+                }
+
+                // 检查列名是否重复
+                if (ret) {
+                    HashMap<String, String> index = new HashMap<>();
+                    for (int n = 0; n < columnNames.length; n++) {
+                        String key = columnNames[n].toUpperCase();
+                        if (index.containsKey(key)) {
+                            ret = false;
+                            break;
+                        } else {
+                            index.put(key, columnNames[n]);
+                        }
                     }
                 }
-            }
 
-            columnTypes = new String[c.length];
-
-            // 检查第一行数据中各列的值，确定 SQL 数据类型
-            for (int j = 0; j < t.length; j++) {
-                if ((t[j].getType() == CellType.NUMBER) ||
-                        (t[j].getType() == CellType.NUMBER_FORMULA)) {
-                    // 数字类型
-                    columnTypes[j] = "DOUBLE";
-                } else if ((t[j].getType() == CellType.LABEL) ||
-                        (t[j].getType() == CellType.STRING_FORMULA)) {
-                    // 标签或字符串公式类型
-                    columnTypes[j] = "VARCHAR(2048)";
-                } else if ((t[j].getType() == CellType.DATE) ||
-                        (t[j].getType() == CellType.DATE_FORMULA)) {
-                    // 日期类型
-                    columnTypes[j] = "DATE";
-                    if (t[j] instanceof DateCell && ((DateCell)t[j]).isTime()) {
-                        // 时间类型
-                        columnTypes[j] = "TIME";
+                // 检查数据类型
+                if (ret && rowCount > 1) {
+                    Row dataRow = sheet.getRow(1);
+                    for (int j = 0; j < columnCount; j++) {
+                        Cell cell = dataRow.getCell(j);
+                        if (cell == null) {
+                            columnTypes[j] = "VARCHAR";
+                        } else {
+                            switch (cell.getCellType()) {
+                                case NUMERIC:
+                                    columnTypes[j] = "DOUBLE";
+                                    break;
+                                case STRING:
+                                    columnTypes[j] = "VARCHAR(2048)";
+                                    break;
+                                case BOOLEAN:
+                                    columnTypes[j] = "BIT";
+                                    break;
+                                default:
+                                    columnTypes[j] = "VARCHAR";
+                            }
+                        }
                     }
-                } else if ((t[j].getType() == CellType.BOOLEAN) ||
-                        (t[j].getType() == CellType.BOOLEAN_FORMULA)) {
-                    // 布尔类型
-                    columnTypes[j] = "BIT";
-                } else if (t[j].getType() == CellType.EMPTY) {
-                    // 空单元格，假设为 VARCHAR
-                    columnTypes[j] = "VARCHAR";
-                } else {
-                    // 未知类型
-                    ret = false;
-                    break;
                 }
             }
         }
 
         if (!ret) {
-            logger.info(fileName + " 包含非 SQL 数据：已失效");
+            logger.info(getFileName() + " 包含非 SQL 数据：已失效");
         }
-
-        sheet = null;
         return ret;
     }
 
@@ -323,123 +236,48 @@ public class xlSheet extends AFile {
      * @param rs 查询结果集
      * @throws xlDatabaseException 当写入 Excel 文件失败时抛出异常
      */
-    private void write(WritableSheet wsh, ResultSet rs)
-            throws xlDatabaseException {
-        // 使用 JXL API 将查询传输到 Excel 工作表
+    private void write(Sheet sheet, ResultSet rs) throws xlDatabaseException {
         try {
             ResultSetMetaData rsmd = rs.getMetaData();
+            int cols = rsmd.getColumnCount();
+            Row headerRow = sheet.createRow(0);
 
             // 写入标题行
-            int col = 0;
-            int row = 0;
-            int cols = rsmd.getColumnCount();
-            int[] type = new int[cols];
-
-            for (col = 0; col < cols; col++) {
-                Label label = new Label(col, row, rsmd.getColumnName(col + 1));
-                type[col] = xlConstants.xlType(rsmd.getColumnType(col + 1));
-                wsh.addCell(label);
+            for (int col = 0; col < cols; col++) {
+                Cell cell = headerRow.createCell(col);
+                cell.setCellValue(rsmd.getColumnName(col + 1));
             }
 
             // 写入数据行
-            row++;
-
+            int rowNum = 1;
             while (rs.next()) {
-                for (col = 0; col < cols; col++) {
-                    switch (type[col]) {
-                        case 1: // 数字类型
-                            jxl.write.Number nm = new jxl.write.Number(col, row,
-                                    rs.getDouble(col + 1));
-                            wsh.addCell(nm);
+                Row row = sheet.createRow(rowNum++);
+                for (int col = 0; col < cols; col++) {
+                    Cell cell = row.createCell(col);
+                    switch (rsmd.getColumnType(col + 1)) {
+                        case java.sql.Types.NUMERIC:
+                            cell.setCellValue(rs.getDouble(col + 1));
                             break;
-
-                        case 2: // 文本类型
-                            Label lb = new Label(col, row, rs.getString(col + 1));
-                            wsh.addCell(lb);
+                        case java.sql.Types.VARCHAR:
+                            cell.setCellValue(rs.getString(col + 1));
                             break;
-
-                        case 3: // 日期类型
-                            java.util.Date bug;
-                            if (rs.getDate(col + 1) == null) {
-                                bug = new java.util.Date(0);
-                            } else {
-                                bug = rs.getDate(col + 1);
-                            }
-                            DateTime dt = new DateTime(col, row, bug);
-                            wsh.addCell(dt);
+                        case java.sql.Types.DATE:
+                            cell.setCellValue(rs.getDate(col + 1));
                             break;
-
-                        case 4: // 布尔类型
-                            jxl.write.Boolean bl = new jxl.write.Boolean(col, row,
-                                    rs.getBoolean(col + 1));
-                            wsh.addCell(bl);
+                        case java.sql.Types.BOOLEAN:
+                            cell.setCellValue(rs.getBoolean(col + 1));
                             break;
-
                         default:
-                            // MySQL 'TEXT' 类型的解决方法
-                            lb = new Label(col, row, rs.getString(col + 1));
-                            wsh.addCell(lb);
+                            cell.setCellValue(rs.getString(col + 1));
                     }
                 }
-                row++;
             }
-        } catch (SQLException sqe) {
-            throw new xlDatabaseException(sqe.getMessage());
-        } catch (jxl.write.WriteException jxw) {
-            throw new xlDatabaseException(jxw.getMessage());
+        } catch (SQLException e) {
+            throw new xlDatabaseException(e.getMessage());
         }
     }
 
-    /**
-     * 根据 SQL 类型返回 Excel 单元格类型。
-     *
-     * @param sqlType SQL 数据类型
-     * @return Excel 单元格类型（1=数字，2=文本，3=日期，4=布尔值）
-     */
-    private static int xlType(int sqlType) {
-        int ret = 0;
 
-        switch (sqlType) {
-            // 数字类型
-            case (-6):
-            case (-5):
-            case (-2):
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                ret = 1;
-                break;
-
-            // 文本类型
-            case 1:
-            case 12:
-            case 70:
-                ret = 2;
-                break;
-
-            // 日期/时间类型
-            case 91:
-            case 92:
-            case 93:
-                ret = 3;
-                break;
-
-            // 布尔类型
-            case -7:
-            case 16:
-                ret = 4;
-                break;
-
-            default:
-                ret = 0;
-        }
-
-        return ret;
-    }
 
     /**
      * 将工作表作为字符串矩阵返回。
@@ -454,57 +292,31 @@ public class xlSheet extends AFile {
 
         if (validAsSqlTable) {
             Sheet sheet = getSheet();
-            // 创建二维数组存储数据（行数减1是因为排除了标题行）
-            ret = new String[columnCount][rowCount - 1];
+            ret = new String[columnCount][rowCount - 1]; // 行数减1是因为排除了标题行
 
             for (int i = 0; i < (rowCount - 1); i++) {
-                // 处理第 i 行数据
+                Row row = sheet.getRow(i + 1); // i+1 跳过标题行
                 for (int j = 0; j < columnCount; j++) {
-                    Cell c = sheet.getCell(j, i + 1); // i+1 跳过标题行
-
-                    if ((c == null) || (c.getType() == CellType.EMPTY)) {
-                        // 空单元格
+                    Cell cell = row.getCell(j);
+                    if (cell == null) {
                         ret[j][i] = "";
-                    } else if ((c.getType() == CellType.NUMBER) ||
-                            (c.getType() == CellType.NUMBER_FORMULA)) {
-                        // 数字类型单元格
-                        try {
-                            Locale.setDefault(new Locale("en", "US"));
-                            Double db = new Double(((NumberCell) c).getValue());
-                            ret[j][i] = db.toString();
-                        } catch (ClassCastException ce) {
-                            ret[j][i] = "";
-                        }
-                    } else if ((c.getType() == CellType.DATE) ||
-                            (c.getType() == CellType.DATE_FORMULA)) {
-                        // 日期类型单元格
-                        try {
-                            DateCell dc = (DateCell) c;
-                            DateFormat dateFormat = dc.getDateFormat();
-                            dateFormat.setTimeZone(gmtZone);
-                            java.util.Date d = dateFormat.parse(c.getContents());
-                            if (!dc.isTime()) {
-                                // 日期格式
-                                SimpleDateFormat canonicalDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                                canonicalDateFormat.setTimeZone(gmtZone);
-                                ret[j][i] = canonicalDateFormat.format(d);
-                            } else {
-                                // 时间格式
-                                SimpleDateFormat canonicalTimeFormat = new SimpleDateFormat("HH:mm:ss");
-                                canonicalTimeFormat.setTimeZone(gmtZone);
-                                ret[j][i] = canonicalTimeFormat.format(d);
-                            }
-                        } catch (ParseException pe) {
-                            ret[j][i] = "";
-                        }
                     } else {
-                        // 其他类型单元格
-                        ret[j][i] = c.getContents();
+                        switch (cell.getCellType()) {
+                            case NUMERIC:
+                                ret[j][i] = String.valueOf(cell.getNumericCellValue());
+                                break;
+                            case STRING:
+                                ret[j][i] = cell.getStringCellValue();
+                                break;
+                            case BOOLEAN:
+                                ret[j][i] = String.valueOf(cell.getBooleanCellValue());
+                                break;
+                            default:
+                                ret[j][i] = "";
+                        }
                     }
                 }
             }
-
-            sheet = null;
         } else {
             throw new IllegalArgumentException(xlConstants.NOARGS);
         }
