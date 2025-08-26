@@ -22,7 +22,7 @@ ExcelJDBC 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询�
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>exceljdbc</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -60,7 +60,7 @@ import java.sql.Statement;
 
 // 创建 Statement
 Statement stmt = conn.createStatement();
-ResultSet rs = stmt.executeQuery("SELECT * FROM Sheet1");
+ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\" LIMIT 10");
 
 // 遍历结果集
 while (rs.next()) {
