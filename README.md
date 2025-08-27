@@ -1,84 +1,112 @@
-# ExcelJDBC
-## 微信公众号
+# xlSQL
 
-扫码关注微信公众号，Java码界探秘。
+## WeChat Official Account
+
+Scan the QR code to follow our WeChat official account, "Java码界探秘" (Java Code World Exploration).
 ![Java码界探秘](http://images.jsdiff.com/qrcode_for_gh_1e2587cc42b1_258_1587996055777.jpg)
 
-[https://jsdiff.com/](https://jsdiff.com/)
+[https://blog.jsdiff.com/](https://blog.jsdiff.com/)
 
-## 项目概述
-ExcelJDBC 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操作 Excel 文件。它将 Excel 文件视为数据库表，支持标准的 JDBC 接口，方便开发者集成到现有项目中。
+## Project Overview
 
-## 功能特性
-- **支持 SQL 查询**：通过 JDBC 接口执行 SQL 查询，操作 Excel 数据。
-- **多引擎支持**：支持 HSQLDB 和 MySQL 作为底层数据库引擎。
-- **Excel 文件读写**：支持 `.xls` 格式的 Excel 文件读写操作。
-- **元数据查询**：提供数据库和表的元数据信息（如表结构、列信息等）。
+xlSQL is a Java-based JDBC driver that allows users to query and manipulate Excel files using SQL. It treats Excel files as database tables and supports standard JDBC interfaces, making it easy for developers to integrate into existing projects.
 
-## 快速开始
-### 1. 依赖配置
-在 `pom.xml` 中添加以下依赖：
+## Features
+
+- **SQL Query Support**: Execute SQL queries on Excel data through JDBC interfaces
+- **Multi-engine Support**: Supports HSQLDB and MySQL as underlying database engines
+- **Excel File Read/Write**: Supports read and write operations for `.xls` format Excel files
+- **Metadata Query**: Provides metadata information for databases and tables (such as table structure, column information, etc.)
+
+## Quick Start
+
+### 1. Dependency Configuration
+
+Add the following dependency to your [pom.xml](https://github.com/daichangya/xlsql/blob/main/pom.xml):
+
 ```xml
 <dependency>
     <groupId>com.jsdiff</groupId>
-    <artifactId>exceljdbc</artifactId>
+    <artifactId>xlsql</artifactId>
     <version>2.0-SNAPSHOT</version>
 </dependency>
 ```
 
-#### 1. 清理项目
+
+#### 1. Clean Project
+```bash
 mvn clean
+```
 
-#### 2. 强制更新并编译
+
+#### 2. Force Update and Compile
+```bash
 mvn compile -U
+```
 
-#### 3. 打包
+
+#### 3. Package
+```bash
 mvn package
+```
 
-### 2. 连接数据库
+
+### 2. Connect to Database
+
 ```java
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // 注册驱动
+        // Register driver
         Class.forName("com.jsdiff.excel.jdbc.xlDriver");
         
-        // 创建连接
+        // Create connection
         String url = "jdbc:jsdiff:excel::/path";
         Connection conn = DriverManager.getConnection(url);
-        System.out.println("连接成功！");
+        System.out.println("Connection successful!");
     }
 }
 ```
 
-### 3. 执行查询
+
+### 3. Execute Query
+
 ```java
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-// 创建 Statement
+// Create Statement
 Statement stmt = conn.createStatement();
 ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\" LIMIT 10");
 
-// 遍历结果集
+// Iterate through result set
 while (rs.next()) {
     System.out.println(rs.getString(1));
 }
 ```
 
-## 依赖项
-- **jxl**: 用于读写 Excel 文件。
-- **HSQLDB/MySQL**: 可选数据库引擎支持。
 
-## 限制
-- 仅支持 `.xls` 格式的 Excel 文件。
-- 部分 JDBC 高级功能（如事务）可能受限。
+## Dependencies
 
-## 扩展性
-- 支持自定义数据库引擎（通过 `xlDatabaseFactory` 扩展）。
-- 支持自定义 SQL 解析器（通过 `ASqlParser` 扩展）。
+- **jxl**: For reading and writing Excel files
+- **HSQLDB/MySQL**: Optional database engine support
 
-## 许可证
-本项目基于 GNU General Public License 发布。
+## Limitations
+
+- Only supports `.xls` format Excel files
+- Some advanced JDBC features (such as transactions) may be limited
+
+## Extensibility
+
+- Supports custom database engines (via [xlDatabaseFactory](https://github.com/daichangya/xlsql/blob/main/src/main/java/com/jsdiff/excel/database/xlDatabaseFactory.java#L36-L58) extension)
+- Supports custom SQL parsers (via [ASqlParser](https://github.com/daichangya/xlsql/blob/main/src/main/java/com/jsdiff/excel/database/sql/ASqlParser.java#L20-L115) extension)
+
+## License
+
+This project is released under the GNU General Public License.
+
+## Project Link
+
+Project Link: [https://github.com/daichangya/xlsql](https://github.com/daichangya/xlsql)

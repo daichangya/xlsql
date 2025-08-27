@@ -53,7 +53,7 @@ public class xlDriver implements Driver {
         try {
             DriverManager.registerDriver(new xlDriver());
         	//csny 
-            // attemp to make jconfig find the xlsql_config.xml file,
+            // attemp to make jconfig find the xlsql_config.properties file,
             // which is usually created in the local directory (".").
             // Calling this method seems to be unnecessary, after the 
             // corrections made in database.xlInstance class.
@@ -302,7 +302,7 @@ public class xlDriver implements Driver {
 //    /**
 //     * Adds the current directory (".") to the CLASSPATH variable
 //     * so that the DriverManager can find the configuration file
-//     * ("xlsql_config.xml"). It may not work on Mac OS - for reasons
+//     * ("xlsql_config.properties"). It may not work on Mac OS - for reasons
 //     * uninvestigated. 
 //     * 
 //     * @author csny

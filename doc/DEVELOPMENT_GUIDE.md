@@ -1,4 +1,4 @@
-# ExcelJDBC 开发指南
+# xlSQL 开发指南
 
 ## 1. 开发环境配置
 ### 基础要求
@@ -8,8 +8,8 @@
 
 ### 初始化步骤
 ```bash
-git clone <项目仓库地址>
-cd exceljdbc
+git clone https://github.com/daichangya/xlsql
+cd xlsql
 mvn clean install
 ```
 
@@ -31,14 +31,13 @@ mvn clean install
 ### 数据库连接模块 (`xlInstance`)
 - **职责**：管理数据库配置和连接
 - **规范**：
-  - 配置文件路径：`resources/xlsql_config.xml`
-  - 必须实现 `ConfigurationListener` 接口
+  - 配置文件路径：`~/.xlsql/xlsql_config.properties`
 
 ### JDBC驱动模块 (`xlDriver`)
 - **职责**：实现 `java.sql.Driver` 接口
 - **规范**：
   - 驱动类名：`com.jsdiff.excel.jdbc.xlDriver`
-  - URL格式：`jdbc:xl:file:/path/to/excel.xls`
+  - URL格式：`jdbc:jsdiff:excel:/path/`
 
 ## 4. 测试指南
 ### 单元测试
@@ -62,5 +61,5 @@ mvn verify  # 运行所有测试
 - 使用 Checkstyle 校验（配置见 `checkstyle.xml`）
 
 ## 7. 问题排查
-- 查看日志文件：`logs/xlsql.log`
+- 查看日志文件：`~/.xlsql/xlsql.log`
 - 启用调试模式：在配置文件中设置 `debug=true`

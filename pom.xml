@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.jsdiff</groupId>
-    <artifactId>exceljdbc</artifactId>
+    <artifactId>xlsql</artifactId>
     <version>2.0-SNAPSHOT</version>
 
-    <name>ExcelJDBC</name>
+    <name>xlSQL</name>
     <description>A JDBC driver for Excel files, allowing SQL operations on Excel worksheets.</description>
-    <url>https://github.com/daichangya/exceljdbc</url>
+    <url>https://github.com/daichangya/xlsql</url>
 
     <licenses>
         <license>
@@ -29,9 +29,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/daichangya/exceljdbc.git</connection>
-        <developerConnection>scm:git:git@github.com:daichangya/exceljdbc.git</developerConnection>
-        <url>https://github.com/daichangya/exceljdbc</url>
+        <connection>scm:git:https://github.com/daichangya/xlsql.git</connection>
+        <developerConnection>scm:git:git@github.com:daichangya/xlsql.git</developerConnection>
+        <url>https://github.com/daichangya/xlsql</url>
     </scm>
 
     <properties>

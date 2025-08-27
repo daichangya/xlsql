@@ -1,14 +1,14 @@
-# ExcelJDBC 架构文档
+# xlSQL 架构文档
 
 ## 1. 概述
-ExcelJDBC 是一个基于 Java 的 JDBC 驱动，用于通过 SQL 查询和操作 Excel 文件。它支持将 Excel 文件作为数据库表进行查询和操作，提供了丰富的 JDBC 接口实现。
+xlSQL 是一个基于 Java 的 JDBC 驱动，用于通过 SQL 查询和操作 Excel 文件。它支持将 Excel 文件作为数据库表进行查询和操作，提供了丰富的 JDBC 接口实现。
 
 ## 2. 核心模块
 
 ### 2.1 数据库连接模块 (`xlInstance`)
 - **功能**: 管理数据库连接配置，包括日志、数据库路径、引擎类型等。
 - **关键类**: `xlInstance`
-  - 负责加载和保存配置文件 (`xlsql_config.xml`)。
+  - 负责加载和保存配置文件 (`xlsql_config.properties`)。
   - 提供连接数据库的方法 (`connect`)。
   - 支持多种数据库引擎（如 HSQLDB、MySQL）。
 

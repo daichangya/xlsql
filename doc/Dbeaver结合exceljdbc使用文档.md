@@ -14,7 +14,7 @@
 ### 2.2 获取 Excel JDBC 驱动
 获取驱动文件：
 ```
-https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/exceljdbc/2.0-SNAPSHOT/exceljdbc-1.0-20250820.071754-1.jar
+https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/2.0-SNAPSHOT/xlsql-1.0-20250820.071754-1.jar
 ```
 
 
@@ -38,7 +38,7 @@ https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/exceljdbc/2.0
 1. 切换到 **Libraries** 标签页
 2. 点击 **Add File** 按钮
 3. 选择你的 Excel JDBC 驱动 JAR 文件
-    - 路径示例：`/path/to/exceljdbc-1.0-20250820.071754-1.jar`
+    - 路径示例：`/path/to/xlsql-1.0-20250820.071754-1.jar`
 4. 点击 **OK** 保存驱动配置
 
 ## 4. 创建数据库连接
@@ -125,7 +125,7 @@ SELECT * FROM "test.Sheet1" ORDER BY "column1";
 **问题**: `Driver class not found`
 **解决方案**:
 - 确认驱动 JAR 文件已正确添加到驱动配置中
-- 检查驱动类名是否正确：`com.daicy.exceljdbc.jdbc.xlDriver`
+- 检查驱动类名是否正确：`com.jsdiff.excel.jdbc.xlDriver`
 
 ### 7.3 权限问题
 **问题**: `Permission denied` 访问 Excel 文件
