@@ -47,8 +47,6 @@ import java.util.TimeZone;
  * 由 Csongor Nyulas (csny) 修改：适配 TIME 单元格类型
  */
 public class xlSheet extends AFile {
-    /** Excel 文件扩展名 */
-    private static final String XLS = ".xls";
 
     /** GMT 时区 */
     private static final TimeZone gmtZone = TimeZone.getTimeZone("GMT");

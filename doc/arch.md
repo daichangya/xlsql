@@ -45,5 +45,5 @@ xlSQL 是一个基于 Java 的 JDBC 驱动，用于通过 SQL 查询和操作 Ex
 - 支持自定义 SQL 解析器（通过 `ASqlParser` 扩展）。
 
 ## 6. 限制
-- 仅支持 `.xls` 格式的 Excel 文件。
+- 支持 `.xls` `.xlsx`  格式的 Excel 文件。
 - 部分 JDBC 高级功能（如事务）可能受限。

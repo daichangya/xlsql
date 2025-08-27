@@ -96,7 +96,7 @@ SELECT * FROM "test.Sheet1" ORDER BY "column1";
 ## 6. Excel 文件要求
 
 ### 6.1 文件格式
-- 支持 `.xls` 格式（Excel 97-2003）
+- 支持 `.xls``.xlsx` 格式
 
 ### 6.2 工作表结构
 1. 第一行为列标题

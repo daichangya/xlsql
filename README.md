@@ -15,7 +15,7 @@ xlSQL is a Java-based JDBC driver that allows users to query and manipulate Exce
 
 - **SQL Query Support**: Execute SQL queries on Excel data through JDBC interfaces
 - **Multi-engine Support**: Supports HSQLDB and MySQL as underlying database engines
-- **Excel File Read/Write**: Supports read and write operations for `.xls` format Excel files
+- **Excel File Read/Write**: Supports read and write operations for `.xls` `.xlsx`  format Excel files
 - **Metadata Query**: Provides metadata information for databases and tables (such as table structure, column information, etc.)
 
 ## Quick Start
