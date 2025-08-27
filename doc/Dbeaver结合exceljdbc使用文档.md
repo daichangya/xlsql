@@ -14,7 +14,7 @@
 ### 2.2 获取 Excel JDBC 驱动
 获取驱动文件：
 ```
-https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/2.0-SNAPSHOT/xlsql-1.0-20250820.071754-1.jar
+https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/2.0-SNAPSHOT/xlsql-2.0-20250827.014816-1.jar 
 ```
 
 
@@ -38,7 +38,7 @@ https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/2.0-SNA
 1. 切换到 **Libraries** 标签页
 2. 点击 **Add File** 按钮
 3. 选择你的 Excel JDBC 驱动 JAR 文件
-    - 路径示例：`/path/to/xlsql-1.0-20250820.071754-1.jar`
+    - 路径示例：`/path/to/xlsql-2.0-20250827.014816-1.jar `
 4. 点击 **OK** 保存驱动配置
 
 ## 4. 创建数据库连接
@@ -202,7 +202,7 @@ dbeaver -vmargs -Dorg.jkiss.dbeaver.debug=true
 ### 版本 2.0-SNAPSHOT
 - 初始版本
 - 支持基本的 CRUD 操作
-- 支持 .xls 格式文件
+- 支持 .xls .xlsx 格式文件
 - 与 DBeaver 集成
 
 ---
