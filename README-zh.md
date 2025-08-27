@@ -73,7 +73,7 @@ while (rs.next()) {
 - **HSQLDB/MySQL**: 可选数据库引擎支持。
 
 ## 限制
-- 仅支持 `.xls` 格式的 Excel 文件。
+- 支持 `.xls`  `.xlsx` 格式的 Excel 文件。
 - 部分 JDBC 高级功能（如事务）可能受限。
 
 ## 扩展性

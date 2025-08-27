@@ -95,7 +95,7 @@ while (rs.next()) {
 
 ## Limitations
 
-- Only supports `.xls` format Excel files
+- supports `.xls`  `.xlsx` format Excel files
 - Some advanced JDBC features (such as transactions) may be limited
 
 ## Extensibility
