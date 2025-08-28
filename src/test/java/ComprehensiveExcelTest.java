@@ -1,8 +1,8 @@
 import java.io.File;
 import java.sql.*;
 
-import static com.jsdiff.excel.jdbc.Constants.DRIVER;
-import static com.jsdiff.excel.jdbc.Constants.URL_PFX_XLS;
+import static com.jsdiff.xlsql.jdbc.Constants.DRIVER;
+import static com.jsdiff.xlsql.jdbc.Constants.URL_PFX_XLS;
 
 public class ComprehensiveExcelTest {
 

@@ -4,7 +4,7 @@
   <groupId>com.jsdiff</groupId>
   <artifactId>xlsql</artifactId>
   <name>xlSQL</name>
-  <version>2.0-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <description>A JDBC driver for Excel files, allowing SQL operations on Excel worksheets.</description>
   <url>https://github.com/daichangya/xlsql</url>
   <developers>
@@ -52,7 +52,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.jsdiff.excel.ui.XlUi</mainClass>
+                  <mainClass>com.jsdiff.xlsql.ui.XlUi</mainClass>
                 </transformer>
               </transformers>
               <filters>

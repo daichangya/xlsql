@@ -1,112 +1,116 @@
-# xlSQL
+# xlSQL - Excel SQL Query Tool
 
-## WeChat Official Account
+xlSQL is a JDBC driver that enables querying Excel files using SQL statements. It treats Excel worksheets as database tables, allowing you to perform queries, inserts, updates, and deletes on Excel data using standard SQL syntax.
 
-Scan the QR code to follow our WeChat official account, "Java码界探秘" (Java Code World Exploration).
-![Java码界探秘](http://images.jsdiff.com/qrcode_for_gh_1e2587cc42b1_258_1587996055777.jpg)
+## Project Modernization
 
-[https://blog.jsdiff.com/](https://blog.jsdiff.com/)
+This project has been upgraded from JDK 1.4 codebase to modern Java 8+, with major optimizations including:
 
-## Project Overview
+### 1. Code Modernization
 
-xlSQL is a Java-based JDBC driver that allows users to query and manipulate Excel files using SQL. It treats Excel files as database tables and supports standard JDBC interfaces, making it easy for developers to integrate into existing projects.
+- Java 8 Stream API for collection processing
+- Lambda expressions for code simplification
+- Optional for null-safe operations
+- Try-with-resources for automatic resource management
+- Parallel streams for improved performance
 
-## Features
+### 2. Dependency Updates
 
-- **SQL Query Support**: Execute SQL queries on Excel data through JDBC interfaces
-- **Multi-engine Support**: Supports HSQLDB and MySQL as underlying database engines
-- **Excel File Read/Write**: Supports read and write operations for `.xls` `.xlsx`  format Excel files
-- **Metadata Query**: Provides metadata information for databases and tables (such as table structure, column information, etc.)
+- Upgraded to latest Apache POI (5.2.3) supporting modern Excel formats
+- Updated HSQLDB to version 2.7.2
+- Updated MySQL Connector to version 8.0.33
+- Updated JUnit to version 5.9.3
 
-## Quick Start
+### 3. New Features
 
-### 1. Dependency Configuration
+- Connection pool management for better performance and resource utilization
+- Modern Excel reader supporting .xlsx format and parallel processing
+- Excel streaming utility class using functional programming
+- Improved exception handling and logging
 
-Add the following dependency to your [pom.xml](https://github.com/daichangya/xlsql/blob/main/pom.xml):
+### 4. Performance Optimizations
 
+- Parallel processing for large Excel files
+- Connection pooling to reduce database overhead
+- Optimized resource management to prevent memory leaks
+- Caching to reduce redundant operations
+
+## Usage
+
+### Dependency Configuration
+Add the following to your `pom.xml`:
 ```xml
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
 </dependency>
 ```
 
-
-#### 1. Clean Project
-```bash
-mvn clean
-```
-
-
-#### 2. Force Update and Compile
-```bash
-mvn compile -U
-```
-
-
-#### 3. Package
-```bash
-mvn package
-```
-
-
-### 2. Connect to Database
+### JDBC Connection
 
 ```java
-import java.sql.Connection;
-import java.sql.DriverManager;
+// Register driver (usually not needed explicitly)
+Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
 
-public class Main {
-    public static void main(String[] args) throws Exception {
-        // Register driver
-        Class.forName("com.jsdiff.excel.jdbc.xlDriver");
-        
-        // Create connection
-        String url = "jdbc:jsdiff:excel::/path";
-        Connection conn = DriverManager.getConnection(url);
-        System.out.println("Connection successful!");
-    }
-}
-```
+// Create connection
+String url = "jdbc:jsdiff:excel:/path/to/excel/files";
+Connection conn = DriverManager.getConnection(url);
 
-
-### 3. Execute Query
-
-```java
-import java.sql.ResultSet;
-import java.sql.Statement;
-
-// Create Statement
+// Execute query
 Statement stmt = conn.createStatement();
-ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\" LIMIT 10");
+ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\"");
 
-// Iterate through result set
+// Process results
 while (rs.next()) {
     System.out.println(rs.getString(1));
 }
+
+// Close resources
+rs.close();
+stmt.close();
+conn.close();
 ```
 
+### Using the New Excel Utilities
 
-## Dependencies
+```java
+// Find all Excel files
+Path directory = Paths.get("/path/to/excel/files");
+List<Path> excelFiles = ExcelStreamUtils.findExcelFiles(directory)
+    .collect(Collectors.toList());
 
-- **jxl**: For reading and writing Excel files
-- **HSQLDB/MySQL**: Optional database engine support
+// Read Excel data
+File excelFile = excelFiles.get(0).toFile();
+try (Workbook workbook = ExcelStreamUtils.openWorkbook(excelFile)) {
+    Sheet sheet = workbook.getSheetAt(0);
+    
+    // Get headers
+    List<String> headers = ExcelStreamUtils.getHeaderRow(sheet);
+    
+    // Get data rows
+    List<Map<String, String>> dataRows = ExcelStreamUtils.getDataRowsAsMaps(sheet);
+    
+    // Filter data
+    List<Map<String, String>> filteredRows = ExcelStreamUtils.filterRows(
+        sheet, 
+        row -> "Active".equals(row.get("Status"))
+    );
+    
+    // Map data
+    List<Customer> customers = ExcelStreamUtils.mapRows(
+        sheet,
+        row -> new Customer(row.get("Name"), row.get("Email"))
+    );
+}
+```
 
-## Limitations
+## Building the Project
 
-- supports `.xls`  `.xlsx` format Excel files
-- Some advanced JDBC features (such as transactions) may be limited
-
-## Extensibility
-
-- Supports custom database engines (via [xlDatabaseFactory](https://github.com/daichangya/xlsql/blob/main/src/main/java/com/jsdiff/excel/database/xlDatabaseFactory.java#L36-L58) extension)
-- Supports custom SQL parsers (via [ASqlParser](https://github.com/daichangya/xlsql/blob/main/src/main/java/com/jsdiff/excel/database/sql/ASqlParser.java#L20-L115) extension)
+```bash
+mvn clean package
+```
 
 ## License
 
-This project is released under the GNU General Public License.
-
-## Project Link
-
-Project Link: [https://github.com/daichangya/xlsql](https://github.com/daichangya/xlsql)
+This project is released under the GNU General Public License (GPL).
