@@ -14,7 +14,7 @@
 ### 2.2 获取 Excel JDBC 驱动
 获取驱动文件：
 ```
-https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/2.0-SNAPSHOT/xlsql-2.0-20250827.014816-1.jar 
+https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/3.0-SNAPSHOT/xlsql-2.0-20250827.014816-1.jar 
 ```
 
 
@@ -28,7 +28,7 @@ https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/2.0-SNA
 1. 点击 **New** 按钮创建新驱动
 2. 在 **Settings** 标签页中填写以下信息：
     - **Driver Name**: Excel JDBC Driver
-    - **Class Name**: `com.jsdiff.excel.jdbc.xlDriver`
+    - **Class Name**: `com.jsdiff.xlsql.jdbc.xlDriver`
     - **URL Template**: `jdbc:jsdiff:excel:{path}`
     - **Port**: (留空)
    
@@ -125,7 +125,7 @@ SELECT * FROM "test.Sheet1" ORDER BY "column1";
 **问题**: `Driver class not found`
 **解决方案**:
 - 确认驱动 JAR 文件已正确添加到驱动配置中
-- 检查驱动类名是否正确：`com.jsdiff.excel.jdbc.xlDriver`
+- 检查驱动类名是否正确：`com.jsdiff.xlsql.jdbc.xlDriver`
 
 ### 7.3 权限问题
 **问题**: `Permission denied` 访问 Excel 文件
@@ -194,12 +194,12 @@ dbeaver -vmargs -Dorg.jkiss.dbeaver.debug=true
 
 | DBeaver 版本 | Excel JDBC 驱动版本 | 兼容性 |
 |--------------|---------------------|--------|
-| 21.x         | 2.0-SNAPSHOT        | ✓      |
-| 22.x         | 2.0-SNAPSHOT        | ✓      |
+| 21.x         | 3.0-SNAPSHOT        | ✓      |
+| 22.x         | 3.0-SNAPSHOT        | ✓      |
 
 ## 12. 更新日志
 
-### 版本 2.0-SNAPSHOT
+### 版本 3.0-SNAPSHOT
 - 初始版本
 - 支持基本的 CRUD 操作
 - 支持 .xls .xlsx 格式文件
@@ -207,4 +207,4 @@ dbeaver -vmargs -Dorg.jkiss.dbeaver.debug=true
 
 ---
 
-**注意**: 本文档基于 Excel JDBC 驱动版本 2.0-SNAPSHOT 编写，具体功能可能因版本更新而有所变化。建议在使用前确认当前版本的功能特性。
+**注意**: 本文档基于 Excel JDBC 驱动版本 3.0-SNAPSHOT 编写，具体功能可能因版本更新而有所变化。建议在使用前确认当前版本的功能特性。

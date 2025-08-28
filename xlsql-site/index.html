@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xlSQL - Excel SQL查询工具</title>
+    <!-- Bootstrap 5 + Material Design -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/mdbootstrap/material-design-bootstrap@latest/css/mdb.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <span class="material-icons me-2">storage</span>
+                <strong>xlSQL</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html"><i class="fas fa-home me-1"></i> 首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="features.html"><i class="fas fa-star me-1"></i> 特性</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="docs.html"><i class="fas fa-book me-1"></i> 文档</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="download.html"><i class="fas fa-download me-1"></i> 下载</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="community.html"><i class="fas fa-users me-1"></i> 社区</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="hero-section bg-gradient-primary text-white py-5">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">xlSQL</h1>
+                    <p class="lead mb-4">企业级Excel数据查询解决方案，通过标准SQL接口访问Excel数据</p>
+                    <div class="d-flex gap-3">
+                        <a href="download.html" class="btn btn-light btn-lg rounded-pill px-4">
+                            <i class="fas fa-download me-2"></i> 立即下载
+                        </a>
+                        <a href="docs.html" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                            <i class="fas fa-book me-2"></i> 查看文档
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="hero-image">
+                        <img src="images/dbeaver2.png" alt="xlSQL Dashboard" class="img-fluid rounded shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 特性概览 -->
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">为什么选择xlSQL?</h2>
+                <p class="text-muted">专为企业数据分析设计的强大工具</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-effect">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-circle bg-primary text-white mb-4 mx-auto">
+                                <i class="fas fa-bolt fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold">高性能处理</h5>
+                            <p class="text-muted">支持并行处理和智能缓存，轻松应对百万级数据</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-effect">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-circle bg-success text-white mb-4 mx-auto">
+                                <i class="fas fa-shield-alt fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold">企业级安全</h5>
+                            <p class="text-muted">数据加密和访问控制，保障企业数据安全</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-effect">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-circle bg-info text-white mb-4 mx-auto">
+                                <i class="fas fa-plug fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold">无缝集成</h5>
+                            <p class="text-muted">标准JDBC接口，与现有系统无缝对接</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 代码示例 -->
+    <section class="bg-dark text-white py-5">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="fw-bold mb-4">简单易用的API</h2>
+                    <p class="mb-4">使用标准JDBC接口，几分钟内即可集成到您的应用中</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 支持所有标准SQL操作</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 自动类型转换</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 事务支持</li>
+                        <li><i class="fas fa-check-circle text-primary me-2"></i> 连接池管理</li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <div class="code-card bg-black rounded p-4">
+                        <div class="d-flex mb-3">
+                            <div class="code-dot bg-danger"></div>
+                            <div class="code-dot bg-warning ms-2"></div>
+                            <div class="code-dot bg-success ms-2"></div>
+                        </div>
+                        <pre class="mb-0"><code class="language-java">// 注册驱动
+Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+
+// 创建连接
+String url = "jdbc:jsdiff:excel:/path/to/excel/files";
+Connection conn = DriverManager.getConnection(url);
+
+// 执行查询
+Statement stmt = conn.createStatement();
+ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\"");
+
+// 处理结果
+while (rs.next()) {
+    System.out.println(rs.getString(1));
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户评价 -->
+<!--    <section class="py-5 bg-white">-->
+<!--        <div class="container py-5">-->
+<!--            <div class="text-center mb-5">-->
+<!--                <h2 class="fw-bold">客户评价</h2>-->
+<!--                <p class="text-muted">看看我们的客户怎么说</p>-->
+<!--            </div>-->
+<!--            <div class="row g-4">-->
+<!--                <div class="col-md-4">-->
+<!--                    <div class="card h-100 border-0 shadow-sm">-->
+<!--                        <div class="card-body p-4">-->
+<!--                            <div class="d-flex align-items-center mb-3">-->
+<!--                                <img src="images/client1.jpg" class="rounded-circle me-3" width="50" alt="Client">-->
+<!--                                <div>-->
+<!--                                    <h6 class="mb-0">张伟</h6>-->
+<!--                                    <small class="text-muted">某金融公司CTO</small>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <p class="mb-0">"xlSQL彻底改变了我们处理Excel数据的方式，查询性能提升了10倍以上。"</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-4">-->
+<!--                    <div class="card h-100 border-0 shadow-sm">-->
+<!--                        <div class="card-body p-4">-->
+<!--                            <div class="d-flex align-items-center mb-3">-->
+<!--                                <img src="images/client2.jpg" class="rounded-circle me-3" width="50" alt="Client">-->
+<!--                                <div>-->
+<!--                                    <h6 class="mb-0">李娜</h6>-->
+<!--                                    <small class="text-muted">某电商平台数据总监</small>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <p class="mb-0">"从传统ETL工具切换到xlSQL后，我们的数据处理流程简化了60%。"</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-4">-->
+<!--                    <div class="card h-100 border-0 shadow-sm">-->
+<!--                        <div class="card-body p-4">-->
+<!--                            <div class="d-flex align-items-center mb-3">-->
+<!--                                <img src="images/client3.jpg" class="rounded-circle me-3" width="50" alt="Client">-->
+<!--                                <div>-->
+<!--                                    <h6 class="mb-0">王强</h6>-->
+<!--                                    <small class="text-muted">某制造企业IT经理</small>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <p class="mb-0">"xlSQL的易用性和稳定性远超我们的预期，已经成为我们数据分析的核心工具。"</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </section>-->
+
+    <!-- 行动号召 -->
+    <section class="bg-gradient-primary text-white py-5">
+        <div class="container py-5 text-center">
+            <h2 class="fw-bold mb-4">准备好体验xlSQL的强大功能了吗?</h2>
+            <p class="lead mb-5">立即下载并开始您的Excel数据查询之旅</p>
+            <a href="download.html" class="btn btn-light btn-lg rounded-pill px-5 py-3">
+                                <i class="fas fa-download me-2"></i> 免费下载
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- 页脚 -->
+                    <footer class="bg-dark text-white py-5">
+                        <div class="container py-4">
+                            <div class="row">
+                                <div class="col-lg-4 mb-4 mb-lg-0">
+                                    <h5 class="mb-4">xlSQL</h5>
+                                    <p>企业级Excel数据查询解决方案，通过标准SQL接口访问Excel数据</p>
+                                    <div class="social-icons">
+                                        <a href="#" class="text-white me-3"><i class="fab fa-github"></i></a>
+                                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                                        <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                                    <h6 class="mb-4">产品</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><a href="features.html" class="text-white-50">特性</a></li>
+                                        <li class="mb-2"><a href="download.html" class="text-white-50">下载</a></li>
+                                        <li class="mb-2"><a href="#" class="text-white-50">定价</a></li>
+                                        <li><a href="#" class="text-white-50">路线图</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                                    <h6 class="mb-4">资源</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><a href="docs.html" class="text-white-50">文档</a></li>
+                                        <li class="mb-2"><a href="#" class="text-white-50">API参考</a></li>
+                                        <li class="mb-2"><a href="https://github.com/daichangya/xlsql/tree/main/doc" class="text-white-50">教程</a></li>
+                                        <li><a href="https://blog.jsdiff.com/" class="text-white-50">博客</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-4">
+                                    <h6 class="mb-4">公司</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><a href="#" class="text-white-50">关于我们</a></li>
+                                        <li class="mb-2"><a href="#" class="text-white-50">工作机会</a></li>
+                                        <li class="mb-2"><a href="#" class="text-white-50">联系我们</a></li>
+                                        <li><a href="#" class="text-white-50">法律声明</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2">
+                                    <h6 class="mb-4">联系方式</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> daichangya@163.com</li>
+                                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +86 15010953530</li>
+                                        <li><i class="fas fa-map-marker-alt me-2"></i> 北京市海淀区</li>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-4 bg-secondary">
+                            <div class="row align-items-center">
+                                <div class="col-md-6 text-center text-md-start">
+                                    <p class="mb-0">&copy; 2025 jsdiff Information Sciences. All rights reserved.</p>
+                                </div>
+                                <div class="col-md-6 text-center text-md-end">
+                                    <ul class="list-inline mb-0">
+                                        <li class="list-inline-item"><a href="#" class="text-white-50">隐私政策</a></li>
+                                        <li class="list-inline-item"><a href="#" class="text-white-50">使用条款</a></li>
+                                        <li class="list-inline-item"><a href="#" class="text-white-50">Cookie政策</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+
+                    <!-- 脚本 -->
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+                    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+                    <script src="js/main.js"></script>
+                </body>
+</html>

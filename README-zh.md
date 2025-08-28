@@ -22,7 +22,7 @@ xlSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -36,6 +36,7 @@ mvn compile -U
 mvn package
 
 ### 2. 连接数据库
+
 ```java
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -43,8 +44,8 @@ import java.sql.DriverManager;
 public class Main {
     public static void main(String[] args) throws Exception {
         // 注册驱动
-        Class.forName("com.jsdiff.excel.jdbc.xlDriver");
-        
+        Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+
         // 创建连接
         String url = "jdbc:jsdiff:excel::/path";
         Connection conn = DriverManager.getConnection(url);
