@@ -29,20 +29,39 @@ import java.sql.Connection;
 
 
 /**
- * DOCUMENT ME!
+ * xlSqlSelectFactory - SQL查询对象工厂类
+ * 
+ * <p>该类提供工厂方法用于创建不同类型的SQL查询对象。
+ * 根据数据库类型（hsqldb或mysql）创建相应的查询实现。</p>
  * 
  * @author daichangya
  */
 public class xlSqlSelectFactory {
+    /**
+     * 创建SQL查询对象
+     * 
+     * <p>根据数据库类型创建相应的查询实现：</p>
+     * <ul>
+     *   <li>"hsqldb" - 创建xlHsqldbSelect实例</li>
+     *   <li>"mysql" - 创建xlMySQLSelect实例</li>
+     * </ul>
+     * 
+     * @param type 数据库类型（"hsqldb"或"mysql"）
+     * @param con JDBC连接对象
+     * @return SQL查询对象（ASqlSelect实现）
+     * @throws IllegalArgumentException 如果类型不支持则抛出异常
+     */
     public static ASqlSelect create(String type, Connection con) {
         ASqlSelect ret = null;
 
         if (type.equals("hsqldb")) {
+            // 创建HSQLDB查询对象
             ret = new xlHsqldbSelect(con);
         } else if (type.equals("mysql")) {
+            // 创建MySQL查询对象
             ret = new xlMySQLSelect(con);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Unsupported database type: " + type);
         }
 
         return ret;

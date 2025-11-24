@@ -20,22 +20,26 @@
 package com.jsdiff.xlsql.database;
 
 /**
+ * xlDatabaseException - 数据库异常类
+ * 
+ * <p>该类表示数据库操作过程中发生的异常，继承自xlException。
+ * 用于表示数据库初始化、数据访问等操作中的错误。</p>
  * 
  * @version $Revision: 1.3 $
  * @author daichangya
  */
 public class xlDatabaseException extends xlException {
     /**
-     * Creates a new instance of type xlDatabaseException.
+     * 创建xlDatabaseException实例（无消息）
      */
     public xlDatabaseException() {
         super();
     }
 
     /**
-     * Creates a new instance of type xlDatabaseException.
+     * 创建xlDatabaseException实例（带消息）
      * 
-     * @param msg
+     * @param msg 异常消息
      */
     public xlDatabaseException(String msg) {
         super(msg);

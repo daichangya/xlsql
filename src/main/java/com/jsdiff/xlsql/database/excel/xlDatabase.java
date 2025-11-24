@@ -31,32 +31,49 @@ import java.util.Map;
 
 
 /**
- * Implements ADatabase for Excel
+ * xlDatabase - Excel数据库实现类
+ * 
+ * <p>该类实现了ADatabase抽象类，专门用于处理Excel文件。
+ * 它将Excel文件目录视为数据库，Excel文件视为模式（schema），工作表视为表（table）。</p>
+ * 
+ * <p>主要功能：</p>
+ * <ul>
+ *   <li>扫描指定目录下的Excel文件</li>
+ *   <li>读取Excel文件的工作表结构</li>
+ *   <li>提供工厂方法创建xlWorkbook和xlSheet对象</li>
+ * </ul>
  * 
  * @author daichangya
  */
 public class xlDatabase extends ADatabase implements IExcelReader, IExcelStore {
 
     /**
-     * Creates a new xlDatabase object.
+     * 创建xlDatabase对象
      * 
-     * @param dir relative root dir of workbooks
+     * <p>初始化Excel数据库，扫描指定目录下的所有Excel文件。</p>
      * 
-     * @throws xlDatabaseException when this object cannot be instantiated
+     * @param dir Excel文件所在的根目录
+     * @throws xlDatabaseException 如果对象无法实例化则抛出异常
      */
     public xlDatabase(File dir) throws xlDatabaseException {
         super(dir);
     }
 
+    /**
+     * 读取子文件夹（Excel文件）
+     * 
+     * @param dir 目录路径
+     * @throws xlDatabaseException 如果读取失败则抛出异常
+     */
     @Override
     protected void readSubFolders(File dir) throws xlDatabaseException {
         readWorkbooks(dir);
     }
 
     /**
-     * Implements IExcelStore
+     * 实现IExcelStore接口：获取存储的Excel工作簿映射
      * 
-     * @return Map containing xlWorkbook objects
+     * @return 包含xlWorkbook对象的映射表
      */
     @Override
     public Map<String, ASubFolder> getStore() {
@@ -64,11 +81,13 @@ public class xlDatabase extends ADatabase implements IExcelReader, IExcelStore {
     }
 
     /**
-     * Implements IExcelReader
+     * 实现IExcelReader接口：读取Excel工作簿
      * 
-     * @param dir directory where workbooks are stored
+     * <p>使用ModernExcelReader来读取目录下的所有Excel文件，
+     * 支持并行处理和更好的资源管理。</p>
      * 
-     * @throws xlDatabaseException if an error occurs
+     * @param dir 存储Excel工作簿的目录
+     * @throws xlDatabaseException 如果发生错误则抛出异常
      */
     @Override
     public void readWorkbooks(File dir) throws xlDatabaseException {
@@ -77,11 +96,26 @@ public class xlDatabase extends ADatabase implements IExcelReader, IExcelStore {
         reader.readWorkbooks(dir);
     }
     
+    /**
+     * 创建子文件夹（工作簿）对象的工厂方法
+     * 
+     * @param dir 目录路径
+     * @param subfolder 子文件夹名称（Excel文件名，不含扩展名）
+     * @return xlWorkbook对象
+     */
     @Override
     public ASubFolder subFolderFactory(File dir, String subfolder) {
         return new xlWorkbook(dir, subfolder, true);
     }
     
+    /**
+     * 创建文件（工作表）对象的工厂方法
+     * 
+     * @param dir 目录路径
+     * @param subfolder 子文件夹名称（Excel文件名）
+     * @param file 文件名称（工作表名）
+     * @return xlSheet对象
+     */
     @Override
     public AFile fileFactory(File dir, String subfolder, String file) {
         return new xlSheet(dir, subfolder, file, true);

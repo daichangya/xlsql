@@ -19,23 +19,36 @@
 */
 package com.jsdiff.xlsql.database.excel;
 
-import com.jsdiff.xlsql.database.*;
-import com.jsdiff.xlsql.database.sql.ASqlSelect;
-import org.apache.commons.io.IOUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.jsdiff.xlsql.database.ASubFolder;
+import com.jsdiff.xlsql.database.FileType;
+import com.jsdiff.xlsql.database.xlDatabaseException;
+import com.jsdiff.xlsql.database.sql.ASqlSelect;
+
 
 /**
- * Represents a schema in the Excel context: the workbook
+ * xlWorkbook - Excel工作簿实现类
+ * 
+ * <p>该类表示Excel文件（工作簿），在xlSQL中对应数据库的模式（schema）。
+ * 它管理工作簿中的所有工作表（对应数据库的表）。</p>
+ * 
+ * <p>主要功能：</p>
+ * <ul>
+ *   <li>读取Excel文件中的所有工作表</li>
+ *   <li>管理工作表的生命周期</li>
+ *   <li>支持.xls和.xlsx格式</li>
+ * </ul>
  * 
  * @version $Revision: 1.15 $
  * @author $author$
@@ -45,41 +58,54 @@ import java.util.Iterator;
 public class xlWorkbook extends ASubFolder {
 
     /**
-     * Creates a new xlWorkbook object.
+     * 创建xlWorkbook对象（读取文件）
      * 
-     * @param file where workbooks are stored
-     * @param name name of workbook excluding extension
-     * @throws xlDatabaseException DOCUMENT ME!
+     * @param file Excel文件对象
+     * @param name 工作簿名称（不含扩展名）
+     * @throws xlDatabaseException 如果读取失败则抛出异常
      */
     public xlWorkbook(File file, String name) throws xlDatabaseException {
         super(file, name);
     }
 
     /**
-     * Creates a new xlWorkbook object.
+     * 创建xlWorkbook对象（不读取文件）
      * 
-     * @param dir directory where workbooks are stored
-     * @param name name of workbook excluding extension
-     * @param dirty DOCUMENT ME!
+     * @param dir 工作簿所在的目录
+     * @param name 工作簿名称（不含扩展名）
+     * @param dirty 脏数据标志
      */
     public xlWorkbook(File dir, String name, boolean dirty) {
         super(dir, name, dirty);
     }
 
-    // 在 xlWorkbook.java 中添加方法
+    /**
+     * 获取工作簿文件对象
+     * 
+     * @return Excel文件对象
+     */
     protected File getWorkbookFile() {
         return getFile();
     }
 
-
+    /**
+     * 读取工作簿中的所有工作表
+     * 
+     * <p>根据文件类型（.xls或.xlsx）使用相应的POI类来读取工作簿，
+     * 然后遍历所有工作表并创建xlSheet对象。</p>
+     * 
+     * @throws xlDatabaseException 如果读取失败则抛出异常
+     */
     @Override
     protected void readFiles() throws xlDatabaseException {
         Workbook wb =  null;
         try {
+            // 根据文件类型创建相应的Workbook对象
             if (FileType.XLSX.equals(getFileType())) {
+                // Excel 2007+格式使用XSSFWorkbook
                 wb = new XSSFWorkbook(getWorkbookFile());
             } else if (FileType.XLS.equals(getFileType())) {
-                // 需要引入HSSFWorkbook
+                // Excel 97-2003格式使用HSSFWorkbook
                 wb = new HSSFWorkbook(new FileInputStream(getWorkbookFile()));
             } else {
                 logger.warning("xlSQL: Unsupported file format for: " + getWorkbookFile().getPath());
@@ -102,16 +128,31 @@ public class xlWorkbook extends ASubFolder {
     }
 
 
+    /**
+     * 关闭工作簿并保存更改
+     * 
+     * <p>根据脏数据标志执行相应的操作：</p>
+     * <ul>
+     *   <li>ADD或UPDATE：创建新的工作簿或更新现有工作簿，将所有有效工作表写入文件</li>
+     *   <li>DELETE：删除工作簿文件</li>
+     * </ul>
+     * 
+     * @param select SQL查询对象，用于获取要写入的数据
+     * @throws xlDatabaseException 如果保存失败则抛出异常
+     */
     @Override
     protected void close(ASqlSelect select) throws xlDatabaseException {
         sqlSelect = select;
+        // 如果需要添加或更新
         if (bDirty[ADD] || bDirty[UPDATE]) {
             try (Workbook wb = new XSSFWorkbook()) {
+                // 遍历所有有效工作表并写入数据
                 Iterator i = validfiles.values().iterator();
                 while (i.hasNext()) {
                     xlSheet ws = (xlSheet) i.next();
                     ws.close(wb, select);
                 }
+                // 将工作簿写入文件
                 try (FileOutputStream out = new FileOutputStream(getWorkbookFile())) {
                     wb.write(out);
                 }
@@ -120,6 +161,7 @@ public class xlWorkbook extends ASubFolder {
                 logger.severe(getWorkbookFile().getPath() + " NOT created/updated. " + e.getMessage());
             }
         } else if (bDirty[DELETE]) {
+            // 如果需要删除，删除工作簿文件
             if (getWorkbookFile().delete()) {
                 logger.info(getWorkbookFile().getPath() + " deleted.");
             } else {

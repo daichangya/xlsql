@@ -139,8 +139,9 @@ public class XlUi {
      * @throws xlException
      */
     private void go() {
-        BufferedReader in = new 
-                            BufferedReader(new InputStreamReader(System.in));
+        // Note: System.in should not be closed as it's a shared system resource
+        // Using InputStreamReader without try-with-resources is intentional here
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("\n*** caution: development release ***");
         System.out.println("Excel JDBC Driver");
@@ -195,12 +196,23 @@ public class XlUi {
                 // do parsing and execution
                 doIt();
             } catch (xlException pe) {
-                pe.printStackTrace();
-                System.err.println("..? Enter h for help \n");
-
+                // 只打印错误消息，不打印完整堆栈跟踪（除非是调试模式）
+                String message = pe.getMessage();
+                if (message != null && !message.isEmpty()) {
+                    System.err.println("错误: " + message);
+                } else {
+                    System.err.println("发生错误，请输入 -h 查看帮助信息");
+                }
+                System.err.println("提示: 输入 -h 查看帮助信息\n");
                 continue;
             } catch (IOException io) {
+                System.err.println("输入/输出错误: " + io.getMessage());
                 break;
+            } catch (Exception e) {
+                System.err.println("未预期的错误: " + e.getMessage());
+                e.printStackTrace(); // 对于未预期的异常，打印堆栈跟踪
+                System.err.println("提示: 输入 -h 查看帮助信息\n");
+                continue;
             }
         }
     }
@@ -214,8 +226,9 @@ public class XlUi {
             XlUi xldba = new XlUi();
             xldba.go();
         } catch (Exception e) {
-            System.out.println("?.. Abnormal program termination\n");
+            System.err.println("程序异常终止: " + e.getMessage());
             e.printStackTrace();
+            System.exit(1);
         }
     }
 

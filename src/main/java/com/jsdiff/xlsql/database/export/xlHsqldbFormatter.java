@@ -20,31 +20,69 @@
 package com.jsdiff.xlsql.database.export;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
- * DOCUMENT ME!
- * 
+ * SQL formatter for HSQLDB database engine.
+ * Generates HSQLDB-compatible SQL statements for schema, table, and data operations.
+ *
  * @author daichangya
  */
 public class xlHsqldbFormatter extends ASqlFormatter {
     /**
-     * TODO: javadoc
-     * 
-     * @param s
-     * 
-     * @return sql string for 'CREATE SCHEMA'
+     * Generates SQL string for creating a schema in HSQLDB.
+     * HSQLDB doesn't require explicit schema creation, so returns a comment.
+     *
+     * @param s the schema name
+     * @return SQL comment string (HSQLDB doesn't need CREATE SCHEMA)
      */
+    @Override
     public String wCreateSchema(String s) {
         return "--";
     }
 
+    // 修改 xlHsqldbFormatter.java 中的 wCreateTable 方法
+    @Override
+    public String wCreateTable(String s, String t, String[] co, String[] ty) {
+        String sql = "CREATE TABLE " + getTableName(s, t) + " ( ";
+        boolean firstcolumn = true;
+
+        for (int i = 0; i < co.length; i++) {
+            if (firstcolumn) {
+                firstcolumn = false;
+            } else {
+                sql = sql + ",";
+            }
+
+            sql = sql + "\"" + co[i] + "\" ";
+
+            // 为 HSQLDB 处理 VARCHAR 类型，指定默认长度
+            if (ty[i].equalsIgnoreCase("VARCHAR")) {
+                sql = sql + "VARCHAR(2048)";
+            } else if (ty[i].equalsIgnoreCase("BIT")) {
+                sql = sql + "CHAR(1)";
+            } else {
+                sql = sql + ty[i];
+            }
+        }
+
+        sql = sql + " );";
+
+        return sql;
+    }
+
+
     /**
-     * TODO: javadoc
-     * 
-     * @param s
-     * @param t
-     * 
-     * @return sql string for 'DROP TABLE'
+     * Generates SQL string for dropping a table in HSQLDB.
+     *
+     * @param s schema name
+     * @param t table name
+     * @return SQL string for 'DROP TABLE IF EXISTS' statement
      */
+    @Override
     public String wDropTable(String s, String t) {
         String sql;
         sql = "DROP TABLE " + getTableName(s, t) + " IF EXISTS;";
@@ -52,6 +90,7 @@ public class xlHsqldbFormatter extends ASqlFormatter {
         return sql;
     }
 
+    @Override
     protected String getTableName(String s, String t) {
         String tablename;
 
@@ -63,10 +102,72 @@ public class xlHsqldbFormatter extends ASqlFormatter {
 
         return tablename;
     }
-    
+
+    @Override
+    public String wInsert(String s, String t, String[] co, String[] ty,
+                          String[] va) {
+        String sql = "INSERT INTO " + getTableName(s, t) + " VALUES (";
+        boolean firstcolumn = true;
+
+        for (int i = 0; i < co.length; i++) {
+            if (firstcolumn) {
+                firstcolumn = false;
+            } else {
+                sql = sql + ",";
+            }
+
+            if (va[i] == null) {
+                sql = sql + "null";
+                continue;
+            }
+
+            if (va[i].equals("")) {
+                sql = sql + "null";
+                continue;
+            }
+
+            // 处理单引号转义
+            Pattern pattern = Pattern.compile("'");
+            Matcher matcher = pattern.matcher(va[i]);
+            va[i] = matcher.replaceAll("''");
+
+            // 对于所有类型，除了明确的数值和布尔类型，都应该用引号包围
+            if ("DOUBLE".equals(ty[i]) || "BIT".equals(ty[i]) || "INTEGER".equals(ty[i]) || "BIGINT".equals(ty[i])) {
+                // 数值类型不加引号
+                sql = sql + va[i];
+            } else if ("DATE".equals(ty[i])) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    java.util.Date d = dateFormat.parse(va[i]);
+                    dateFormat.applyPattern("yyyy-MM-dd");
+                    sql = sql + "'" + dateFormat.format(d) + "'";
+                } catch (ParseException pe) {
+                    sql = sql + "null";
+                }
+            } else if ("TIME".equals(ty[i])) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    java.util.Date d = dateFormat.parse(va[i]);
+                    dateFormat.applyPattern("HH:mm:ss");
+                    sql = sql + "'" + dateFormat.format(d) + "'";
+                } catch (ParseException pe) {
+                    sql = sql + "null";
+                }
+            } else {
+                // 所有其他类型（包括VARCHAR等）都用单引号包围
+                sql = sql + "'" + va[i] + "'";
+            }
+        }
+
+        sql = sql + " );";
+        return sql;
+    }
+
+
+
     public String wLast() {
         return "";
     }
-    
+
 }
 

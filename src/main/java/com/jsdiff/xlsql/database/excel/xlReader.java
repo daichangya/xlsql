@@ -19,52 +19,66 @@
 */
 package com.jsdiff.xlsql.database.excel;
 
-import com.jsdiff.xlsql.database.*;
-import com.jsdiff.xlsql.database.excel.io.ModernExcelReader;
-
 import java.io.File;
 import java.util.Map;
+
+import com.jsdiff.xlsql.database.AReader;
+import com.jsdiff.xlsql.database.ASubFolder;
+import com.jsdiff.xlsql.database.xlDatabaseException;
+import com.jsdiff.xlsql.database.excel.io.ModernExcelReader;
 
 
 
 /**
- * Extends xlFolder for Excel
+ * xlReader - Excel读取器实现类
+ * 
+ * <p>该类继承自AReader，专门用于读取Excel文件。
+ * 它实现了IExcelReader和IExcelStore接口，使用ModernExcelReader来读取工作簿。</p>
  * 
  * @author daichangya
  */
 public class xlReader extends AReader implements IExcelReader, IExcelStore {
     /**
-     * Creates a new xlFolderXls object.
+     * 创建xlReader对象
      * 
-     * @param dir relative root dir of workbooks
-     * 
-     * @throws xlDatabaseException when this object cannot be instantiated
+     * @param dir Excel工作簿所在的根目录
+     * @throws xlDatabaseException 如果对象无法实例化则抛出异常
      */
     public xlReader(File dir) throws xlDatabaseException {
         super(dir);
     }
 
+    /**
+     * 读取子文件夹（Excel文件）
+     * 
+     * @param dir 目录路径
+     * @throws xlDatabaseException 如果读取失败则抛出异常
+     */
     protected void readSubFolders(File dir) throws xlDatabaseException {
         readWorkbooks(dir);
     }
 
     /**
-     * Implements IExcelStore
+     * 实现IExcelStore接口：获取存储的Excel工作簿映射
      * 
-     * @return Map containing xlWorkbook objects
+     * @return 包含xlWorkbook对象的映射表
      */
-    public Map getStore() {
+    @Override
+    public Map<String, ASubFolder> getStore() {
         return super.getSubfolders();
     }
 
     /**
-     * Implements IExcelReader
+     * 实现IExcelReader接口：读取Excel工作簿
      * 
-     * @param dir directory where workbooks are stored
+     * <p>使用ModernExcelReader来读取目录下的所有Excel文件。</p>
      * 
-     * @throws xlDatabaseException if an error occurs
+     * @param dir 存储Excel工作簿的目录
+     * @throws xlDatabaseException 如果发生错误则抛出异常
      */
+    @Override
     public void readWorkbooks(File dir) throws xlDatabaseException {
+        // 使用现代Excel读取器读取工作簿
         IExcelReader reader = new ModernExcelReader(this);
         reader.readWorkbooks(dir);
     }

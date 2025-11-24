@@ -9,18 +9,45 @@ package com.jsdiff.xlsql.jdbc;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.Ref;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
 
+/**
+ * xlCallableStatement - xlSQL可调用语句实现
+ * 
+ * <p>该类实现了JDBC CallableStatement接口，作为后端数据库可调用语句的包装器。
+ * 所有方法都委托给后端数据库的CallableStatement对象。</p>
+ * 
+ * @author daichangya
+ */
 public class xlCallableStatement extends xlPreparedStatement 
                                             implements CallableStatement {
 
+    /** 关联的xlConnection对象 */
     private xlConnection xlCon;
+    /** 后端数据库的CallableStatement对象 */
     private CallableStatement dbCstm;
 
     /**
-    * Constructs a new CallableStatementImpl object.
-    *
-    */
+     * 创建可调用语句实例
+     * 
+     * <p>可调用语句用于调用存储过程，继承自PreparedStatement并实现CallableStatement接口。</p>
+     * 
+     * @param con 关联的xlConnection对象
+     * @param clst 后端数据库的CallableStatement对象
+     * @param sql 可调用的SQL语句（通常是存储过程调用）
+     * @throws SQLException 如果创建失败则抛出异常
+     */
     public xlCallableStatement(xlConnection con, CallableStatement clst, 
                                             String sql) throws SQLException {
         super (con, clst, sql);

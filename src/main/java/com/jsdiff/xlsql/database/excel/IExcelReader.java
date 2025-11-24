@@ -30,15 +30,21 @@ import java.io.File;
 
 
 /**
- * For classes which read data stored in an IExcelStore
+ * IExcelReader - Excel读取器接口
+ * 
+ * <p>该接口定义了读取Excel工作簿的标准方法。
+ * 实现类负责从指定目录读取所有Excel文件并创建相应的工作簿对象。</p>
  * 
  * @author daichangya
  */
 public interface IExcelReader {
     /**
-     * Read all workbooks in dir
+     * 读取目录中的所有工作簿
      * 
-     * @param dir java.io.File directory type of object
+     * <p>扫描指定目录下的所有Excel文件，为每个文件创建工作簿对象。</p>
+     * 
+     * @param dir 包含Excel文件的目录对象
+     * @throws xlDatabaseException 如果读取失败则抛出异常
      */
     public void readWorkbooks(File dir) throws xlDatabaseException;
 }

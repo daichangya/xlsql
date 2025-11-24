@@ -20,23 +20,26 @@
 package com.jsdiff.xlsql.database;
 
 /**
- * Class
+ * xlException - xlSQL异常基类
+ * 
+ * <p>该类是所有xlSQL异常的基类，继承自Exception。
+ * 用于表示xlSQL操作过程中发生的异常。</p>
  * 
  * @version $Revision: 1.4 $
  * @author daichangya
  */
 public class xlException extends Exception {
     /**
-     * Creates a new instance of type xlException.
+     * 创建xlException实例（无消息）
      */
     public xlException() {
         super();
     }
 
     /**
-     * Creates a new instance of type xlException.
+     * 创建xlException实例（带消息）
      * 
-     * @param msg
+     * @param msg 异常消息
      */
     public xlException(String msg) {
         super(msg);

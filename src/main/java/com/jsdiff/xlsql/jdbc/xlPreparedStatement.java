@@ -6,12 +6,34 @@
  */
 package com.jsdiff.xlsql.jdbc;
 
-import com.jsdiff.xlsql.database.sql.ICommand;
-
 import java.io.InputStream;
 import java.io.Reader;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
 
+import com.jsdiff.xlsql.database.sql.ICommand;
+
+/**
+ * xlPreparedStatement - xlSQL预编译语句实现
+ * 
+ * <p>该类实现了JDBC PreparedStatement接口，作为后端数据库预编译语句的包装器。
+ * 在执行预编译语句时会先通过xlSQL解析器解析，然后执行相应的命令。</p>
+ * 
+ * @author daichangya
+ */
 public class xlPreparedStatement extends xlStatement implements PreparedStatement {
 
     private String psql;
@@ -20,9 +42,13 @@ public class xlPreparedStatement extends xlStatement implements PreparedStatemen
     //~ Constructors �����������������������������������������������������������
 
     /**
-    * Constructs a new PreparedStatementImpl object.
-    *
-    */
+     * 创建预编译语句实例
+     * 
+     * @param con 关联的xlConnection对象
+     * @param pstm 后端数据库的PreparedStatement对象
+     * @param sql 预编译的SQL语句
+     * @throws SQLException 如果创建失败则抛出异常
+     */
     protected xlPreparedStatement(xlConnection con, PreparedStatement pstm, 
                                              String sql) throws SQLException {
         super(con,pstm);
@@ -54,10 +80,12 @@ public class xlPreparedStatement extends xlStatement implements PreparedStatemen
     */
     public boolean execute() throws SQLException {
         boolean ret;
+        // 解析SQL语句为xlSQL命令对象
         ICommand cmd = xlCon.xlsql.parseSql(psql);        
         if (cmd.execAllowed()) {
-            // dbStm may throw an SQLException..., pass on to client
+            // 执行后端数据库的预编译语句（可能抛出SQLException，传递给客户端）
             ret = dbPstm.execute();
+            // 执行xlSQL命令
             cmd.execute();
         }
         else {

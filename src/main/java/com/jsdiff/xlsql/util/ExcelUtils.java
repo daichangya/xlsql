@@ -36,6 +36,12 @@ import java.util.logging.Logger;
 public class ExcelUtils {
     private static final Logger LOGGER = Logger.getLogger(ExcelUtils.class.getName());
     
+    /** Default VARCHAR column type with length */
+    private static final String DEFAULT_VARCHAR_TYPE = "VARCHAR(255)";
+    
+    /** Maximum number of rows to analyze for type inference */
+    private static final int MAX_ROWS_FOR_TYPE_ANALYSIS = 100;
+    
     /**
      * Determines if a file is an Excel file
      * 
@@ -194,11 +200,11 @@ public class ExcelUtils {
             
             // Initialize all columns as VARCHAR
             for (int i = 0; i < cellCount; i++) {
-                columnTypes[i] = "VARCHAR(255)";
+                columnTypes[i] = DEFAULT_VARCHAR_TYPE;
             }
             
             // Analyze data rows to infer types
-            int maxRowsToAnalyze = Math.min(100, sheet.getPhysicalNumberOfRows() - 1);
+            int maxRowsToAnalyze = Math.min(MAX_ROWS_FOR_TYPE_ANALYSIS, sheet.getPhysicalNumberOfRows() - 1);
             for (int i = 1; i <= maxRowsToAnalyze; i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
@@ -216,7 +222,7 @@ public class ExcelUtils {
                                 double value = cell.getNumericCellValue();
                                 if (value == Math.floor(value) && !Double.isInfinite(value)) {
                                     // Integer value
-                                    if (columnTypes[j].equals("VARCHAR(255)")) {
+                                    if (columnTypes[j].equals(DEFAULT_VARCHAR_TYPE)) {
                                         columnTypes[j] = "INTEGER";
                                     }
                                 } else {
@@ -226,14 +232,14 @@ public class ExcelUtils {
                             }
                             break;
                         case BOOLEAN:
-                            if (columnTypes[j].equals("VARCHAR(255)")) {
+                            if (columnTypes[j].equals(DEFAULT_VARCHAR_TYPE)) {
                                 columnTypes[j] = "BOOLEAN";
                             }
                             break;
                         case STRING:
                             // If we find a string in a numeric column, revert to VARCHAR
-                            if (!columnTypes[j].equals("VARCHAR(255)")) {
-                                columnTypes[j] = "VARCHAR(255)";
+                            if (!columnTypes[j].equals(DEFAULT_VARCHAR_TYPE)) {
+                                columnTypes[j] = DEFAULT_VARCHAR_TYPE;
                             }
                             break;
                         default:

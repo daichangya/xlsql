@@ -19,27 +19,34 @@
 */
 package com.jsdiff.xlsql.database.sql;
 
-import com.jsdiff.xlsql.database.ADatabase;
-
 import java.sql.SQLException;
+
+import com.jsdiff.xlsql.database.ADatabase;
 
 
 /**
- * Native xlSql DROP TABLE.
+ * DropTable - DROP TABLE SQL命令实现
+ * 
+ * <p>该类实现了ICommand接口，用于处理删除Excel表的操作。
+ * 执行后会从数据库中移除指定的表。</p>
  * 
  * @author daichangya
  */
 public class DropTable implements ICommand {
+    /** 数据库对象 */
     private ADatabase dbs;
+    /** 模式名称（Excel文件名） */
     private String sch;
+    /** 表名称（Excel工作表名） */
     private String tbl;
 
     /**
-     * Creates a new instance of type xlSqlDropTable.
-     * @param database database instance
-     * @param schema name
-     * @param table
-     * @throws IllegalArgumentException
+     * 创建DropTable命令对象
+     * 
+     * @param database 数据库实例
+     * @param schema 模式名称（Excel文件名，不含扩展名）
+     * @param table 表名称（Excel工作表名）
+     * @throws IllegalArgumentException 如果任何参数为null则抛出异常
      */
     DropTable(final ADatabase database, final String schema, 
                                                         final String table) {
@@ -48,26 +55,31 @@ public class DropTable implements ICommand {
             sch = schema;
             tbl = table;
         } else {
-            throw new IllegalArgumentException("null argument(s)");
+            throw new IllegalArgumentException("xlSQL: null argument(s)");
         }
     }
 
     /**
-     * Changelog reader for verifications.
-     * @return true if allowed
-     * @throws SQLException if an unexpected error occurs
+     * 检查命令是否允许执行
+     * 
+     * <p>DROP TABLE命令始终允许执行，如果表不存在则操作会被忽略。</p>
+     *
+     * @return 始终返回true
+     * @throws SQLException 如果发生意外错误则抛出异常
      */
     public final boolean execAllowed() throws SQLException {
-        boolean ret = true;
-
-        return ret;
+        return true;
     }
 
     /**
-     * Adds command to queue.
-     * @throws SQLException if an unexpected error occurs
+     * 执行DROP TABLE命令
+     * 
+     * <p>从数据库中移除指定的表，标记为删除状态。实际删除操作在关闭连接时执行。</p>
+     *
+     * @throws SQLException 如果发生意外错误则抛出异常
      */
     public final void execute() throws SQLException {
+        // 从数据库中移除表
         dbs.removeTable(sch, tbl);
     }
 }

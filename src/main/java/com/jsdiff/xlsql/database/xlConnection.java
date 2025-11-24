@@ -19,16 +19,19 @@
 */
 package com.jsdiff.xlsql.database;
 
-import com.jsdiff.xlsql.jdbc.Constants;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.jsdiff.xlsql.jdbc.Constants;
+
 
 /**
- * Creates a JDBC Connection to xlSQL
+ * xlConnection - 创建xlSQL JDBC连接的工具类
+ * 
+ * <p>该类提供静态方法用于创建到xlSQL的JDBC连接。
+ * 主要用于简化连接创建过程。</p>
  * 
  * @version $Revision: 1.6 $
  * @author $author$
@@ -36,17 +39,21 @@ import java.sql.SQLException;
 public class xlConnection {
 
     /**
-     * @param database Path to database directory
-     *
-     * @return JDBC Connection
-     *
-     * @throws SQLException
-     * @throws xlException
+     * 创建到xlSQL的JDBC连接
+     * 
+     * <p>加载xlDriver驱动并创建到指定数据库目录的连接。</p>
+     * 
+     * @param database 数据库目录路径
+     * @return JDBC连接对象
+     * @throws SQLException 如果连接创建失败则抛出异常
+     * @throws xlException 如果xlSQL异常则抛出异常
      */
     public static Connection create(String database) throws SQLException, 
                                                             xlException {
         try {
-            Driver d = (Driver) Class.forName(Constants.DRIVER).newInstance();
+            // 使用 getDeclaredConstructor().newInstance() 替代已废弃的 newInstance()
+            // 加载并实例化xlDriver驱动
+            Driver d = (Driver) Class.forName(Constants.DRIVER).getDeclaredConstructor().newInstance();
             String url = Constants.URL_PFX_XLS + database;
             return DriverManager.getConnection(url);
         } catch (ClassNotFoundException nfe) {
@@ -55,6 +62,10 @@ public class xlConnection {
             throw new xlException("ERR: while instantiating. ???");
         } catch (IllegalAccessException iae) {
             throw new xlException("ERR: illegal access. Privileges?");
+        } catch (NoSuchMethodException nsme) {
+            throw new xlException("ERR: driver constructor not found: " + nsme.getMessage());
+        } catch (java.lang.reflect.InvocationTargetException ite) {
+            throw new xlException("ERR: error invoking driver constructor: " + ite.getMessage());
         } catch (Exception e) {
             throw new xlException(e.getMessage());
         }

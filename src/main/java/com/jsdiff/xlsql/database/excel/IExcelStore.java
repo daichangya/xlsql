@@ -30,18 +30,31 @@ import com.jsdiff.xlsql.database.ASubFolder;
 import java.util.Map;
 
 /**
- * For classes which store data read by an IExcelReader
+ * IExcelStore - Excel存储接口
+ * 
+ * <p>该接口定义了存储Excel工作簿的标准方法。
+ * 实现类负责维护工作簿的映射表，供IExcelReader使用。</p>
  * 
  * @author daichangya
  */
 public interface IExcelStore {
     /**
-     * Return map where data can be stored
+     * 获取存储工作簿的映射表
+     * 
+     * <p>返回工作簿名称到ASubFolder对象的映射，键为大写的工作簿名称。</p>
      *
-     * @return Map
+     * @return 工作簿映射表
      */
     public Map<String, ASubFolder> getStore();
 
+    /**
+     * 添加工作簿到存储
+     * 
+     * <p>默认实现：将工作簿添加到映射表中。</p>
+     * 
+     * @param name 工作簿名称（通常为大写）
+     * @param subfolder 工作簿对象（ASubFolder实现）
+     */
     default void addStore(String name, ASubFolder subfolder){
         getStore().put(name, subfolder);
     }

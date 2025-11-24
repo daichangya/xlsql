@@ -16,17 +16,29 @@
  */
 package com.jsdiff.xlsql.jdbc;
 
-import com.jsdiff.xlsql.database.export.xlSqlFormatterFactory;
-import com.jsdiff.xlsql.database.sql.xlSqlParserFactory;
-import com.jsdiff.xlsql.database.sql.xlSqlSelectFactory;
-
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.NClob;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLXML;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 
+import com.jsdiff.xlsql.database.export.xlSqlFormatterFactory;
+import com.jsdiff.xlsql.database.sql.xlSqlParserFactory;
+import com.jsdiff.xlsql.database.sql.xlSqlSelectFactory;
+
 /**
- * DOCUMENT ME!
+ * xlConnectionMySQL - MySQL数据库引擎的连接实现
+ * 
+ * <p>该类是xlConnection的MySQL实现，用于使用MySQL作为后端数据库引擎。
+ * 支持指定数据库模式（schema），在关闭连接时会安全地清理资源。</p>
  * 
  * @author daichangya
  *
@@ -34,21 +46,38 @@ import java.util.logging.Logger;
  */
 public class xlConnectionMySQL extends xlConnection {
 
+    /** 日志记录器 */
     private static final Logger logger = Logger.getAnonymousLogger();
 
-
+    /** MySQL数据库引擎标识符 */
     private static final String MYSQL = "mysql";
+    /** MySQL数据库模式（schema）名称 */
     private String context;
 
+    /**
+     * 创建MySQL连接实例
+     * 
+     * <p>初始化MySQL特定的组件（SQL格式化器、解析器、查询对象），
+     * 并启动连接（加载Excel数据到MySQL）。</p>
+     * 
+     * @param url JDBC连接URL
+     * @param c MySQL后端数据库连接
+     * @param schema MySQL数据库模式名称
+     * @throws SQLException 如果连接创建失败则抛出异常
+     */
     public xlConnectionMySQL(String url, Connection c, 
                              String schema) throws SQLException {
         dialect = "mysql";
         context = schema;
         URL = url;
+        // 创建MySQL特定的SQL格式化器
         w = xlSqlFormatterFactory.create(MYSQL);
-        dbCon = c; //? Stack Overflow ?
+        dbCon = c;
+        // 创建MySQL特定的查询对象
         query = xlSqlSelectFactory.create(MYSQL, dbCon);
+        // 启动连接，加载Excel数据
         startup();
+        // 创建MySQL特定的SQL解析器
         xlsql = xlSqlParserFactory.create(MYSQL, datastore, context);
     }
 
