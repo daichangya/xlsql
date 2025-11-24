@@ -6,8 +6,20 @@
  */
 package com.jsdiff.xlsql.jdbc;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.RowIdLifetime;
+import java.sql.SQLException;
 
+/**
+ * xlDatabaseMetaData - xlSQL数据库元数据实现
+ * 
+ * <p>该类实现了JDBC DatabaseMetaData接口，作为xlSQL连接和后端数据库元数据的包装器。
+ * 大部分方法直接委托给后端数据库的元数据对象，部分方法进行了自定义实现以适配Excel数据模型。</p>
+ * 
+ * @author daichangya
+ */
 public class xlDatabaseMetaData implements DatabaseMetaData, Constants {
     //~ Static variables/initializers ������������������������������������������
 
@@ -382,11 +394,17 @@ public class xlDatabaseMetaData implements DatabaseMetaData, Constants {
     * Implements method in interface java.sql.Connection
     * @see DatabaseMetaData#getMaxColumnsInTable
     */
+    /** Maximum number of columns supported in a table */
+    private static final int MAX_COLUMNS_IN_TABLE = 255;
+    
+    /**
+     * Gets the maximum number of columns in a table
+     * 
+     * @return Maximum number of columns (255)
+     * @throws SQLException if an error occurs
+     */
     public int getMaxColumnsInTable() throws SQLException {
-// jsdiff...
-//  ISSUE        
-        return 255;
-// End
+        return MAX_COLUMNS_IN_TABLE;
     }
 
     /**

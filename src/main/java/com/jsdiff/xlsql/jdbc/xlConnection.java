@@ -19,53 +19,87 @@
 */
 package com.jsdiff.xlsql.jdbc;
 
-import com.jsdiff.xlsql.database.*;
-import com.jsdiff.xlsql.database.export.*;
-import com.jsdiff.xlsql.database.sql.*;
-
 import java.io.File;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLWarning;
+import java.sql.Savepoint;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.jsdiff.xlsql.database.ADatabase;
+import com.jsdiff.xlsql.database.xlDatabaseException;
+import com.jsdiff.xlsql.database.xlDatabaseFactory;
+import com.jsdiff.xlsql.database.export.ASqlFormatter;
+import com.jsdiff.xlsql.database.sql.ASqlParser;
+import com.jsdiff.xlsql.database.sql.ASqlSelect;
+
 /**
- * xlConnection - Base class for Excel SQL connections
+ * xlConnection - Excel SQL连接的基类
+ * 
+ * <p>该类是xlSQL连接实现的抽象基类，实现了JDBC Connection接口。
+ * 它负责管理Excel文件到数据库的映射，包括：</p>
+ * <ul>
+ *   <li>管理Excel数据存储（datastore）</li>
+ *   <li>维护后端数据库连接（HSQLDB或MySQL）</li>
+ *   <li>处理SQL语句的解析和执行</li>
+ *   <li>在连接启动时将Excel数据加载到后端数据库</li>
+ * </ul>
+ * 
+ * <p>子类需要实现shutdown()方法来清理资源。</p>
  * 
  * @version 2.0
  * @author daichangya
  */
 public abstract class xlConnection implements Connection, Constants {
+    /** 日志记录器 */
     private static final Logger LOGGER = Logger.getLogger(xlConnection.class.getName());
     
+    /** Excel数据存储对象，管理Excel文件和表结构 */
     protected ADatabase datastore;
+    /** 后端数据库连接（HSQLDB或MySQL） */
     protected Connection dbCon;
+    /** JDBC连接URL */
     protected String URL;
+    /** SQL格式化器，用于生成特定数据库的SQL语句 */
     protected ASqlFormatter w;
+    /** SQL解析器，用于解析xlSQL语句 */
     protected ASqlParser xlsql;
+    /** SQL查询对象 */
     protected ASqlSelect query;
+    /** 连接是否已关闭的标志 */
     protected boolean closed;
+    /** SQL方言名称（如"hsqldb"或"mysql"） */
     protected String dialect;
 
     /**
-     * Shuts down the connection
+     * 关闭连接并清理资源
      * 
-     * @throws Exception If shutdown fails
+     * <p>子类需要实现此方法来执行特定的清理操作，如关闭后端连接等。</p>
+     * 
+     * @throws Exception 如果关闭失败则抛出异常
      */
     public abstract void shutdown() throws Exception;
 
     /**
-     * Factory method to create appropriate connection based on database engine
+     * 工厂方法：根据数据库引擎创建相应的连接实现
      * 
-     * @param url JDBC URL
-     * @param c Backend connection
-     * @param schema Database schema
-     * @return Appropriate xlConnection implementation
-     * @throws SQLException If connection creation fails
+     * <p>该方法会检查后端数据库类型，如果是MySQL则创建xlConnectionMySQL实例，
+     * 否则创建xlConnectionHSQLDB实例。</p>
+     * 
+     * @param url JDBC连接URL
+     * @param c 后端数据库连接对象
+     * @param schema 数据库模式名称
+     * @return 相应的xlConnection实现（xlConnectionMySQL或xlConnectionHSQLDB）
+     * @throws SQLException 如果连接创建失败则抛出异常
      */
     public static xlConnection factory(String url, Connection c, String schema)
             throws SQLException {
@@ -73,10 +107,13 @@ public abstract class xlConnection implements Connection, Constants {
             throw new SQLException("Backend connection cannot be null");
         }
         
+        // 根据数据库产品名称判断使用哪个连接实现
         String engine = c.getMetaData().getDatabaseProductName();
         if (engine.contains("MySQL")) {
+            // MySQL数据库使用xlConnectionMySQL
             return new xlConnectionMySQL(url, c, schema);
         } else {
+            // 其他数据库（主要是HSQLDB）使用xlConnectionHSQLDB
             return new xlConnectionHSQLDB(url, c);
         }
     }
@@ -553,62 +590,73 @@ public abstract class xlConnection implements Connection, Constants {
     }
 
     /**
-     * Initializes the connection by loading Excel data into the database
+     * 初始化连接：将Excel数据加载到数据库
      * 
-     * @throws SQLException If initialization fails
+     * <p>该方法执行以下操作：</p>
+     * <ol>
+     *   <li>从URL中提取Excel文件目录路径</li>
+     *   <li>创建数据存储对象，扫描Excel文件</li>
+     *   <li>为每个Excel工作表生成SQL语句（DROP TABLE、CREATE TABLE、INSERT）</li>
+     *   <li>在后端数据库中执行所有SQL语句，将Excel数据导入数据库</li>
+     * </ol>
+     * 
+     * @throws SQLException 如果初始化失败则抛出异常
      */
     void startup() throws SQLException {
         try {
-            // Extract directory path from URL
+            // 从URL中提取目录路径（去掉"jdbc:jsdiff:excel:"前缀）
             String dir = URL.substring(URL_PFX_XLS.length());
             LOGGER.info("Mounting: " + dir + " using jdbc:jsdiff:excel");
             
-            // Create database from directory
+            // 从目录创建数据库对象，扫描Excel文件
             datastore = xlDatabaseFactory.create(new File(dir), "xls");
             
-            // Prepare SQL statements
+            // 准备SQL语句列表
             List<String> sqlStatements = new ArrayList<>();
             String[] schemas = datastore.getSchemas();
             
-            // Process each schema
+            // 处理每个模式（对应Excel文件名）
             for (String schema : schemas) {
                 String[] tables = datastore.getTables(schema);
                 
-                // Process each table
+                // 处理每个表（对应Excel工作表）
                 for (String table : tables) {
                     String[] columnNames = datastore.getColumnNames(schema, table);
                     String[] columnTypes = datastore.getColumnTypes(schema, table);
                     
-                    // Drop table if it exists
+                    // 如果表已存在则先删除
                     String dropTableSql = w.wDropTable(schema, table);
                     if (dropTableSql != null) {
                         sqlStatements.add(dropTableSql);
                     }
                     
-                    // Create table
+                    // 创建表结构
                     sqlStatements.add(w.wCreateTable(schema, table, columnNames, columnTypes));
                     
-                    // Insert data
+                    // 插入数据行
                     int rowCount = datastore.getRows(schema, table);
                     int columnCount = columnNames.length;
                     String[][] dataMatrix = datastore.getValues(schema, table);
                     
                     if (columnNames != null && columnTypes != null) {
+                        // 为每一行数据生成INSERT语句
                         for (int row = 0; row < rowCount; row++) {
                             String[] values = new String[columnCount];
+                            // 提取该行的所有列值
                             for (int col = 0; col < columnCount; col++) {
                                 values[col] = dataMatrix[col][row];
                             }
+                            // 生成INSERT语句并添加到列表
                             sqlStatements.add(w.wInsert(schema, table, columnNames, columnTypes, values));
                         }
                     }
                 }
             }
             
-            // Execute all SQL statements
+            // 在后端数据库中执行所有SQL语句
             try (Statement statement = dbCon.createStatement()) {
                 for (String sql : sqlStatements) {
-                    LOGGER.fine("Executing SQL: " + sql);
+                    LOGGER.info("Executing SQL: " + sql);
                     statement.executeUpdate(sql);
                 }
             }

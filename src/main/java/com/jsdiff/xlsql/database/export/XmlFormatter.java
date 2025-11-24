@@ -126,10 +126,23 @@ public class XmlFormatter extends ASqlFormatter {
         return sql;
     }
 
+    /**
+     * Gets table name for XML format.
+     * XML format doesn't use table names in the same way, so returns null.
+     * 
+     * @param schema schema name
+     * @param table table name
+     * @return null (not used in XML format)
+     */
     protected String getTableName(String schema, String table) {
         return null;
     }
     
+    /**
+     * Generates the closing XML tag for the resultset.
+     * 
+     * @return XML closing tag "</resultset>"
+     */
     public String wLast() {
         return "</resultset>";
     }

@@ -19,24 +19,34 @@
 */
 package com.jsdiff.xlsql.database;
 
-import com.jsdiff.xlsql.database.excel.*;
-
 import java.io.File;
 import java.util.Optional;
 
+import com.jsdiff.xlsql.database.excel.xlDatabase;
+import com.jsdiff.xlsql.database.excel.xlExporter;
+
 /**
- * Factory class for creating database objects
+ * xlDatabaseFactory - 数据库对象工厂类
+ * 
+ * <p>该类提供工厂方法用于创建不同类型的数据库实例。
+ * 当前支持Excel数据库（xls和xlsx格式）。</p>
  * 
  * @author daichangya
  */
 public class xlDatabaseFactory {
     /**
-     * Creates a database instance based on the specified type
+     * 根据指定类型创建数据库实例
      * 
-     * @param dir Directory containing the database files
-     * @param type Type of database to create (e.g., "xls")
-     * @return A database instance
-     * @throws xlDatabaseException If database creation fails
+     * <p>当前支持的类型：</p>
+     * <ul>
+     *   <li>"xls" - Excel 97-2003格式</li>
+     *   <li>"xlsx" - Excel 2007+格式</li>
+     * </ul>
+     * 
+     * @param dir 包含数据库文件的目录
+     * @param type 要创建的数据库类型（如"xls"或"xlsx"）
+     * @return 数据库实例
+     * @throws xlDatabaseException 如果数据库创建失败则抛出异常
      */
     public static ADatabase create(File dir, String type) throws xlDatabaseException {
         if (dir == null) {
@@ -52,6 +62,7 @@ public class xlDatabaseFactory {
             .filter(t -> t.equals("xls") || t.equals("xlsx"))
             .map(t -> {
                 try {
+                    // 创建Excel数据库实例
                     return new xlDatabase(dir);
                 } catch (xlDatabaseException e) {
                     throw new RuntimeException(e);
@@ -61,31 +72,33 @@ public class xlDatabaseFactory {
     }
     
     /**
-     * Creates an exporter for the specified directory
+     * 为指定目录创建导出器实例
      * 
-     * @param dir Directory to export from
-     * @return An exporter instance
-     * @throws xlDatabaseException If exporter creation fails
+     * @param dir 要导出的目录
+     * @return 导出器实例
+     * @throws xlDatabaseException 如果导出器创建失败则抛出异常
      */
     public static AExporter createExporter(File dir) throws xlDatabaseException { 
         if (dir == null) {
             throw new IllegalArgumentException("Directory cannot be null");
         }
+        // 创建Excel导出器
         return new xlExporter(dir);
     }
 
     /**
-     * Creates a database instance with the specified instance configuration
+     * 使用指定的实例配置创建数据库实例
      * 
-     * @param dir Directory containing the database files
-     * @param instance Configuration instance
-     * @return A database instance
-     * @throws xlDatabaseException If database creation fails
+     * @param dir 包含数据库文件的目录
+     * @param instance 配置实例
+     * @return 数据库实例
+     * @throws xlDatabaseException 如果数据库创建失败则抛出异常
      */
     public static ADatabase createDatabase(File dir, xlInstance instance) throws xlDatabaseException {
         if (dir == null) {
             throw new IllegalArgumentException("Directory cannot be null");
         }
+        // 创建Excel数据库实例
         return new xlDatabase(dir);
     }
 }

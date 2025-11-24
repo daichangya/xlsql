@@ -26,31 +26,31 @@ import java.util.regex.Pattern;
 
 
 /**
- * DOCUMENT ME!
+ * Abstract base class for SQL formatters.
+ * Provides methods to generate SQL statements for different database engines.
  * 
  * @author daichangya
- *
+ * @version 2.0
+ * 
  * Changed by Csongor Nyulas (csny): adapted to work with TIME cell types
  */
 public abstract class ASqlFormatter {
     /**
-     * TODO: javadoc
+     * Generates SQL string for creating a schema.
      * 
-     * @param schema
-     * 
-     * @return sql string for 'CREATE SCHEMA'
+     * @param schema the schema name to create
+     * @return SQL string for 'CREATE SCHEMA' statement
      */
     abstract public String wCreateSchema(String schema);
 
     /**
-     * TODO: javadoc
+     * Generates SQL string for creating a table.
      * 
-     * @param s
-     * @param t
-     * @param co
-     * @param ty
-     * 
-     * @return sql string for 'CREATE TABLE'
+     * @param s schema name
+     * @param t table name
+     * @param co column names array
+     * @param ty column types array
+     * @return SQL string for 'CREATE TABLE' statement
      */
     public String wCreateTable(String s, String t, String[] co, String[] ty) {
         String sql;
@@ -74,25 +74,23 @@ public abstract class ASqlFormatter {
     }
 
     /**
-     * TODO: javadoc
+     * Generates SQL string for dropping a table.
      * 
-     * @param schema
-     * @param table
-     * 
-     * @return sql string for 'DROP TABLE'
+     * @param schema the schema name
+     * @param table the table name to drop
+     * @return SQL string for 'DROP TABLE' statement
      */
     abstract public String wDropTable(String schema, String table);
 
     /**
-     * TODO: javadoc
+     * Generates SQL string for inserting data into a table.
      * 
-     * @param s
-     * @param t
-     * @param co
-     * @param ty
-     * @param va
-     * 
-     * @return sql string for 'INSERT INTO ... VALUES '
+     * @param s schema name
+     * @param t table name
+     * @param co column names array
+     * @param ty column types array
+     * @param va values array
+     * @return SQL string for 'INSERT INTO ... VALUES' statement
      */
     public String wInsert(String s, String t, String[] co, String[] ty, 
                           String[] va) {
@@ -161,8 +159,20 @@ public abstract class ASqlFormatter {
     }
     
 
+    /**
+     * Generates table name with optional schema prefix.
+     * 
+     * @param schema the schema name (can be null or empty)
+     * @param table the table name
+     * @return formatted table name (schema.table or just table)
+     */
     abstract protected String getTableName(String schema, String table);
 
+    /**
+     * Generates the last SQL statement (typically a commit or similar).
+     * 
+     * @return SQL string for the final statement
+     */
     abstract public String wLast();
 }
 

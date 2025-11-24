@@ -37,25 +37,23 @@ import java.util.regex.Pattern;
  */
 public class xlMysqlFormatter extends ASqlFormatter {
     /**
-     * TODO: javadoc
+     * Generates SQL string for creating a database in MySQL.
      * 
-     * @param s
-     * 
-     * @return sql string for 'CREATE SCHEMA'
+     * @param s the database/schema name to create
+     * @return SQL string for 'CREATE DATABASE IF NOT EXISTS' statement
      */
     public String wCreateSchema(String s) {
         return "CREATE DATABASE IF NOT EXISTS " + s + ";";
     }
 
     /**
-     * TODO: javadoc
+     * Generates SQL string for creating a table in MySQL.
      * 
-     * @param s
-     * @param t
-     * @param co
-     * @param ty
-     * 
-     * @return sql string for 'CREATE TABLE'
+     * @param s schema name
+     * @param t table name
+     * @param co column names array
+     * @param ty column types array
+     * @return SQL string for 'CREATE TABLE' statement
      */
     public String wCreateTable(String s, String t, String[] co, String[] ty) {
         String sql = "CREATE TABLE " + getTableName(s, t) + " ( ";
@@ -85,19 +83,18 @@ public class xlMysqlFormatter extends ASqlFormatter {
     }
 
     /**
-     * TODO: javadoc
+     * Generates SQL string for dropping a table in MySQL.
      * 
-     * @param s
-     * @param t
-     * 
-     * @return sql string for 'DROP TABLE'
+     * @param s schema name
+     * @param t table name
+     * @return SQL string for 'DROP TABLE IF EXISTS' statement
      */
     public String wDropTable(String s, String t) {
         return "DROP TABLE IF EXISTS " + getTableName(s, t) + ";";
     }
 
     /**
-     * TODO: javadoc
+     * Generates SQL string for inserting data into a table in MySQL.
      * 
      * @param s
      * @param t
@@ -167,20 +164,28 @@ public class xlMysqlFormatter extends ASqlFormatter {
         return sql;
     }
 
+    /**
+     * Generates table name for MySQL with backtick escaping.
+     * JDBC allows only characters in [a-zA-Z0-9_] in table names,
+     * so if the Excel file or sheet name contains other characters,
+     * the JDBC driver may not be able to list the name of their corresponding tables.
+     * 
+     * @param schema schema name
+     * @param table table name
+     * @return formatted table name with backticks: `schema_table`
+     */
     protected String getTableName(String schema, String table) {
-    	//csny
-    	//JDBC allows only characters in [a-zA-Z0-9_] in table names, 
-    	//so if the Excel file or sheet name contains other characters
-    	//the JDBC driver may not be able to list the name of their corresponding tables
-    	//Note:	Use:
-    	//			return "`" + schema + "`.`" + table + "`";
-    	//		in case you want to store all the data sources (e.g. Excel files) in separate schemas,
-    	//		which also requires some backward changes in jdbc.xlConnection. This is not recommended, 
-    	//		however, because users may have difficulties using this driver (for example because 
-    	//		of DB access rigth issues, etc.)
+        // Note: Using schema_table format instead of schema.table to avoid
+        // JDBC naming restrictions and database access right issues
         return "`" + schema + "_" + table + "`";
     }
     
+    /**
+     * Generates the last SQL statement for MySQL.
+     * MySQL doesn't require a final statement, so returns empty string.
+     * 
+     * @return empty string
+     */
     public String wLast() {
         return "";
     }

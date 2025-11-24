@@ -12,7 +12,14 @@
 package com.jsdiff.xlsql.jdbc;
 
 /**
- *  Global xlSQL constants
+ * xlSQL全局常量定义
+ * 
+ * <p>该接口定义了xlSQL JDBC驱动使用的所有常量，包括：</p>
+ * <ul>
+ *   <li>驱动类名和版本信息</li>
+ *   <li>JDBC URL前缀</li>
+ *   <li>应用程序标识符</li>
+ * </ul>
  *
  * @version $Revision: 1.1 $
  * @author daichangya

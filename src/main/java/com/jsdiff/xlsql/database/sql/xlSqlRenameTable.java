@@ -14,7 +14,8 @@ package com.jsdiff.xlsql.database.sql;
 import java.sql.SQLException;
 
 /**
- * DOCUMENT ME!
+ * Represents a RENAME TABLE SQL command.
+ * Handles renaming of tables in Excel databases.
  * 
  * @author daichangya
  */
@@ -69,28 +70,35 @@ public class xlSqlRenameTable implements ICommand {
     }
 
     /**
-     * TODO: javadoc
+     * 检查RENAME TABLE操作是否允许执行
+     * 
+     * <p>如果新表名已存在，则不允许重命名，避免覆盖现有表。</p>
      *
-     * @return true if allowed
-     *
-     * @throws SQLException
+     * @return 如果允许重命名则返回true，如果目标表已存在则返回false
+     * @throws SQLException 如果检查过程中发生错误则抛出异常
      */
     public boolean execAllowed() throws SQLException {
-        boolean ret = true;
+        // 检查新表名是否已存在
         if (db.tableExists(_schema, _table)) {
-            ret = false;
+            return false;
         }
-        return ret;
+        return true;
     }
 
     /**
-     * TODO: javadoc
+     * 执行RENAME TABLE命令
+     * 
+     * <p>删除旧表并添加新表，实现重命名操作。
+     * 实际的Excel文件重命名操作在关闭连接时执行。</p>
      *
-     * @throws SQLException
+     * @throws SQLException 如果执行过程中发生错误则抛出异常
      */
     public void execute() throws SQLException {
-        db.removeTable(_schema_old, _table_old);            
+        // 删除旧表
+        db.removeTable(_schema_old, _table_old);
+        // 添加新模式（如果不存在）
         db.addSchema(_schema);
+        // 添加新表
         db.addTable(_schema, _table);
     }
 }

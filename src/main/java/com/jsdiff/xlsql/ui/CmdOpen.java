@@ -64,7 +64,8 @@ public class CmdOpen implements IStateCommand {
                 xldba.instance.setDatabase(database);
             }
 
-            Driver d = (Driver) Class.forName(DRIVER).newInstance();
+            // 使用 getDeclaredConstructor().newInstance() 替代已废弃的 newInstance()
+            Driver d = (Driver) Class.forName(DRIVER).getDeclaredConstructor().newInstance();
             ExcelDriver ed = new ExcelDriver(d);
             String url = URL_PFX_XLS + database;
             xldba.con = ed.connect(url, new Properties());
@@ -76,6 +77,10 @@ public class CmdOpen implements IStateCommand {
             System.out.println("ERR: while instantiating. ???");
         } catch (IllegalAccessException iae) {
             System.out.println("ERR: illegal access. Privileges?");
+        } catch (NoSuchMethodException nsme) {
+            System.out.println("ERR: driver constructor not found: " + nsme.getMessage());
+        } catch (java.lang.reflect.InvocationTargetException ite) {
+            System.out.println("ERR: error invoking driver constructor: " + ite.getMessage());
         } catch (SQLException sqe) {
             System.out.println(sqe.getMessage() + " :" + sqe.getSQLState());
         } catch (Exception xe) {

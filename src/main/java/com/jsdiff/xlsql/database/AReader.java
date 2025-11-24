@@ -22,37 +22,39 @@ package com.jsdiff.xlsql.database;
 
 import java.io.File;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 
 /**
- * Abstract Reader.
+ * AReader - 读取器抽象基类
+ * 
+ * <p>该类继承自AFolder，提供了读取数据源的功能。
+ * 子类需要实现具体的读取逻辑，用于从数据源中获取列名、列类型、数据值等信息。</p>
  * 
  * @version $Revision: 1.4 $
  * @author $author$
  */
 public abstract class AReader extends AFolder {
     /**
-     * Creates a new Reader object.
+     * 创建读取器对象
      * 
-     * @param dir ( root ) directory where datasource is stored
-     * 
-     * @throws xlDatabaseException when a database error occurs
+     * @param dir 数据源存储的根目录
+     * @throws xlDatabaseException 如果数据库错误发生则抛出异常
      */
     public AReader(File dir) throws xlDatabaseException {
         super(dir);
     }
 
     /**
-     * Column names
+     * 获取列名数组
      * 
-     * @param subfolder schema type of identifier for document
-     * @param docname document name
+     * <p>从指定的文档中获取所有列的名称。</p>
      * 
-     * @return String array with columnnames (assume never null or empty)
+     * @param subfolder 文档的模式类型标识符（对应Excel文件名）
+     * @param docname 文档名称（对应Excel工作表名）
      * 
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @return 列名数组（假设不为null或空）
+     * 
+     * @throws IllegalArgumentException 如果子文件夹或文档不存在则抛出异常
      */
     public String[] getColumnNames(String subfolder, String docname) {
         String[] ret = { "" };
@@ -82,14 +84,16 @@ public abstract class AReader extends AFolder {
     }
 
     /**
-     * Column types
+     * 获取列类型数组
      * 
-     * @param subfolder schema type of identifier for document
-     * @param docname DOCUMENT ME!
+     * <p>从指定的文档中获取所有列的数据类型。</p>
      * 
-     * @return DOCUMENT ME!
+     * @param subfolder 文档的模式类型标识符（对应Excel文件名）
+     * @param docname 文档名称（对应Excel工作表名）
      * 
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @return 列类型数组（SQL类型名称）
+     * 
+     * @throws IllegalArgumentException 如果子文件夹或文档不存在则抛出异常
      */
     public String[] getColumnTypes(String subfolder, String docname) {
         String[] ret = { "" };
@@ -119,14 +123,16 @@ public abstract class AReader extends AFolder {
     }
 
     /**
-     * Row count
+     * 获取行数
      * 
-     * @param subfolder schema type of identifier for document
-     * @param docname DOCUMENT ME!
+     * <p>获取指定文档的数据行数（不包括标题行）。</p>
      * 
-     * @return DOCUMENT ME!
+     * @param subfolder 文档的模式类型标识符（对应Excel文件名）
+     * @param docname 文档名称（对应Excel工作表名）
      * 
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @return 数据行数（不包括标题行）
+     * 
+     * @throws IllegalArgumentException 如果子文件夹或文档不存在则抛出异常
      */
     public int getRows(String subfolder, String docname) {
         int ret = 0;
@@ -141,6 +147,7 @@ public abstract class AReader extends AFolder {
                 AFile doc = (AFile) files.get(docnameU);
 
                 if (doc.isValid()) {
+                    // 减去标题行
                     ret = doc.getRows() - 1;
                 } else {
                     throw new IllegalArgumentException(NOARGS);
@@ -156,9 +163,11 @@ public abstract class AReader extends AFolder {
     }
 
     /**
-     * Schemas
+     * 获取所有模式（工作簿）名称
      * 
-     * @return DOCUMENT ME!
+     * <p>返回所有子文件夹的名称数组，使用Java 8 Stream API实现。</p>
+     * 
+     * @return 模式名称数组
      */
     public String[] getSchemas() {
         String[] ret = getSubfolders().values().stream()
@@ -169,13 +178,13 @@ public abstract class AReader extends AFolder {
     }
 
     /**
-     * Tables
+     * 获取指定模式（工作簿）下的所有表（工作表）名称
      * 
-     * @param subfolder schema type of identifier for document
+     * @param subfolder 文档的模式类型标识符（对应Excel文件名）
      * 
-     * @return DOCUMENT ME!
+     * @return 表名称数组
      * 
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @throws IllegalArgumentException 如果子文件夹不存在则抛出异常
      */
     public String[] getTables(String subfolder) {
         String[] ret = { "" };
@@ -200,24 +209,39 @@ public abstract class AReader extends AFolder {
         return ret;
     }
 
+    /**
+     * 将字符串转换为大写（安全处理null）
+     *
+     * @param str 要转换的字符串
+     * @return 大写字符串，如果输入为null则返回null
+     */
     private String toUpperCase(String str) {
         return str != null ? str.toUpperCase() : null;
     }
 
+    /**
+     * 根据大写名称获取子文件夹
+     *
+     * @param subfolderU 子文件夹名称（大写）
+     * @return 子文件夹对象，如果不存在则返回null
+     */
     private ASubFolder getSubfolder(String subfolderU) {
         return (ASubFolder) getSubfolders().get(subfolderU);
     }
 
     /**
-     * Values ( string matrix )
+     * 获取数据值矩阵
      * 
-     * @param subfolder schema type of identifier for document
-     * @param docname DOCUMENT ME!
+     * <p>从指定的文档中获取所有数据值，返回二维字符串数组。
+     * 第一维是列，第二维是行。</p>
      * 
-     * @return DOCUMENT ME!
+     * @param subfolder 文档的模式类型标识符（对应Excel文件名）
+     * @param docname 文档名称（对应Excel工作表名）
      * 
-     * @throws xlDatabaseException DOCUMENT ME!
-     * @throws IllegalArgumentException DOCUMENT ME!
+     * @return 数据值矩阵（String[列][行]）
+     * 
+     * @throws xlDatabaseException 如果读取数据时发生错误则抛出异常
+     * @throws IllegalArgumentException 如果子文件夹或文档不存在则抛出异常
      */
     public String[][] getValues(String subfolder, String docname)
                          throws xlDatabaseException {

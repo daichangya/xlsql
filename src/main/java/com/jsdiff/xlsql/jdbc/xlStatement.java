@@ -6,12 +6,23 @@
  */
 package com.jsdiff.xlsql.jdbc;
 
-import com.jsdiff.xlsql.database.sql.ICommand;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
 import java.util.logging.Logger;
 
+import com.jsdiff.xlsql.database.sql.ICommand;
 
+/**
+ * xlStatement - xlSQL语句实现
+ * 
+ * <p>该类实现了JDBC Statement接口，作为后端数据库语句的包装器。
+ * 在执行SQL语句时会先通过xlSQL解析器解析，然后执行相应的命令。</p>
+ * 
+ * @author daichangya
+ */
 public class xlStatement implements Statement {
 
     private static final Logger log = Logger.getLogger(xlStatement.class.getName());
@@ -20,9 +31,12 @@ public class xlStatement implements Statement {
     protected xlConnection xlCon;
     private Statement dbStm;
     /**
-    * Constructs a new StatementImpl object.
-    *
-    */
+     * 创建语句实例
+     * 
+     * @param con 关联的xlConnection对象
+     * @param stm 后端数据库的Statement对象
+     * @throws SQLException 如果创建失败则抛出异常
+     */
     protected xlStatement(xlConnection con, Statement stm) throws SQLException {
          xlCon = con;
          dbStm = stm;
