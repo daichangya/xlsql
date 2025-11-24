@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xlSQL - Excel SQL 查询工具</title>
+    <meta name="description" content="xlSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操作 Excel 文件。">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-database me-2"></i>xlSQL</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="usage.html">使用指南</a></li>
+                    <li class="nav-item"><a class="nav-link" href="download.html">下载安装</a></li>
+                    <li class="nav-item"><a class="nav-link" href="community.html">社区</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://github.com/daichangya/xlsql" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="hero-title">xlSQL</h1>
+            <p class="hero-tagline">像操作数据库一样查询 Excel 文件</p>
+            <p class="lead mb-4">基于 Java 的 JDBC 驱动，支持 SQL 查询、插入、更新和删除操作。</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="download.html" class="btn btn-light btn-lg px-4">立即下载</a>
+                <a href="usage.html" class="btn btn-outline-light btn-lg px-4">查看文档</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container py-5">
+        <h2 class="text-center mb-5">核心特性</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="feature-icon"><i class="fas fa-code"></i></div>
+                        <h5 class="card-title">标准 SQL 支持</h5>
+                        <p class="card-text">通过标准 JDBC 接口执行 SQL 查询，无缝集成到现有 Java 应用中。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="feature-icon"><i class="fas fa-cogs"></i></div>
+                        <h5 class="card-title">多引擎支持</h5>
+                        <p class="card-text">内置 HSQLDB 和 MySQL 支持，提供灵活的底层数据库引擎选择。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="feature-icon"><i class="fas fa-file-excel"></i></div>
+                        <h5 class="card-title">Excel 读写</h5>
+                        <p class="card-text">全面支持 .xls 和 .xlsx 格式，可进行查询、插入、更新和删除操作。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card feature-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="feature-icon"><i class="fas fa-info-circle"></i></div>
+                        <h5 class="card-title">元数据查询</h5>
+                        <p class="card-text">方便地获取 Excel 文件的表结构、列信息等元数据。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Preview -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5">
+                    <h2>简单易用</h2>
+                    <p class="lead">只需几行代码，即可开始使用 SQL 操作 Excel。</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 标准 JDBC API</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 自动资源管理</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 支持复杂查询</li>
+                    </ul>
+                    <a href="usage.html" class="btn btn-primary mt-3">查看完整示例</a>
+                </div>
+                <div class="col-lg-7">
+<pre><code class="language-java">// 注册驱动
+Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+
+// 连接到 Excel 目录
+String url = "jdbc:jsdiff:excel:/path/to/files";
+Connection conn = DriverManager.getConnection(url);
+
+// 执行 SQL 查询
+Statement stmt = conn.createStatement();
+ResultSet rs = stmt.executeQuery("SELECT * FROM \"data.Sheet1\"");
+
+while (rs.next()) {
+    System.out.println(rs.getString(1));
+}
+</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>xlSQL</h5>
+                    <p class="small">基于 Java 的 Excel SQL 引擎，让数据处理更简单。</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>链接</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://github.com/daichangya/xlsql">GitHub 仓库</a></li>
+                        <li><a href="https://blog.jsdiff.com/">官方博客</a></li>
+                        <li><a href="https://github.com/daichangya/xlsql/issues">问题反馈</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>联系我们</h5>
+                    <p class="small">关注微信公众号：Java码界探秘</p>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <p class="mb-0">&copy; <span id="current-year">2025</span> xlSQL Project. Released under GPL License.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
+
