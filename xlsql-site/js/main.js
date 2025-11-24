@@ -1,31 +1,47 @@
-// 主JavaScript文件
+// Main JavaScript for xlSQL Site
+
 document.addEventListener('DOMContentLoaded', function() {
-    // 可以在这里添加交互功能
-    console.log('xlSQL网站已加载');
+    // Update current year in footer
+    const yearSpan = document.getElementById('current-year');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
+
+    // Syntax highlighting (optional, if we decide to add a library later)
+    // For now, we just ensure code blocks look good
     
-    // 示例：为所有代码块添加复制按钮
-    document.querySelectorAll('pre code').forEach(function(codeBlock) {
-        var button = document.createElement('button');
-        button.className = 'copy-button';
-        button.textContent = '复制';
+    // Add copy button to code blocks
+    document.querySelectorAll('pre').forEach(block => {
+        // Create container for relative positioning
+        const container = document.createElement('div');
+        container.style.position = 'relative';
         
-        button.addEventListener('click', function() {
-            navigator.clipboard.writeText(codeBlock.textContent)
-                .then(function() {
-                    button.textContent = '已复制!';
-                    setTimeout(function() {
-                        button.textContent = '复制';
-                    }, 2000);
-                })
-                .catch(function(err) {
-                    console.error('复制失败: ', err);
-                });
+        // Insert container before block and move block into it
+        block.parentNode.insertBefore(container, block);
+        container.appendChild(block);
+        
+        // Create button
+        const button = document.createElement('button');
+        button.className = 'btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2';
+        button.style.zIndex = '10';
+        button.textContent = 'Copy';
+        
+        // Add click handler
+        button.addEventListener('click', () => {
+            const code = block.innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.remove('btn-outline-secondary');
+                button.classList.add('btn-success');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-outline-secondary');
+                }, 2000);
+            });
         });
         
-        var div = document.createElement('div');
-        div.className = 'code-header';
-        div.appendChild(button);
-        
-        codeBlock.parentNode.insertBefore(div, codeBlock);
+        container.appendChild(button);
     });
 });
+

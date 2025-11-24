@@ -3,267 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xlSQL - 下载</title>
-    <!-- Bootstrap 5 + Material Design -->
+    <title>下载安装 - xlSQL</title>
+    <meta name="description" content="下载 xlSQL，获取源代码，查看构建指南和安装说明。">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/gh/mdbootstrap/material-design-bootstrap@latest/css/mdb.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow">
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <span class="material-icons me-2">storage</span>
-                <strong>xlSQL</strong>
-            </a>
+            <a class="navbar-brand" href="index.html"><i class="fas fa-database me-2"></i>xlSQL</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html"><i class="fas fa-home me-1"></i> 首页</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="features.html"><i class="fas fa-star me-1"></i> 特性</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="docs.html"><i class="fas fa-book me-1"></i> 文档</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="download.html"><i class="fas fa-download me-1"></i> 下载</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="community.html"><i class="fas fa-users me-1"></i> 社区</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="usage.html">使用指南</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="download.html">下载安装</a></li>
+                    <li class="nav-item"><a class="nav-link" href="community.html">社区</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://github.com/daichangya/xlsql" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- 页面标题 -->
-    <header class="page-header bg-gradient-primary text-white py-5">
-        <div class="container py-5 text-center">
-            <h1 class="display-4 fw-bold mb-4">下载xlSQL</h1>
-            <p class="lead mb-0">获取最新版本的xlSQL驱动</p>
-        </div>
-    </header>
+    <!-- Main Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="mb-4 text-center">下载安装</h1>
+                <p class="lead text-center mb-5">获取最新版本的 xlSQL，开始您的数据集成之旅。</p>
 
-    <!-- 下载选项 -->
-    <section class="py-5">
-        <div class="container py-5">
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4 text-center">
-                            <div class="icon-circle bg-success text-white mb-4 mx-auto">
-                                <i class="fas fa-check-circle fa-2x"></i>
-                            </div>
-                            <h3 class="fw-bold">稳定版本</h3>
-                            <p class="text-muted">推荐用于生产环境</p>
-                            <div class="version-info mb-4">
-                                <h4 class="fw-bold text-primary">v3.0</h4>
-                                <p class="text-muted">发布日期: 2025-08-20</p>
-                            </div>
-                            <a href=" https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/4.0-SNAPSHOT/xlsql-3.0-20250828.051655-1.jar" class="btn btn-primary btn-lg rounded-pill px-5">
-                                <i class="fas fa-download me-2"></i> 下载稳定版
-                            </a>
-                            <div class="mt-4">
-                                <a href="#" class="text-decoration-none"><i class="fas fa-file-alt me-2"></i> 发布说明</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4 text-center">
-                            <div class="icon-circle bg-warning text-white mb-4 mx-auto">
-                                <i class="fas fa-flask fa-2x"></i>
-                            </div>
-                            <h3 class="fw-bold">开发版本</h3>
-                            <p class="text-muted">包含最新特性，可能不稳定</p>
-                            <div class="version-info mb-4">
-                                <h4 class="fw-bold text-primary">v4.0-SNAPSHOT</h4>
-                                <p class="text-muted">最后构建: 2025-08-27</p>
-                            </div>
-                            <a href=" https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/4.0-SNAPSHOT/xlsql-3.0-20250828.051655-1.jar" class="btn btn-outline-primary btn-lg rounded-pill px-5">
-                                <i class="fas fa-download me-2"></i> 下载开发版
-                            </a>
-                            <div class="mt-4">
-                                <a href="#" class="text-decoration-none"><i class="fas fa-code-branch me-2"></i> 查看变更日志</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                <section class="mb-5">
+                    <h2 class="border-bottom pb-2 mb-4">系统要求</h2>
+                    <ul class="list-group">
+                        <li class="list-group-item"><i class="fab fa-java me-2 text-primary"></i> <strong>Java SDK</strong>: JDK 8 或更高版本</li>
+                        <li class="list-group-item"><i class="fas fa-hammer me-2 text-primary"></i> <strong>Maven</strong>: 3.6.0 或更高版本</li>
+                        <li class="list-group-item"><i class="fas fa-desktop me-2 text-primary"></i> <strong>操作系统</strong>: Windows, Linux, macOS</li>
+                    </ul>
+                </section>
 
-    <!-- 系统要求 -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">系统要求</h2>
-                <p class="text-muted">确保您的环境满足以下要求</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <h4 class="fw-bold"><i class="fas fa-coffee text-primary me-2"></i> Java环境</h4>
-                            <ul class="mt-3">
-                                <li class="mb-2">Java 8或更高版本</li>
-                                <li class="mb-2">JRE/JDK 1.8+</li>
-                                <li>支持OpenJDK和Oracle JDK</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <h4 class="fw-bold"><i class="fas fa-file-excel text-success me-2"></i> Excel支持</h4>
-                            <ul class="mt-3">
-                                <li class="mb-2">Apache POI 5.2.3+</li>
-                                <li class="mb-2">支持.xls和.xlsx格式</li>
-                                <li>支持Excel 97-2019</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <h4 class="fw-bold"><i class="fas fa-database text-info me-2"></i> 后端数据库</h4>
-                            <ul class="mt-3">
-                                <li class="mb-2">HSQLDB 2.7.2+</li>
-                                <li class="mb-2">MySQL 8.0.33+</li>
-                                <li>PostgreSQL 14+ (开发中)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                <section class="mb-5">
+                    <h2 class="border-bottom pb-2 mb-4">从源码构建</h2>
+                    <p>目前推荐从源码构建以获取最新功能。</p>
 
-    <!-- 安装指南 -->
-    <section class="py-5">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">安装指南</h2>
-                <p class="text-muted">快速开始使用xlSQL</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h4 class="fw-bold"><i class="fas fa-box-open text-primary me-2"></i> 手动安装</h4>
-                            <ol class="mt-3">
-                                <li class="mb-2">下载xlSQL驱动JAR文件</li>
-                                <li class="mb-2">将JAR文件添加到项目classpath</li>
-                                <li class="mb-2">添加必要的依赖项(POI等)</li>
-                                <li>按照文档配置连接参数</li>
-                            </ol>
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <i class="fas fa-terminal me-2"></i> 终端命令
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">1. 克隆仓库</h5>
+                            <pre><code>git clone https://github.com/daichangya/xlsql.git
+cd xlsql</code></pre>
+
+                            <h5 class="card-title mt-3">2. 编译和测试</h5>
+                            <pre><code>mvn clean package</code></pre>
+
+                            <h5 class="card-title mt-3">3. 安装到本地仓库</h5>
+                            <pre><code>mvn install</code></pre>
                         </div>
                     </div>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h4 class="fw-bold"><i class="fab fa-java text-success me-2"></i> Maven安装</h4>
-                            <div class="mt-3">
-                                <p>在pom.xml中添加以下依赖:</p>
-                                <div class="code-card bg-dark text-white p-3 rounded">
-                                    <pre><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.jsdiff&lt;/groupId&gt;
-    &lt;artifactId&gt;xlsql&lt;/artifactId&gt;
-    &lt;version&gt;4.0-SNAPSHOT&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+                </section>
+
+                <section class="mb-5">
+                    <h2 class="border-bottom pb-2 mb-4">构建产物说明</h2>
+                    <p>构建完成后，<code>target/</code> 目录下会生成以下文件：</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary">标准 JAR</h5>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-4.0-SNAPSHOT.jar</p>
+                                    <p class="card-text">仅包含 xlSQL 核心代码。使用时需要自行在 classpath 中添加所有依赖库。</p>
+                                    <span class="badge bg-primary">适合 Maven 项目</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-success">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">Shaded JAR (Fat JAR)</h5>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-4.0-SNAPSHOT-shaded.jar</p>
+                                    <p class="card-text">包含所有依赖库（POI, HSQLDB等）。可以直接作为单独的库使用，无需额外配置依赖。</p>
+                                    <span class="badge bg-success">适合非 Maven 项目</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                <section class="mb-5">
+                    <h2 class="border-bottom pb-2 mb-4">手动安装 JAR</h2>
+                    <p>如果您需要将 Shaded JAR 手动安装到本地 Maven 仓库：</p>
+                    <pre><code>mvn install:install-file \
+  -Dfile=target/xlsql-4.0-SNAPSHOT-shaded.jar \
+  -DgroupId=com.jsdiff \
+  -DartifactId=xlsql \
+  -Dversion=4.0-SNAPSHOT \
+  -Dpackaging=jar</code></pre>
+                </section>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- 页脚 -->
-    <footer class="bg-dark text-white py-5">
-        <div class="container py-4">
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
             <div class="row">
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <h5 class="mb-4">xlSQL</h5>
-                    <p>企业级Excel数据查询解决方案，通过标准SQL接口访问Excel数据</p>
-                    <div class="social-icons">
-                        <a href="#" class="text-white me-3"><i class="fab fa-github"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
-                    </div>
+                <div class="col-md-4 mb-3">
+                    <h5>xlSQL</h5>
+                    <p class="small">基于 Java 的 Excel SQL 引擎，让数据处理更简单。</p>
                 </div>
-                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h6 class="mb-4">产品</h6>
+                <div class="col-md-4 mb-3">
+                    <h5>链接</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="features.html" class="text-white-50">特性</a></li>
-                        <li class="mb-2"><a href="download.html" class="text-white-50">下载</a></li>
-                        <li class="mb-2"><a href="#" class="text-white-50">定价</a></li>
-                        <li><a href="#" class="text-white-50">路线图</a></li>
+                        <li><a href="https://github.com/daichangya/xlsql">GitHub 仓库</a></li>
+                        <li><a href="https://blog.jsdiff.com/">官方博客</a></li>
+                        <li><a href="https://github.com/daichangya/xlsql/issues">问题反馈</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h6 class="mb-4">资源</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="docs.html" class="text-white-50">文档</a></li>
-                        <li class="mb-2"><a href="#" class="text-white-50">API参考</a></li>
-                        <li class="mb-2"><a href="https://github.com/daichangya/xlsql/tree/main/doc" class="text-white-50">教程</a></li>
-                        <li><a href="https://blog.jsdiff.com/" class="text-white-50">博客</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-4">
-                    <h6 class="mb-4">公司</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-white-50">关于我们</a></li>
-                        <li class="mb-2"><a href="#" class="text-white-50">工作机会</a></li>
-                        <li class="mb-2"><a href="#" class="text-white-50">联系我们</a></li>
-                        <li><a href="#" class="text-white-50">法律声明</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2">
-                    <h6 class="mb-4">联系方式</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> daichangya@163.com</li>
-                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +86 15010953530</li>
-                        <li><i class="fas fa-map-marker-alt me-2"></i> 北京市海淀区</li>
-                    </ul>
+                <div class="col-md-4 mb-3">
+                    <h5>联系我们</h5>
+                    <p class="small">关注微信公众号：Java码界探秘</p>
                 </div>
             </div>
-            <hr class="my-4 bg-secondary">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">&copy; 2025 jsdiff Information Sciences. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <ul class="list-inline mb-0">
-                        <li class="list-inline-item"><a href="#" class="text-white-50">隐私政策</a></li>
-                        <li class="list-inline-item"><a href="#" class="text-white-50">使用条款</a></li>
-                        <li class="list-inline-item"><a href="#" class="text-white-50">Cookie政策</a></li>
-                    </ul>
-                </div>
-            </div>
+            <hr class="border-secondary">
+            <p class="mb-0">&copy; <span id="current-year">2025</span> xlSQL Project. Released under GPL License.</p>
         </div>
     </footer>
 
-    <!-- 脚本 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
+
