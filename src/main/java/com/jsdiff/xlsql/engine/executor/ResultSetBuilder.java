@@ -96,6 +96,7 @@ public class ResultSetBuilder {
         }
         
         List<String[]> result = new ArrayList<>();
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
         
         for (String[] row : rows) {
             List<String> selectedValues = new ArrayList<>();
@@ -110,9 +111,13 @@ public class ResultSetBuilder {
                 
                 Integer index = columnIndexMap.get(columnName);
                 if (index != null && index >= 0 && index < row.length) {
+                    // 找到列，直接使用
                     selectedValues.add(row[index]);
                 } else {
-                    selectedValues.add(null);
+                    // 列名查找失败，可能是表达式（如 UPPER(a)）
+                    // 尝试解析并评估表达式
+                    String value = evaluateExpression(col, row, columnIndexMap, plan);
+                    selectedValues.add(value);
                 }
             }
             
@@ -126,6 +131,54 @@ public class ResultSetBuilder {
             }
             
             result.add(selectedValues.toArray(new String[0]));
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 评估表达式（如 UPPER(a)、LOWER(name) 等）
+     * 
+     * @param exprStr 表达式字符串
+     * @param row 数据行
+     * @param columnIndexMap 列名到索引的映射
+     * @param plan 查询计划
+     * @return 评估结果字符串，如果评估失败返回null
+     */
+    private String evaluateExpression(String exprStr, String[] row,
+                                      Map<String, Integer> columnIndexMap,
+                                      QueryPlan plan) {
+        try {
+            // 尝试解析表达式
+            net.sf.jsqlparser.expression.Expression expr = 
+                net.sf.jsqlparser.parser.CCJSqlParserUtil.parseExpression(exprStr);
+            
+            // 使用ExpressionEvaluator评估
+            ExpressionEvaluator evaluator = new ExpressionEvaluator();
+            Object result = evaluator.evaluate(expr, row, columnIndexMap, 
+                convertTablesForEvaluator(plan));
+            
+            return result != null ? result.toString() : null;
+        } catch (Exception e) {
+            // 解析或评估失败，返回null
+            return null;
+        }
+    }
+    
+    /**
+     * 将QueryPlan中的表信息转换为ExpressionEvaluator需要的格式
+     */
+    private List<TableInfo> convertTablesForEvaluator(QueryPlan plan) {
+        List<TableInfo> result = new ArrayList<>();
+        
+        // 添加主表
+        if (plan.getMainTable() != null) {
+            result.add(plan.getMainTable());
+        }
+        
+        // 添加JOIN表
+        for (com.jsdiff.xlsql.engine.plan.JoinInfo join : plan.getJoins()) {
+            result.add(join.getTable());
         }
         
         return result;

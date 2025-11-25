@@ -347,10 +347,35 @@ public class PlainSelectAdapter {
     
     /**
      * 解析表名
+     * 
+     * <p>从JSqlParser的Table对象中提取工作簿和工作表名称。
+     * JSqlParser解析MySQL语法时，表名可能包含反引号（`），需要移除。</p>
+     * 
+     * @param table JSqlParser的Table对象
+     * @return 数组，[0]=工作簿名，[1]=工作表名
      */
     private String[] parseTableName(Table table) {
         String workbook = table.getSchemaName();
         String sheet = table.getName();
+        
+        // 移除反引号（MySQL语法中的标识符引号）
+        if (workbook != null) {
+            workbook = workbook.replace("`", "").trim();
+        }
+        if (sheet != null) {
+            sheet = sheet.replace("`", "").trim();
+        }
+        
+        // 如果工作簿为空，使用默认值"SA"
+        if (workbook == null || workbook.isEmpty()) {
+            workbook = "SA";
+        }
+        
+        // 如果工作表为空，使用空字符串
+        if (sheet == null) {
+            sheet = "";
+        }
+        
         return new String[]{workbook, sheet};
     }
     
