@@ -60,7 +60,7 @@ public class xlConnectionHSQLDB extends xlConnection {
     private static final Logger logger = Logger.getAnonymousLogger();
 
     /** HSQLDB数据库引擎标识符 */
-    private static final String HSQLDB = "hsqldb";
+    private static final String HSQLDB = DatabaseType.HSQLDB.getName();;
     
     /**
      * 创建HSQLDB连接实例

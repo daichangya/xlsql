@@ -41,6 +41,7 @@ import com.jsdiff.xlsql.database.xlDatabaseFactory;
 import com.jsdiff.xlsql.database.export.ASqlFormatter;
 import com.jsdiff.xlsql.database.sql.ASqlParser;
 import com.jsdiff.xlsql.database.sql.ASqlSelect;
+import com.jsdiff.xlsql.jdbc.DatabaseType;
 
 /**
  * xlConnection - Excel SQL连接的基类
@@ -109,12 +110,17 @@ public abstract class xlConnection implements Connection, Constants {
         
         // 根据数据库产品名称判断使用哪个连接实现
         String engine = c.getMetaData().getDatabaseProductName();
-        if (engine.contains("MySQL")) {
-            // MySQL数据库使用xlConnectionMySQL
-            return new xlConnectionMySQL(url, c, schema);
-        } else {
-            // 其他数据库（主要是HSQLDB）使用xlConnectionHSQLDB
-            return new xlConnectionHSQLDB(url, c);
+        DatabaseType dbType = DatabaseType.fromEngineName(engine);
+        switch (dbType) {
+            case MYSQL:
+                // MySQL数据库使用xlConnectionMySQL
+                return new xlConnectionMySQL(url, c, schema);
+            case HSQLDB:
+                return new xlConnectionHSQLDB(url, c);
+            case H2:
+            default:
+                // H2数据库使用xlConnectionH2
+                return new xlConnectionH2(url, c);
         }
     }
 

@@ -50,7 +50,7 @@ public class xlConnectionMySQL extends xlConnection {
     private static final Logger logger = Logger.getAnonymousLogger();
 
     /** MySQL数据库引擎标识符 */
-    private static final String MYSQL = "mysql";
+    private static final String MYSQL = DatabaseType.MYSQL.getName();
     /** MySQL数据库模式（schema）名称 */
     private String context;
 

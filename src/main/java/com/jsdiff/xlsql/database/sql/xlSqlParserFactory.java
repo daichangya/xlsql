@@ -25,6 +25,7 @@
 package com.jsdiff.xlsql.database.sql;
 
 
+import com.jsdiff.xlsql.jdbc.DatabaseType;
 
 /**
  * xlSqlParserFactory - SQL解析器工厂类
@@ -53,14 +54,18 @@ public class xlSqlParserFactory {
     public static ASqlParser create(String type, com.jsdiff.xlsql.database.ADatabase database, String context) {
         ASqlParser ret = null;
 
-        if (type.equals("hsqldb")) {
-            // 创建HSQLDB解析器
-            ret = new xlHsqldb(database);
-        } else if (type.equals("mysql")) {
-            // 创建MySQL解析器（需要context参数）
-            ret = new xlMySQL(database, context);
-        } else {
-            throw new IllegalArgumentException("Unsupported database type: " + type);
+        DatabaseType dbType = DatabaseType.fromEngineName(type);
+        switch (dbType) {
+            case HSQLDB:
+                // 创建HSQLDB解析器
+                ret = new xlHsqldb(database);
+                break;
+            case MYSQL:
+                // 创建MySQL解析器（需要context参数）
+                ret = new xlMySQL(database, context);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported database type: " + type);
         }
 
         return ret;

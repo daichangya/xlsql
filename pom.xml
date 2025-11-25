@@ -48,6 +48,13 @@
             <version>2.5.2</version> <!-- Compatible with Java 8, supports variable-length VARCHAR -->
         </dependency>
 
+        <!-- H2 Database for database operations (recommended alternative to HSQLDB) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version> <!-- Compatible with Java 8, better SQL compatibility and performance -->
+        </dependency>
+
         <!-- MySQL Connector for MySQL database engine support -->
         <dependency>
             <groupId>com.mysql</groupId>

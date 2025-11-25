@@ -26,6 +26,8 @@ package com.jsdiff.xlsql.database.sql;
 
 import java.sql.Connection;
 
+import com.jsdiff.xlsql.jdbc.DatabaseType;
+
 
 
 /**
@@ -43,10 +45,11 @@ public class xlSqlSelectFactory {
      * <p>根据数据库类型创建相应的查询实现：</p>
      * <ul>
      *   <li>"hsqldb" - 创建xlHsqldbSelect实例</li>
+     *   <li>"h2" - 创建xlH2Select实例</li>
      *   <li>"mysql" - 创建xlMySQLSelect实例</li>
      * </ul>
      * 
-     * @param type 数据库类型（"hsqldb"或"mysql"）
+     * @param type 数据库类型（"hsqldb"、"h2"或"mysql"）
      * @param con JDBC连接对象
      * @return SQL查询对象（ASqlSelect实现）
      * @throws IllegalArgumentException 如果类型不支持则抛出异常
@@ -54,14 +57,22 @@ public class xlSqlSelectFactory {
     public static ASqlSelect create(String type, Connection con) {
         ASqlSelect ret = null;
 
-        if (type.equals("hsqldb")) {
-            // 创建HSQLDB查询对象
-            ret = new xlHsqldbSelect(con);
-        } else if (type.equals("mysql")) {
-            // 创建MySQL查询对象
-            ret = new xlMySQLSelect(con);
-        } else {
-            throw new IllegalArgumentException("Unsupported database type: " + type);
+        DatabaseType dbType = DatabaseType.fromEngineName(type);
+        switch (dbType) {
+            case HSQLDB:
+                // 创建HSQLDB查询对象
+                ret = new xlHsqldbSelect(con);
+                break;
+            case H2:
+                // 创建H2查询对象
+                ret = new xlH2Select(con);
+                break;
+            case MYSQL:
+                // 创建MySQL查询对象
+                ret = new xlMySQLSelect(con);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported database type: " + type);
         }
 
         return ret;

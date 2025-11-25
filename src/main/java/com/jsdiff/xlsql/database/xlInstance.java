@@ -19,6 +19,8 @@
 */
 package com.jsdiff.xlsql.database;
 
+import com.jsdiff.xlsql.jdbc.DatabaseType;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -212,7 +214,7 @@ public class xlInstance {
      */
     private void createDefaultConfiguration() {
         file = getFile(getDefaultConfigPath());
-        this.engine = "hsqldb";
+        this.engine = DatabaseType.H2.getName();
         this.database = System.getProperty("user.dir");
         this.log = getDefaultLogPath();
         setProperty("general.database", database);
@@ -224,6 +226,13 @@ public class xlInstance {
         setProperty("hsqldb.schema", "");
         setProperty("hsqldb.user", "sa");
         setProperty("hsqldb.password", "");
+
+        // H2数据库配置（推荐替代HSQLDB，SQL兼容性更好）
+        setProperty("h2.driver", "org.h2.Driver");
+        setProperty("h2.url", "jdbc:h2:mem:xlsql");
+        setProperty("h2.schema", "");
+        setProperty("h2.user", "sa");
+        setProperty("h2.password", "");
 
 
         logger.info("Default configuration created.");
@@ -452,11 +461,11 @@ public class xlInstance {
     /**
      * 获取支持的数据库引擎列表
      * 
-     * @return 支持的引擎名称数组（当前为"general"和"hsqldb"）
+     * @return 支持的引擎名称数组（当前为"general"、"hsqldb"和"h2"）
      */
     public String[] getEngines() {
         // 简化实现，返回固定引擎列表
-        return new String[]{"general", "hsqldb"};
+        return new String[]{"general", "hsqldb", "h2"};
     }
 
     /**

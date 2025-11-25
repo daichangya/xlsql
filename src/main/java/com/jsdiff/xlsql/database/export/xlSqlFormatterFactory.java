@@ -25,6 +25,8 @@
 package com.jsdiff.xlsql.database.export;
 
 
+import com.jsdiff.xlsql.jdbc.DatabaseType;
+
 /**
  * DOCUMENT ME!
  * 
@@ -41,12 +43,19 @@ public class xlSqlFormatterFactory {
     public static ASqlFormatter create(String type) {
         ASqlFormatter ret = null;
 
-        if (type.equals("hsqldb")) {
-            ret = new xlHsqldbFormatter();
-        } else if (type.equals("mysql")) {
-            ret = new xlMysqlFormatter();
-        } else {
-            throw new IllegalArgumentException();
+        DatabaseType dbType = DatabaseType.fromEngineName(type);
+        switch (dbType) {
+            case HSQLDB:
+                ret = new xlHsqldbFormatter();
+                break;
+            case H2:
+                ret = new xlH2Formatter();
+                break;
+            case MYSQL:
+                ret = new xlMysqlFormatter();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported database type: " + type);
         }
 
         return ret;
