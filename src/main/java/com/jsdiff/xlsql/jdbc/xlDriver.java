@@ -1,4 +1,4 @@
-/*zthinker.com
+/*jsdiff.com
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
@@ -135,11 +135,21 @@ public class xlDriver implements Driver {
             String config = info.getProperty("config");
             xlInstance instance = xlInstance.getInstance(config);
             
+            // 检查是否使用自研NATIVE引擎
+            String engine = instance.getEngine();
+            if (engine != null && engine.equalsIgnoreCase("native")) {
+                // 自研引擎不需要外部数据库连接
+                String databasePath = resolveDatabasePath(url, instance);
+                xlConnection connection = xlConnection.factory(databasePath, null, null);
+                LOGGER.info("Connection established to Native SQL Engine");
+                return connection;
+            }
+            
             // 获取后端数据库连接信息
             String engineUrl = instance.getUrl();
             String engineSchema = instance.getSchema();
             
-            // 注册后端数据库驱动（HSQLDB或MySQL）
+            // 注册后端数据库驱动（HSQLDB、H2或MySQL）
             String driverClassName = instance.getDriver();
             loadAndRegisterDriver(driverClassName);
             

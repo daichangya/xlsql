@@ -1,4 +1,4 @@
-/*zthinker.com
+/*jsdiff.com
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
@@ -41,7 +41,7 @@ import com.jsdiff.xlsql.database.xlDatabaseFactory;
 import com.jsdiff.xlsql.database.export.ASqlFormatter;
 import com.jsdiff.xlsql.database.sql.ASqlParser;
 import com.jsdiff.xlsql.database.sql.ASqlSelect;
-import com.jsdiff.xlsql.jdbc.DatabaseType;
+import com.jsdiff.xlsql.engine.connection.xlConnectionNative;
 
 /**
  * xlConnection - Excel SQL连接的基类
@@ -73,7 +73,7 @@ public abstract class xlConnection implements Connection, Constants {
     /** SQL格式化器，用于生成特定数据库的SQL语句 */
     protected ASqlFormatter w;
     /** SQL解析器，用于解析xlSQL语句 */
-    protected ASqlParser xlsql;
+    public ASqlParser xlsql;
     /** SQL查询对象 */
     protected ASqlSelect query;
     /** 连接是否已关闭的标志 */
@@ -93,19 +93,22 @@ public abstract class xlConnection implements Connection, Constants {
     /**
      * 工厂方法：根据数据库引擎创建相应的连接实现
      * 
-     * <p>该方法会检查后端数据库类型，如果是MySQL则创建xlConnectionMySQL实例，
-     * 否则创建xlConnectionHSQLDB实例。</p>
+     * <p>该方法会检查后端数据库类型，创建相应的连接实现。
+     * 支持MySQL、HSQLDB、H2和自研NATIVE引擎。</p>
      * 
      * @param url JDBC连接URL
-     * @param c 后端数据库连接对象
+     * @param c 后端数据库连接对象（NATIVE引擎时可以为null）
      * @param schema 数据库模式名称
-     * @return 相应的xlConnection实现（xlConnectionMySQL或xlConnectionHSQLDB）
+     * @return 相应的xlConnection实现
      * @throws SQLException 如果连接创建失败则抛出异常
      */
     public static xlConnection factory(String url, Connection c, String schema)
             throws SQLException {
-        if (c == null) {
-            throw new SQLException("Backend connection cannot be null");
+        // 检查URL中是否指定了native引擎
+        // 如果URL包含native标识或连接为null，使用自研引擎
+        if (c == null || url.contains("native") || url.contains("NATIVE")) {
+            // 自研引擎不需要外部数据库连接
+            return new xlConnectionNative(url);
         }
         
         // 根据数据库产品名称判断使用哪个连接实现

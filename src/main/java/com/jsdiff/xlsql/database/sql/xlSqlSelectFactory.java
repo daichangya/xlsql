@@ -1,4 +1,4 @@
-/*zthinker.com
+/*jsdiff.com
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
@@ -47,11 +47,12 @@ public class xlSqlSelectFactory {
      *   <li>"hsqldb" - 创建xlHsqldbSelect实例</li>
      *   <li>"h2" - 创建xlH2Select实例</li>
      *   <li>"mysql" - 创建xlMySQLSelect实例</li>
+     *   <li>"native" - 返回null（自研引擎不需要ASqlSelect）</li>
      * </ul>
      * 
-     * @param type 数据库类型（"hsqldb"、"h2"或"mysql"）
-     * @param con JDBC连接对象
-     * @return SQL查询对象（ASqlSelect实现）
+     * @param type 数据库类型（"hsqldb"、"h2"、"mysql"或"native"）
+     * @param con JDBC连接对象（native引擎时可以为null）
+     * @return SQL查询对象（ASqlSelect实现），native引擎返回null
      * @throws IllegalArgumentException 如果类型不支持则抛出异常
      */
     public static ASqlSelect create(String type, Connection con) {
@@ -70,6 +71,10 @@ public class xlSqlSelectFactory {
             case MYSQL:
                 // 创建MySQL查询对象
                 ret = new xlMySQLSelect(con);
+                break;
+            case NATIVE:
+                // 自研引擎不需要ASqlSelect，返回null
+                ret = null;
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported database type: " + type);

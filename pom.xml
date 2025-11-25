@@ -81,6 +81,13 @@
             <version>1.5.0</version>
         </dependency>
 
+        <!-- JSqlParser for SQL parsing with MySQL syntax support -->
+        <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>4.7</version>
+        </dependency>
+
         <!-- JUnit 5 for unit testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

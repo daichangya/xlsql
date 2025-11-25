@@ -1,4 +1,4 @@
-/*zthinker.com
+/*jsdiff.com
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
@@ -25,6 +25,7 @@
 package com.jsdiff.xlsql.database.sql;
 
 
+import com.jsdiff.xlsql.engine.parser.xlNativeParser;
 import com.jsdiff.xlsql.jdbc.DatabaseType;
 
 /**
@@ -43,11 +44,13 @@ public class xlSqlParserFactory {
      * <ul>
      *   <li>"hsqldb" - 创建xlHsqldb解析器实例</li>
      *   <li>"mysql" - 创建xlMySQL解析器实例（需要context参数）</li>
+     *   <li>"h2" - 创建xlHsqldb解析器实例（H2与HSQLDB语法兼容）</li>
+     *   <li>"native" - 创建xlNativeParser解析器实例（自研引擎）</li>
      * </ul>
      * 
-     * @param type 数据库类型（"hsqldb"或"mysql"）
+     * @param type 数据库类型（"hsqldb"、"mysql"、"h2"或"native"）
      * @param database 数据库对象
-     * @param context MySQL数据库上下文（模式名称），HSQLDB不需要此参数
+     * @param context MySQL数据库上下文（模式名称），其他引擎不需要此参数
      * @return SQL解析器对象（ASqlParser实现）
      * @throws IllegalArgumentException 如果类型不支持则抛出异常
      */
@@ -63,6 +66,14 @@ public class xlSqlParserFactory {
             case MYSQL:
                 // 创建MySQL解析器（需要context参数）
                 ret = new xlMySQL(database, context);
+                break;
+            case H2:
+                // H2与HSQLDB语法兼容，使用HSQLDB解析器
+                ret = new xlHsqldb(database);
+                break;
+            case NATIVE:
+                // 创建自研引擎解析器
+                ret = new xlNativeParser(database);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported database type: " + type);

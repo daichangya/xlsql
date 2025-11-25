@@ -31,7 +31,7 @@ public class xlDatabaseMetaData implements DatabaseMetaData, Constants {
     //~ Constructors �����������������������������������������������������������
 
     /** Creates a new instance of DatabaseMetaDataImpl */
-    protected xlDatabaseMetaData(xlConnection con, DatabaseMetaData meta) {
+    public xlDatabaseMetaData(xlConnection con, DatabaseMetaData meta) {
         xlCon = con;
         dbMeta = meta;
     }
@@ -42,6 +42,7 @@ public class xlDatabaseMetaData implements DatabaseMetaData, Constants {
     * Implements method in interface java.sql.Connection
     * @see DatabaseMetaData#allProceduresAreCallable
     */
+    @Override
     public boolean allProceduresAreCallable() throws SQLException {
         return dbMeta.allProceduresAreCallable();
     }

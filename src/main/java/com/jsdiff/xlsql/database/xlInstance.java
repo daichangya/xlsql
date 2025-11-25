@@ -1,4 +1,4 @@
-/*zthinker.com
+/*jsdiff.com
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
@@ -19,8 +19,6 @@
 */
 package com.jsdiff.xlsql.database;
 
-import com.jsdiff.xlsql.jdbc.DatabaseType;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,6 +33,8 @@ import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+
+import com.jsdiff.xlsql.jdbc.DatabaseType;
 
 
 /**
@@ -233,6 +233,13 @@ public class xlInstance {
         setProperty("h2.schema", "");
         setProperty("h2.user", "sa");
         setProperty("h2.password", "");
+
+        // 自研NATIVE引擎配置（不依赖外部数据库）
+        setProperty("native.driver", ""); // 不需要驱动
+        setProperty("native.url", ""); // 不需要URL
+        setProperty("native.schema", "");
+        setProperty("native.user", "");
+        setProperty("native.password", "");
 
 
         logger.info("Default configuration created.");
@@ -464,8 +471,8 @@ public class xlInstance {
      * @return 支持的引擎名称数组（当前为"general"、"hsqldb"和"h2"）
      */
     public String[] getEngines() {
-        // 简化实现，返回固定引擎列表
-        return new String[]{"general", "hsqldb", "h2"};
+        // 返回所有支持的引擎列表
+        return new String[]{"general", "hsqldb", "h2", "native"};
     }
 
     /**
