@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -19,15 +19,15 @@
 */
 package com.jsdiff.xlsql.ui;
 
-import com.jsdiff.xlsql.database.export.ASqlFormatter;
-import com.jsdiff.xlsql.database.export.xlSqlFormatterFactory;
-import com.jsdiff.xlsql.database.xlException;
-import com.jsdiff.xlsql.jdbc.xlConnection;
-import com.jsdiff.xlsql.util.xlFile;
-
 import java.io.File;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.jsdiff.xlsql.database.xlException;
+import com.jsdiff.xlsql.database.export.ASqlFormatter;
+import com.jsdiff.xlsql.database.export.xlSqlFormatterFactory;
+import com.jsdiff.xlsql.jdbc.xlConnection;
+import com.jsdiff.xlsql.util.xlFile;
 
 
 /**
@@ -155,14 +155,6 @@ public class CmdDir2xl implements IStateCommand {
             } else {
                 schema = "SA";
                 table = args[6];
-            }
-        } else if (dialect.equals("mysql")) {
-            if (args[6].indexOf(".") > 0) {
-                String[] tmp = args[6].split("[.]");
-                schema = tmp[0];
-                table = tmp[1];
-            } else {
-                throw new xlException(args[6] + " for MySQL...!?");
             }
         } else {
             assert ret;

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -42,8 +43,9 @@ public class xlConnectionH2Test {
         instance.setUser("sa");
         instance.setPassword("");
         
-        // 连接到当前目录
-        url = URL_PFX_XLS + System.getProperty("user.dir");
+        // 连接到database目录
+        String databaseDir = System.getProperty("user.dir") + File.separator + "database";
+        url = URL_PFX_XLS + databaseDir;
         con = DriverManager.getConnection(url);
     }
 
@@ -83,9 +85,9 @@ public class xlConnectionH2Test {
 
     @Test
     public void testQueryWithH2() throws SQLException {
-        // 测试H2数据库的查询功能
+        // 测试H2数据库的查询功能（H2使用下划线分隔工作簿和工作表名称）
         try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"test1.Sheet1\" LIMIT 1")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 LIMIT 1")) {
             
             assertNotNull(rs, "ResultSet should not be null");
             
@@ -112,10 +114,10 @@ public class xlConnectionH2Test {
     @Test
     public void testH2SQLCompatibility() throws SQLException {
         // 测试H2与HSQLDB的SQL兼容性
-        // H2应该支持与HSQLDB相同的表名引用格式（双引号）
+        // H2应该支持与HSQLDB相同的表名引用格式（下划线分隔）
         try (Statement stmt = con.createStatement()) {
-            // 测试表名引用格式（应该与HSQLDB兼容）
-            String sql = "SELECT COUNT(*) FROM \"test1.Sheet1\"";
+            // 测试表名引用格式（应该与HSQLDB兼容，使用下划线）
+            String sql = "SELECT COUNT(*) FROM test1_Sheet1";
             try {
                 ResultSet rs = stmt.executeQuery(sql);
                 assertNotNull(rs, "Should support HSQLDB-compatible table name format");

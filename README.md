@@ -18,7 +18,7 @@ This project has been upgraded from JDK 1.4 codebase to modern Java 8+, with maj
 
 - Upgraded to latest Apache POI (5.2.3) supporting modern Excel formats
 - Updated HSQLDB to version 2.5.2 (compatible with Java 8)
-- Updated MySQL Connector to version 8.0.33
+- Removed MySQL engine support, now supports H2, HSQLDB, and Native engines only
 - Updated JUnit to version 5.9.3 (JUnit Jupiter)
 
 ### 3. New Features
@@ -43,7 +43,7 @@ Add the following to your `pom.xml`:
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -54,12 +54,12 @@ Add the following to your `pom.xml`:
 Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
 
 // Create connection
-String url = "jdbc:jsdiff:excel:/path/to/excel/files";
+String url = "jdbc:xlsql:excel:/path/to/excel/files";
 Connection conn = DriverManager.getConnection(url);
 
 // Execute query
 Statement stmt = conn.createStatement();
-ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\"");
+ResultSet rs = stmt.executeQuery("SELECT * FROM test2.Sheet1");
 
 // Process results
 while (rs.next()) {
@@ -145,15 +145,15 @@ mvn package
 ```
 
 This will create:
-- `target/xlsql-4.0-SNAPSHOT.jar` - Standard JAR file
-- `target/xlsql-4.0-SNAPSHOT-shaded.jar` - Fat JAR with all dependencies
+- `target/xlsql-5.0-SNAPSHOT.jar` - Standard JAR file
+- `target/xlsql-5.0-SNAPSHOT-shaded.jar` - Fat JAR with all dependencies
 
 #### 5. Install to local Maven repository
 ```bash
 mvn install
 ```
 
-This installs the artifact to your local Maven repository (`~/.m2/repository/com/jsdiff/xlsql/4.0-SNAPSHOT/`), making it available for other projects.
+This installs the artifact to your local Maven repository (`~/.m2/repository/com/jsdiff/xlsql/5.0-SNAPSHOT/`), making it available for other projects.
 
 #### 6. Skip tests during build
 ```bash
@@ -174,11 +174,11 @@ mvn javadoc:jar
 
 After running `mvn package`, you'll find:
 
-- **Standard JAR**: `target/xlsql-4.0-SNAPSHOT.jar`
+- **Standard JAR**: `target/xlsql-5.0-SNAPSHOT.jar`
   - Contains only xlSQL classes
   - Requires dependencies to be provided separately
 
-- **Shaded JAR** (Fat JAR): `target/xlsql-4.0-SNAPSHOT-shaded.jar`
+- **Shaded JAR** (Fat JAR): `target/xlsql-5.0-SNAPSHOT-shaded.jar`
   - Contains all dependencies bundled
   - Can be used standalone
   - Recommended for distribution
@@ -192,21 +192,21 @@ Add to your `pom.xml`:
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
 </dependency>
 ```
 
 #### Option 2: Use Shaded JAR Directly
 
-1. Copy `xlsql-4.0-SNAPSHOT-shaded.jar` to your project
+1. Copy `xlsql-5.0-SNAPSHOT-shaded.jar` to your project
 2. Add to classpath manually
 3. Or install to local repository:
 ```bash
 mvn install:install-file \
-  -Dfile=target/xlsql-4.0-SNAPSHOT-shaded.jar \
+  -Dfile=target/xlsql-5.0-SNAPSHOT-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=4.0-SNAPSHOT \
+  -Dversion=5.0-SNAPSHOT \
   -Dpackaging=jar
 ```
 
@@ -290,7 +290,7 @@ mvn clean install
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -300,10 +300,10 @@ If you have the shaded JAR file:
 
 ```bash
 mvn install:install-file \
-  -Dfile=xlsql-4.0-SNAPSHOT-shaded.jar \
+  -Dfile=xlsql-5.0-SNAPSHOT-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=4.0-SNAPSHOT \
+  -Dversion=5.0-SNAPSHOT \
   -Dpackaging=jar
 ```
 
@@ -325,7 +325,7 @@ Default location: `~/.xlsql/xlsql_config.properties`
 
 Example configuration:
 ```properties
-# Database engine (hsqldb or mysql)
+# Database engine (hsqldb, h2, or native)
 engine=hsqldb
 
 # HSQLDB configuration
@@ -333,10 +333,10 @@ hsqldb.url=jdbc:hsqldb:mem:xlsql
 hsqldb.user=sa
 hsqldb.password=
 
-# MySQL configuration (if using MySQL engine)
-mysql.url=jdbc:mysql://localhost:3306/xlsql
-mysql.user=root
-mysql.password=yourpassword
+# H2 configuration (if using H2 engine)
+h2.url=jdbc:h2:mem:xlsql
+h2.user=sa
+h2.password=
 ```
 
 ## Troubleshooting

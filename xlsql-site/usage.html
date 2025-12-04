@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>使用指南 - xlSQL</title>
     <meta name="description" content="xlSQL 使用文档，包括依赖配置、JDBC 连接示例、配置说明和常见问题解答。">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.loli.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.loli.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
@@ -61,7 +61,7 @@
 <pre><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;com.jsdiff&lt;/groupId&gt;
     &lt;artifactId&gt;xlsql&lt;/artifactId&gt;
-    &lt;version&gt;4.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;5.0-SNAPSHOT&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
                 </section>
 
@@ -79,14 +79,14 @@ public class ExcelQuery {
         Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
 
         // 2. 创建连接
-        // URL 格式: jdbc:jsdiff:excel:/path/to/directory
-        String url = "jdbc:jsdiff:excel:/data/excel_files";
+        // URL 格式: jdbc:xlsql:excel:/path/to/directory
+        String url = "jdbc:xlsql:excel:/data/excel_files";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             
             // 3. 执行查询
             // 表名格式: "文件名.工作表名" (注意引号)
-            String sql = "SELECT * FROM \"sales_2024.Sheet1\" WHERE amount > 1000";
+            String sql = "SELECT * FROM sales_2024.Sheet1 WHERE amount > 1000";
             try (ResultSet rs = stmt.executeQuery(sql)) {
                 while (rs.next()) {
                     System.out.println("Customer: " + rs.getString("Customer"));
@@ -124,7 +124,7 @@ public class ExcelQuery {
 
                     <h4 class="mt-4">配置文件 (xlsql_config.properties)</h4>
                     <p>默认位置：<code>~/.xlsql/xlsql_config.properties</code></p>
-<pre><code class="language-properties"># 数据库引擎 (hsqldb 或 mysql)
+<pre><code class="language-properties"># 数据库引擎 (hsqldb, h2 或 native)
 engine=hsqldb
 
 # HSQLDB 配置
@@ -132,10 +132,10 @@ hsqldb.url=jdbc:hsqldb:mem:xlsql
 hsqldb.user=sa
 hsqldb.password=
 
-# MySQL 配置（可选）
-mysql.url=jdbc:mysql://localhost:3306/xlsql
-mysql.user=root
-mysql.password=secret</code></pre>
+# H2 配置（可选）
+h2.url=jdbc:h2:mem:xlsql
+h2.user=sa
+h2.password=</code></pre>
                 </section>
 
                 <section id="troubleshooting" class="mb-5">
@@ -216,7 +216,7 @@ mysql.password=secret</code></pre>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

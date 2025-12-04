@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -226,9 +226,53 @@ public class ConditionEvaluator {
         String rightOperand = condition.getRightOperand();
         
         // 左操作数应该是聚合函数别名或列名
+        // 尝试多种键名匹配：原始字符串、大写、去掉空格等
         Object leftValueObj = aggregateValues.get(leftOperand);
         if (leftValueObj == null) {
-            throw new SQLException("Column or aggregate not found in HAVING: " + leftOperand);
+            // 尝试大写匹配
+            leftValueObj = aggregateValues.get(leftOperand.toUpperCase());
+        }
+        if (leftValueObj == null) {
+            // 尝试去掉空格匹配
+            leftValueObj = aggregateValues.get(leftOperand.replaceAll("\\s+", ""));
+        }
+        if (leftValueObj == null) {
+            // 尝试匹配所有键（包含leftOperand的键）
+            String normalizedLeft = leftOperand.replaceAll("\\s+", "").toUpperCase();
+            for (Map.Entry<String, Object> entry : aggregateValues.entrySet()) {
+                String key = entry.getKey();
+                if (key != null) {
+                    String normalizedKey = key.replaceAll("\\s+", "").toUpperCase();
+                    // 检查是否是聚合函数表达式匹配（如COUNT(*)匹配COUNT(*))
+                    if (normalizedKey.equals(normalizedLeft) || 
+                        key.equalsIgnoreCase(leftOperand) ||
+                        // 如果leftOperand是聚合函数表达式（如COUNT(*))，尝试匹配所有值
+                        (leftOperand.toUpperCase().startsWith("COUNT") && normalizedKey.contains("COUNT"))) {
+                        leftValueObj = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        if (leftValueObj == null) {
+            // 如果leftOperand是聚合函数表达式（如COUNT(*))，尝试从所有值中查找
+            // 因为可能有多个聚合函数，需要找到匹配的那个
+            String normalizedLeft = leftOperand.replaceAll("\\s+", "").toUpperCase();
+            for (Map.Entry<String, Object> entry : aggregateValues.entrySet()) {
+                String key = entry.getKey();
+                if (key != null) {
+                    String normalizedKey = key.replaceAll("\\s+", "").toUpperCase();
+                    // 检查是否是聚合函数表达式匹配
+                    if (normalizedKey.contains(normalizedLeft) || normalizedLeft.contains(normalizedKey)) {
+                        leftValueObj = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        if (leftValueObj == null) {
+            throw new SQLException("Column or aggregate not found in HAVING: " + leftOperand + 
+                                 ". Available keys: " + aggregateValues.keySet());
         }
         
         String leftValue = leftValueObj.toString();

@@ -11,7 +11,7 @@ xlSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操
 
 ## 功能特性
 - **支持 SQL 查询**：通过 JDBC 接口执行 SQL 查询，操作 Excel 数据。
-- **多引擎支持**：支持 HSQLDB 和 MySQL 作为底层数据库引擎。
+- **多引擎支持**：支持 HSQLDB、H2 和 Native 作为底层数据库引擎。
 - **Excel 文件读写**：支持 `.xls` `.xlsx`  格式的 Excel 文件读写操作。
 - **元数据查询**：提供数据库和表的元数据信息（如表结构、列信息等）。
 
@@ -31,7 +31,7 @@ xlSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -75,15 +75,15 @@ mvn package
 ```
 
 打包后会生成：
-- `target/xlsql-4.0-SNAPSHOT.jar` - 标准 JAR 文件
-- `target/xlsql-4.0-SNAPSHOT-shaded.jar` - 包含所有依赖的 Fat JAR
+- `target/xlsql-5.0-SNAPSHOT.jar` - 标准 JAR 文件
+- `target/xlsql-5.0-SNAPSHOT-shaded.jar` - 包含所有依赖的 Fat JAR
 
 **6. 安装到本地 Maven 仓库**
 ```bash
 mvn install
 ```
 
-这将把项目安装到本地 Maven 仓库（`~/.m2/repository/com/jsdiff/xlsql/4.0-SNAPSHOT/`），供其他项目使用。
+这将把项目安装到本地 Maven 仓库（`~/.m2/repository/com/jsdiff/xlsql/5.0-SNAPSHOT/`），供其他项目使用。
 
 **7. 跳过测试进行构建**
 ```bash
@@ -108,15 +108,15 @@ mvn javadoc:jar
 
 #### 方式二：直接使用 Shaded JAR（Fat JAR）
 
-1. 将 `xlsql-4.0-SNAPSHOT-shaded.jar` 复制到项目
+1. 将 `xlsql-5.0-SNAPSHOT-shaded.jar` 复制到项目
 2. 手动添加到 classpath
 3. 或安装到本地仓库：
 ```bash
 mvn install:install-file \
-  -Dfile=target/xlsql-4.0-SNAPSHOT-shaded.jar \
+  -Dfile=target/xlsql-5.0-SNAPSHOT-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=4.0-SNAPSHOT \
+  -Dversion=5.0-SNAPSHOT \
   -Dpackaging=jar
 ```
 
@@ -132,7 +132,7 @@ public class Main {
         Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
 
         // 创建连接
-        String url = "jdbc:jsdiff:excel:/path/to/excel/files";
+        String url = "jdbc:xlsql:excel:/path/to/excel/files";
         Connection conn = DriverManager.getConnection(url);
         System.out.println("连接成功！");
     }
@@ -147,7 +147,7 @@ import java.sql.Statement;
 
 // 创建 Statement
 Statement stmt = conn.createStatement();
-ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\" LIMIT 10");
+ResultSet rs = stmt.executeQuery("SELECT * FROM test2.Sheet1 LIMIT 10");
 
 // 遍历结果集
 while (rs.next()) {
@@ -221,7 +221,7 @@ mvn test -Dtest=TestXlsql
 
 示例配置：
 ```properties
-# 数据库引擎 (hsqldb 或 mysql)
+# 数据库引擎 (hsqldb, h2 或 native)
 engine=hsqldb
 
 # HSQLDB 配置
@@ -229,10 +229,10 @@ hsqldb.url=jdbc:hsqldb:mem:xlsql
 hsqldb.user=sa
 hsqldb.password=
 
-# MySQL 配置（如果使用 MySQL 引擎）
-mysql.url=jdbc:mysql://localhost:3306/xlsql
-mysql.user=root
-mysql.password=yourpassword
+# H2 配置（如果使用 H2 引擎）
+h2.url=jdbc:h2:mem:xlsql
+h2.user=sa
+h2.password=
 ```
 
 ## 常见问题
@@ -263,7 +263,7 @@ mysql.password=yourpassword
 
 - **Apache POI**: 用于读写 Excel 文件（.xls 和 .xlsx 格式）
 - **HSQLDB**: 默认数据库引擎（版本 2.5.2，兼容 Java 8）
-- **MySQL Connector**: 可选数据库引擎支持（版本 8.0.33）
+- **H2 Database**: 可选数据库引擎支持（版本 2.2.224）
 - **JUnit 5**: 单元测试框架
 
 ## 限制

@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it under 
@@ -32,7 +32,7 @@ import com.jsdiff.xlsql.jdbc.DatabaseType;
  * xlSqlParserFactory - SQL解析器工厂类
  * 
  * <p>该类提供工厂方法用于创建不同类型的SQL解析器对象。
- * 根据数据库类型（hsqldb或mysql）创建相应的解析器实现。</p>
+ * 根据数据库类型（hsqldb或h2）创建相应的解析器实现。</p>
  * 
  * @author daichangya
  */
@@ -43,14 +43,13 @@ public class xlSqlParserFactory {
      * <p>根据数据库类型创建相应的解析器实现：</p>
      * <ul>
      *   <li>"hsqldb" - 创建xlHsqldb解析器实例</li>
-     *   <li>"mysql" - 创建xlMySQL解析器实例（需要context参数）</li>
      *   <li>"h2" - 创建xlHsqldb解析器实例（H2与HSQLDB语法兼容）</li>
      *   <li>"native" - 创建xlNativeParser解析器实例（自研引擎）</li>
      * </ul>
      * 
-     * @param type 数据库类型（"hsqldb"、"mysql"、"h2"或"native"）
+     * @param type 数据库类型（"hsqldb"、"h2"或"native"）
      * @param database 数据库对象
-     * @param context MySQL数据库上下文（模式名称），其他引擎不需要此参数
+     * @param context 数据库上下文（模式名称），当前未使用
      * @return SQL解析器对象（ASqlParser实现）
      * @throws IllegalArgumentException 如果类型不支持则抛出异常
      */
@@ -62,10 +61,6 @@ public class xlSqlParserFactory {
             case HSQLDB:
                 // 创建HSQLDB解析器
                 ret = new xlHsqldb(database);
-                break;
-            case MYSQL:
-                // 创建MySQL解析器（需要context参数）
-                ret = new xlMySQL(database, context);
                 break;
             case H2:
                 // H2与HSQLDB语法兼容，使用HSQLDB解析器

@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -19,15 +19,23 @@
 */
 package com.jsdiff.xlsql.ui;
 
-import com.jsdiff.xlsql.database.AExporter;
-import com.jsdiff.xlsql.database.xlException;
-import com.jsdiff.xlsql.database.xlInstance;
-import org.apache.commons.cli.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
+
+import com.jsdiff.xlsql.database.AExporter;
+import com.jsdiff.xlsql.database.xlException;
+import com.jsdiff.xlsql.database.xlInstance;
 
 
 /**
@@ -146,7 +154,7 @@ public class XlUi {
         System.out.println("\n*** caution: development release ***");
         System.out.println("Excel JDBC Driver");
         System.out.println("Copyright 2025 by jsdiff Information Sciences");
-        System.out.println("http://excel.jsdiff.com\n");
+        System.out.println("http://xlsql.jsdiff.com\n");
 
         while (true) {
             switch (state) {
@@ -283,7 +291,7 @@ public class XlUi {
             options.addOption("cat", false, "catalog");
             options.addOption("close", false, "close");
             option = new Option("export", true, 
-                 "[ ALL | (sch.)tab ] AS [ hsqldb | mysql | xml ] TO [ path | engine | out ]");
+                 "[ ALL | (sch.)tab ] AS [ hsqldb | xml ] TO [ path | engine | out ]");
             option.setArgs(5);
             options.addOption(option);
             options.addOption("h", false, "help");

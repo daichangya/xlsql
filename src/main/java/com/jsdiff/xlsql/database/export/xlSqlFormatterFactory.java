@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it under 
@@ -50,9 +50,6 @@ public class xlSqlFormatterFactory {
                 break;
             case H2:
                 ret = new xlH2Formatter();
-                break;
-            case MYSQL:
-                ret = new xlMysqlFormatter();
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported database type: " + type);

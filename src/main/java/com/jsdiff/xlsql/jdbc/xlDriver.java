@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -44,13 +44,13 @@ import com.jsdiff.xlsql.database.xlInstance;
  *   <li>注册JDBC驱动到DriverManager</li>
  *   <li>验证和接受JDBC URL</li>
  *   <li>建立到Excel文件的数据库连接</li>
- *   <li>管理后端数据库驱动（HSQLDB或MySQL）</li>
+ *   <li>管理后端数据库驱动（HSQLDB或H2）</li>
  * </ul>
  * 
  * <p>使用示例：</p>
  * <pre>
- * Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
- * String url = "jdbc:jsdiff:excel:/path/to/excel/files";
+ * Class.forName(DRIVER);
+ * String url = "jdbc:xlsql:excel:/path/to/excel/files";
  * Connection conn = DriverManager.getConnection(url);
  * </pre>
  * 
@@ -89,10 +89,10 @@ public class xlDriver implements Driver {
     /**
      * 检查URL是否可以被此驱动处理
      * 
-     * <p>判断JDBC URL是否以"jdbc:jsdiff:excel:"开头，如果是则返回true</p>
+     * <p>判断JDBC URL是否以"jdbc:xlsql:excel:"开头，如果是则返回true</p>
      * 
      * @param url 待检查的JDBC URL
-     * @return 如果URL以jdbc:jsdiff:excel:开头则返回true，否则返回false
+     * @return 如果URL以jdbc:xlsql:excel:开头则返回true，否则返回false
      * @throws SQLException 如果URL为null则抛出异常
      */
     @Override
@@ -111,12 +111,12 @@ public class xlDriver implements Driver {
      * <ol>
      *   <li>验证URL是否被接受</li>
      *   <li>获取xlSQL配置实例</li>
-     *   <li>加载并注册后端数据库驱动（HSQLDB或MySQL）</li>
+     *   <li>加载并注册后端数据库驱动（HSQLDB或H2）</li>
      *   <li>建立后端数据库连接</li>
      *   <li>创建xlSQL连接包装器</li>
      * </ol>
      * 
-     * @param url JDBC连接URL，格式：jdbc:jsdiff:excel:/path/to/excel/files
+     * @param url JDBC连接URL，格式：jdbc:xlsql:excel:/path/to/excel/files
      * @param info 连接属性，可包含"config"属性指定配置文件
      * @return 到Excel数据库的JDBC连接对象
      * @throws SQLException 如果连接失败则抛出异常
@@ -149,7 +149,7 @@ public class xlDriver implements Driver {
             String engineUrl = instance.getUrl();
             String engineSchema = instance.getSchema();
             
-            // 注册后端数据库驱动（HSQLDB、H2或MySQL）
+            // 注册后端数据库驱动（HSQLDB或H2）
             String driverClassName = instance.getDriver();
             loadAndRegisterDriver(driverClassName);
             

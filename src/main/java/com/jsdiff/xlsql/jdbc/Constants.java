@@ -27,18 +27,17 @@ package com.jsdiff.xlsql.jdbc;
  * Changed by Csongor Nyulas (csny): Release constants changed
  */
 public interface Constants {
-    //~ Static variables/initializers ������������������������������������������
     public static final String APP = "xlSQL> ";
 
     public static final String DRIVER = "com.jsdiff.xlsql.jdbc.xlDriver";
 
-    public static final String DRIVER_NAME = "jsdiff/xlSQL Excel JDBC Driver";
+    public static final String DRIVER_NAME = "xlSQL Excel JDBC Driver";
     public static final String DRIVER_RELEASE = "beta:Y8";
     public static final String DRIVER_CLASS = "com.jsdiff.xlsql.jdbc.jdbcDriverXls";
     public static final int MAJOR_VERSION = 0;
     public static final int MINOR_VERSION = 0;
-    public static final String URL_PFX_XLS = "jdbc:jsdiff:excel:";
-    public static final String URL_PFX_CSV = "jdbc:jsdiff:csv:";
+    public static final String URL_PFX_XLS = "jdbc:xlsql:excel:";
+    public static final String URL_PFX_CSV = "jdbc:xlsql:csv:";
     public static final boolean JDBC_COMPLIANT = false;
     public static final int JDBC_MAJOR_VERSION = 3;
     public static final int JDBC_MINOR_VERSION = 0;

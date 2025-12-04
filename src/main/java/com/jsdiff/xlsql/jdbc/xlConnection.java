@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -50,7 +50,7 @@ import com.jsdiff.xlsql.engine.connection.xlConnectionNative;
  * 它负责管理Excel文件到数据库的映射，包括：</p>
  * <ul>
  *   <li>管理Excel数据存储（datastore）</li>
- *   <li>维护后端数据库连接（HSQLDB或MySQL）</li>
+ *   <li>维护后端数据库连接（HSQLDB或H2）</li>
  *   <li>处理SQL语句的解析和执行</li>
  *   <li>在连接启动时将Excel数据加载到后端数据库</li>
  * </ul>
@@ -66,7 +66,7 @@ public abstract class xlConnection implements Connection, Constants {
     
     /** Excel数据存储对象，管理Excel文件和表结构 */
     protected ADatabase datastore;
-    /** 后端数据库连接（HSQLDB或MySQL） */
+    /** 后端数据库连接（HSQLDB或H2） */
     protected Connection dbCon;
     /** JDBC连接URL */
     protected String URL;
@@ -78,7 +78,7 @@ public abstract class xlConnection implements Connection, Constants {
     protected ASqlSelect query;
     /** 连接是否已关闭的标志 */
     protected boolean closed;
-    /** SQL方言名称（如"hsqldb"或"mysql"） */
+    /** SQL方言名称（如"hsqldb"、"h2"或"native"） */
     protected String dialect;
 
     /**
@@ -94,7 +94,7 @@ public abstract class xlConnection implements Connection, Constants {
      * 工厂方法：根据数据库引擎创建相应的连接实现
      * 
      * <p>该方法会检查后端数据库类型，创建相应的连接实现。
-     * 支持MySQL、HSQLDB、H2和自研NATIVE引擎。</p>
+     * 支持HSQLDB、H2和自研NATIVE引擎。</p>
      * 
      * @param url JDBC连接URL
      * @param c 后端数据库连接对象（NATIVE引擎时可以为null）
@@ -115,9 +115,6 @@ public abstract class xlConnection implements Connection, Constants {
         String engine = c.getMetaData().getDatabaseProductName();
         DatabaseType dbType = DatabaseType.fromEngineName(engine);
         switch (dbType) {
-            case MYSQL:
-                // MySQL数据库使用xlConnectionMySQL
-                return new xlConnectionMySQL(url, c, schema);
             case HSQLDB:
                 return new xlConnectionHSQLDB(url, c);
             case H2:
@@ -613,9 +610,9 @@ public abstract class xlConnection implements Connection, Constants {
      */
     void startup() throws SQLException {
         try {
-            // 从URL中提取目录路径（去掉"jdbc:jsdiff:excel:"前缀）
+            // 从URL中提取目录路径（去掉"jdbc:xlsql:excel:"前缀）
             String dir = URL.substring(URL_PFX_XLS.length());
-            LOGGER.info("Mounting: " + dir + " using jdbc:jsdiff:excel");
+            LOGGER.info("Mounting: " + dir + " using jdbc:xlsql:excel");
             
             // 从目录创建数据库对象，扫描Excel文件
             datastore = xlDatabaseFactory.create(new File(dir), "xls");
@@ -665,7 +662,9 @@ public abstract class xlConnection implements Connection, Constants {
             // 在后端数据库中执行所有SQL语句
             try (Statement statement = dbCon.createStatement()) {
                 for (String sql : sqlStatements) {
-                    LOGGER.info("Executing SQL: " + sql);
+                    if(!sql.contains("INSERT")){
+                        LOGGER.info("Executing SQL: " + sql);
+                    }
                     statement.executeUpdate(sql);
                 }
             }

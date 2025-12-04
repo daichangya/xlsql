@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it
@@ -42,7 +42,7 @@ import com.jsdiff.xlsql.jdbc.DatabaseType;
  * 
  * <p>该类使用单例模式管理xlSQL的配置信息，包括：</p>
  * <ul>
- *   <li>数据库引擎配置（HSQLDB或MySQL）</li>
+ *   <li>数据库引擎配置（HSQLDB或H2）</li>
  *   <li>连接参数（URL、用户名、密码等）</li>
  *   <li>日志配置</li>
  *   <li>配置文件管理</li>
@@ -86,7 +86,7 @@ public class xlInstance {
 
     /** 日志文件路径 */
     private String log;
-    /** 数据库引擎名称（hsqldb或mysql） */
+    /** 数据库引擎名称（hsqldb、h2或native） */
     private String engine;
     /** 数据库路径 */
     private String database;
@@ -214,7 +214,7 @@ public class xlInstance {
      */
     private void createDefaultConfiguration() {
         file = getFile(getDefaultConfigPath());
-        this.engine = DatabaseType.H2.getName();
+        this.engine = DatabaseType.NATIVE.getName();
         this.database = System.getProperty("user.dir");
         this.log = getDefaultLogPath();
         setProperty("general.database", database);
@@ -423,7 +423,7 @@ public class xlInstance {
     /**
      * 连接到后端数据库引擎
      * 
-     * <p>加载并注册后端数据库驱动（HSQLDB或MySQL），然后建立连接。</p>
+     * <p>加载并注册后端数据库驱动（HSQLDB或H2），然后建立连接。</p>
      *
      * @return 到后端数据库的JDBC连接对象，如果连接失败则返回null
      */
@@ -480,7 +480,7 @@ public class xlInstance {
      * 
      * <p>初始化指定引擎的配置属性（驱动、URL、模式、用户、密码）。</p>
      *
-     * @param engine 引擎名称（如"hsqldb"或"mysql"）
+     * @param engine 引擎名称（如"hsqldb"、"h2"或"native"）
      */
     public void addEngine(String engine) {
         this.engine = engine;
@@ -514,7 +514,7 @@ public class xlInstance {
     /**
      * 获取当前配置的数据库引擎
      *
-     * @return 引擎名称（如"hsqldb"或"mysql"）
+     * @return 引擎名称（如"hsqldb"、"h2"或"native"）
      * @throws IllegalStateException 如果引擎未配置则抛出异常
      */
     public String getEngine() {
@@ -604,7 +604,7 @@ public class xlInstance {
      * 
      * <p>切换到指定的数据库引擎，引擎必须是支持的引擎之一。</p>
      *
-     * @param newengine 要设置的SQL引擎名称（如"hsqldb"或"mysql"）
+     * @param newengine 要设置的SQL引擎名称（如"hsqldb"、"h2"或"native"）
      * @throws xlException 如果引擎名称无效则抛出异常
      */
     public void setEngine(String newengine) throws xlException {

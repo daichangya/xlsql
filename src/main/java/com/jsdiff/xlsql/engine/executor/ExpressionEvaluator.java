@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -23,30 +23,20 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.CaseExpression;
-import net.sf.jsqlparser.expression.CastExpression;
-import net.sf.jsqlparser.expression.operators.relational.*;
-import net.sf.jsqlparser.schema.Column;
+import com.jsdiff.xlsql.engine.plan.TableInfo;
+
 import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.HexValue;
-import net.sf.jsqlparser.expression.JdbcNamedParameter;
-import net.sf.jsqlparser.expression.JdbcParameter;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.NullValue;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.StringValue;
-import net.sf.jsqlparser.expression.WhenClause;
 import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseAnd;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseLeftShift;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseOr;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseRightShift;
-import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseXor;
 import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
 import net.sf.jsqlparser.expression.operators.arithmetic.Division;
 import net.sf.jsqlparser.expression.operators.arithmetic.Modulo;
@@ -54,9 +44,19 @@ import net.sf.jsqlparser.expression.operators.arithmetic.Multiplication;
 import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
+import net.sf.jsqlparser.expression.operators.relational.Between;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
+import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
+import net.sf.jsqlparser.expression.operators.relational.MinorThan;
+import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-
-import com.jsdiff.xlsql.engine.plan.TableInfo;
 
 /**
  * ExpressionEvaluator - 表达式评估器
@@ -75,6 +75,9 @@ import com.jsdiff.xlsql.engine.plan.TableInfo;
  * @author daichangya
  */
 public class ExpressionEvaluator extends ExpressionVisitorAdapter {
+    
+    /** 日志记录器 */
+    private static final Logger logger = Logger.getLogger(ExpressionEvaluator.class.getName());
     
     /** 当前数据行 */
     private String[] row;
@@ -264,7 +267,10 @@ public class ExpressionEvaluator extends ExpressionVisitorAdapter {
     public void visit(EqualsTo equalsTo) {
         Object left = evaluateOperand(equalsTo.getLeftExpression());
         Object right = evaluateOperand(equalsTo.getRightExpression());
-        result = compareValues(left, right) == 0;
+        boolean equals = compareValues(left, right) == 0;
+        result = Boolean.valueOf(equals); // 确保返回Boolean类型
+        // 调试日志
+        logger.info("EqualsTo: left=" + left + ", right=" + right + ", result=" + equals);
     }
     
     public void visit(NotEqualsTo notEqualsTo) {
@@ -314,30 +320,97 @@ public class ExpressionEvaluator extends ExpressionVisitorAdapter {
     public void visit(InExpression inExpression) {
         Object left = evaluateOperand(inExpression.getLeftExpression());
         
+        // 检查是否是子查询（暂不支持）
         if (inExpression.getRightExpression() != null) {
-            // IN (subquery) - 暂不支持
-            result = false;
-            return;
+            // 检查是否是子查询（通常子查询是Select类型的表达式）
+            Expression rightExpr = inExpression.getRightExpression();
+            if (rightExpr.toString().toUpperCase().startsWith("SELECT")) {
+                // IN (subquery) - 暂不支持
+                result = false;
+                return;
+            }
+            // 如果不是子查询，可能是值列表，继续处理
         }
         
-        // JSqlParser 4.7的API可能不同，尝试多种方式获取右侧列表
+        // JSqlParser 4.7的API：使用反射获取getRightItemsList方法
         try {
-            // 尝试getRightItemsList方法
+            // 尝试使用反射获取getRightItemsList方法
             java.lang.reflect.Method getRightItemsList = inExpression.getClass().getMethod("getRightItemsList");
             Object rightItemsList = getRightItemsList.invoke(inExpression);
-            if (rightItemsList != null && rightItemsList instanceof ExpressionList) {
-                ExpressionList exprList = (ExpressionList) rightItemsList;
+            
+            if (rightItemsList != null) {
+                // 如果返回的是ExpressionList，直接使用
+                if (rightItemsList instanceof ExpressionList) {
+                    ExpressionList exprList = (ExpressionList) rightItemsList;
+                    List<Expression> items = exprList.getExpressions();
+                    if (items != null) {
+                        for (Expression item : items) {
+                            Object right = evaluateOperand(item);
+                            if (compareValues(left, right) == 0) {
+                                result = true;
+                                return;
+                            }
+                        }
+                    }
+                } else {
+                    // 尝试使用反射获取expressions（用于其他ItemsList实现）
+                    try {
+                        java.lang.reflect.Method getExpressions = rightItemsList.getClass().getMethod("getExpressions");
+                        @SuppressWarnings("unchecked")
+                        List<Expression> items = (List<Expression>) getExpressions.invoke(rightItemsList);
+                        if (items != null) {
+                            for (Expression item : items) {
+                                Object right = evaluateOperand(item);
+                                if (compareValues(left, right) == 0) {
+                                    result = true;
+                                    return;
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        // 如果方法不存在，记录警告
+                        logger.warning("Cannot get expressions from ItemsList: " + rightItemsList.getClass().getName() + ", error: " + e.getMessage());
+                    }
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            // getRightItemsList方法不存在，尝试解析getRightExpression
+            // 如果getRightExpression返回的是Parenthesis，尝试解析内部表达式
+            Expression rightExpr = inExpression.getRightExpression();
+            if (rightExpr instanceof Parenthesis) {
+                Parenthesis paren = (Parenthesis) rightExpr;
+                Expression innerExpr = paren.getExpression();
+                // 如果内部表达式是ExpressionList，解析它
+                if (innerExpr instanceof ExpressionList) {
+                    ExpressionList exprList = (ExpressionList) innerExpr;
+                    List<Expression> items = exprList.getExpressions();
+                    if (items != null) {
+                        for (Expression item : items) {
+                            Object right = evaluateOperand(item);
+                            if (compareValues(left, right) == 0) {
+                                result = true;
+                                return;
+                            }
+                        }
+                    }
+                }
+            } else if (rightExpr instanceof ExpressionList) {
+                // 直接是ExpressionList
+                ExpressionList exprList = (ExpressionList) rightExpr;
                 List<Expression> items = exprList.getExpressions();
-                for (Expression item : items) {
-                    Object right = evaluateOperand(item);
-                    if (compareValues(left, right) == 0) {
-                        result = true;
-                        return;
+                if (items != null) {
+                    for (Expression item : items) {
+                        Object right = evaluateOperand(item);
+                        if (compareValues(left, right) == 0) {
+                            result = true;
+                            return;
+                        }
                     }
                 }
             }
         } catch (Exception e) {
-            // 如果方法不存在，尝试其他方式或返回false
+            // 如果反射失败，记录警告
+            logger.warning("Cannot get right items list from InExpression: " + e.getMessage());
         }
         
         result = false;
@@ -429,6 +502,16 @@ public class ExpressionEvaluator extends ExpressionVisitorAdapter {
         }
     }
     
+    /**
+     * 默认visit方法，处理未覆盖的表达式类型
+     * 如果ExpressionVisitorAdapter有默认实现，这个方法会被调用
+     */
+    public void visit(Expression expression) {
+        // 如果表达式类型没有被特定的visit方法处理，记录警告并返回null
+        logger.warning("Unhandled expression type: " + expression.getClass().getName() + ", expression: " + expression);
+        result = null;
+    }
+    
     // ========== 辅助方法 ==========
     
     /**
@@ -439,7 +522,9 @@ public class ExpressionEvaluator extends ExpressionVisitorAdapter {
             return null;
         }
         try {
-            return evaluate(expression, row, columnIndexMap, tables);
+            // 创建新的ExpressionEvaluator实例，避免result被覆盖
+            ExpressionEvaluator evaluator = new ExpressionEvaluator();
+            return evaluator.evaluate(expression, row, columnIndexMap, tables);
         } catch (SQLException e) {
             return null;
         }
@@ -457,8 +542,13 @@ public class ExpressionEvaluator extends ExpressionVisitorAdapter {
      * 评估操作数为布尔值
      */
     private boolean evaluateOperandAsBoolean(Expression expression) {
+        if (expression == null) {
+            return false;
+        }
         try {
-            return evaluateAsBoolean(expression, row, columnIndexMap, tables);
+            // 创建新的ExpressionEvaluator实例，避免result被覆盖
+            ExpressionEvaluator evaluator = new ExpressionEvaluator();
+            return evaluator.evaluateAsBoolean(expression, row, columnIndexMap, tables);
         } catch (SQLException e) {
             return false;
         }
@@ -526,9 +616,29 @@ public class ExpressionEvaluator extends ExpressionVisitorAdapter {
             return 1;
         }
         
+        // 先尝试字符串比较（如果都是字符串）
+        if (left instanceof String && right instanceof String) {
+            return ((String) left).compareTo((String) right);
+        }
+        
+        // 尝试数值比较
         try {
             BigDecimal leftNum = toBigDecimal(left);
             BigDecimal rightNum = toBigDecimal(right);
+            // 检查是否真的都是数字（通过比较原始字符串和BigDecimal字符串）
+            String leftStr = left.toString().trim();
+            String rightStr = right.toString().trim();
+            String leftNumStr = leftNum.toString();
+            String rightNumStr = rightNum.toString();
+            
+            // 如果原始字符串和BigDecimal字符串不匹配，说明不是纯数字，使用字符串比较
+            if (!leftStr.equals(leftNumStr) && !leftStr.replaceFirst("^0+", "").equals(leftNumStr.replaceFirst("^0+", ""))) {
+                return leftStr.compareTo(rightStr);
+            }
+            if (!rightStr.equals(rightNumStr) && !rightStr.replaceFirst("^0+", "").equals(rightNumStr.replaceFirst("^0+", ""))) {
+                return leftStr.compareTo(rightStr);
+            }
+            
             return leftNum.compareTo(rightNum);
         } catch (NumberFormatException e) {
             // 不是数字，进行字符串比较

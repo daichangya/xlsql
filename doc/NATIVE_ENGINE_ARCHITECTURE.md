@@ -2,7 +2,7 @@
 
 ## 概述
 
-Native 引擎是 xlSQL 项目中的自研 SQL 执行引擎，不依赖任何外部数据库（HSQLDB/H2/MySQL），直接基于 Excel 数据执行 SQL 查询。本文档详细说明 Native 引擎如何读取 Excel 文件并进行查询。
+Native 引擎是 xlSQL 项目中的自研 SQL 执行引擎，不依赖任何外部数据库（HSQLDB/H2），直接基于 Excel 数据执行 SQL 查询。本文档详细说明 Native 引擎如何读取 Excel 文件并进行查询。
 
 ## 目录
 
@@ -44,7 +44,7 @@ loadTableData() (按需加载Excel数据)
 1. **xlConnectionNative** - Native 引擎的连接实现
 2. **NativeSqlEngine** - SQL 执行引擎接口实现
 3. **xlNativeSelect** - 查询执行器
-4. **MySQLSqlParser** - 基于 JSqlParser 的 SQL 解析器
+4. **MySQLSqlParser** - 基于 JSqlParser 的 SQL 解析器（支持MySQL语法，但引擎本身不依赖MySQL数据库）
 5. **PlainSelectAdapter** - PlainSelect 到 QueryPlan 的适配器
 6. **TableInfo** - 表数据的内存表示
 7. **ADatabase/xlDatabase** - Excel 数据存储抽象
@@ -292,7 +292,7 @@ return builder.build(rows, plan, columnIndexMap, tables);
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    用户SQL查询                               │
-│          SELECT * FROM `workbook`.`sheet`                   │
+│          SELECT * FROM workbook_sheet                        │
 └──────────────────────┬──────────────────────────────────────┘
                        ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -494,11 +494,11 @@ TableInfo
 ### 简单查询
 
 ```sql
-SELECT * FROM `test1`.`Sheet1` LIMIT 10
+SELECT * FROM test1_Sheet1 LIMIT 10
 ```
 
 **执行流程：**
-1. 解析 SQL，识别表 `test1.Sheet1`
+1. 解析 SQL，识别表 `test1_Sheet1`（下划线格式）
 2. 加载 `test1.xls` 文件的 `Sheet1` 工作表数据
 3. 应用 LIMIT 10，只返回前10行
 4. 返回结果集
@@ -507,8 +507,8 @@ SELECT * FROM `test1`.`Sheet1` LIMIT 10
 
 ```sql
 SELECT t1.id, t1.name, t2.value 
-FROM `workbook1`.`sheet1` t1
-INNER JOIN `workbook2`.`sheet2` t2 
+FROM workbook1_sheet1 t1
+INNER JOIN workbook2_sheet2 t2 
 ON t1.id = t2.foreign_id
 WHERE t1.status = 'active'
 ```
@@ -525,7 +525,7 @@ WHERE t1.status = 'active'
 
 ```sql
 SELECT category, COUNT(*), SUM(amount), AVG(price)
-FROM `sales`.`data`
+FROM sales_data
 GROUP BY category
 HAVING COUNT(*) > 10
 ORDER BY SUM(amount) DESC

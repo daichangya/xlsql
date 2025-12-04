@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -57,7 +57,7 @@ public class xlHsqldbFormatter extends ASqlFormatter {
                 sql = sql + ",";
             }
 
-            sql = sql + "\"" + co[i] + "\" ";
+            sql = sql + co[i] + " ";
 
             // 为 HSQLDB 处理 VARCHAR 类型，指定默认长度
             if (ty[i].equalsIgnoreCase("VARCHAR")) {
@@ -95,9 +95,9 @@ public class xlHsqldbFormatter extends ASqlFormatter {
         String tablename;
 
         if (s.equalsIgnoreCase("sa")) {
-            tablename = "\"" + t + "\"";
+            tablename = t;
         } else {
-            tablename = "\"" + s + "." + t + "\"";
+            tablename = s + "_" + t;
         }
 
         return tablename;

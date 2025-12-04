@@ -19,14 +19,9 @@ import java.util.logging.Logger;
 import com.jsdiff.xlsql.database.ADatabase;
 import com.jsdiff.xlsql.database.xlDatabaseException;
 import com.jsdiff.xlsql.engine.parser.NativeSqlParser;
+import com.jsdiff.xlsql.engine.plan.JoinInfo;
 import com.jsdiff.xlsql.engine.plan.QueryPlan;
 import com.jsdiff.xlsql.engine.plan.TableInfo;
-import com.jsdiff.xlsql.engine.plan.JoinInfo;
-import com.jsdiff.xlsql.engine.executor.JoinExecutor;
-import com.jsdiff.xlsql.engine.executor.AggregationExecutor;
-import com.jsdiff.xlsql.engine.executor.ConditionEvaluator;
-import com.jsdiff.xlsql.engine.executor.ResultSetBuilder;
-import com.jsdiff.xlsql.engine.executor.PlainSelectAdapter;
 import com.jsdiff.xlsql.engine.resultset.xlNativeResultSet;
 
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -108,9 +103,9 @@ public class xlNativeSelect {
         // 3. 执行FROM和JOIN
         List<String[]> rows = executeFromAndJoins(plan, tables);
         
-        // 4. 应用WHERE条件
-        if (plan.getWhereClause() != null) {
-            rows = applyWhereCondition(rows, plan, tables);
+        // 4. 应用WHERE条件（直接使用JSqlParser的Expression）
+        if (plainSelect.getWhere() != null) {
+            rows = applyWhereCondition(rows, plainSelect.getWhere(), tables);
         }
         
         // 5. 执行聚合和分组
@@ -276,23 +271,30 @@ public class xlNativeSelect {
     }
     
     /**
-     * 应用WHERE条件过滤
+     * 应用WHERE条件过滤（使用JSqlParser Expression）
      * 
      * @param rows 数据行列表
-     * @param plan 查询计划
+     * @param whereExpression WHERE表达式
      * @param tables 表信息列表
      * @return 过滤后的数据行列表
      * @throws SQLException 如果过滤失败则抛出异常
      */
-    private List<String[]> applyWhereCondition(List<String[]> rows, QueryPlan plan,
+    private List<String[]> applyWhereCondition(List<String[]> rows, 
+                                               net.sf.jsqlparser.expression.Expression whereExpression,
                                                List<TableInfo> tables) throws SQLException {
         ConditionEvaluator evaluator = new ConditionEvaluator();
         Map<String, Integer> columnIndexMap = buildColumnIndexMap(tables);
         
         List<String[]> filteredRows = new ArrayList<>();
         
-        for (String[] row : rows) {
-            if (evaluator.evaluate(plan.getWhereClause(), row, columnIndexMap, tables)) {
+        for (int i = 0; i < rows.size(); i++) {
+            String[] row = rows.get(i);
+            boolean matches = evaluator.evaluate(whereExpression, row, columnIndexMap, tables);
+            // 调试：打印WHERE条件评估结果
+            if (rows.size() <= 5) { // 只对少量数据打印调试信息
+                logger.info("Row " + i + " WHERE evaluation: " + matches + ", row data: " + java.util.Arrays.toString(row));
+            }
+            if (matches) {
                 filteredRows.add(row);
             }
         }

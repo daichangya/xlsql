@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -28,7 +28,7 @@ import com.jsdiff.xlsql.jdbc.DatabaseType;
 /**
  * ISqlExecutionEngine - SQL执行引擎接口
  * 
- * <p>定义统一的SQL执行接口，支持外部数据库引擎（HSQLDB/H2/MySQL）和自研引擎。
+ * <p>定义统一的SQL执行接口，支持外部数据库引擎（HSQLDB/H2）和自研引擎。
  * 通过此接口，xlSQL可以统一管理不同的SQL执行后端。</p>
  * 
  * @author daichangya

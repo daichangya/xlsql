@@ -37,7 +37,7 @@ mvn clean install
 - **职责**：实现 `java.sql.Driver` 接口
 - **规范**：
   - 驱动类名：`com.jsdiff.xlsql.jdbc.xlDriver`
-  - URL格式：`jdbc:jsdiff:excel:/path/`
+  - URL格式：`jdbc:xlsql:excel:/path/`
 
 ## 4. 测试指南
 ### 单元测试

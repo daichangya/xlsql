@@ -6,7 +6,7 @@
 
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
 
     <name>xlSQL</name>
     <description>A JDBC driver for Excel files, allowing SQL operations on Excel worksheets.</description>
@@ -55,12 +55,6 @@
             <version>2.2.224</version> <!-- Compatible with Java 8, better SQL compatibility and performance -->
         </dependency>
 
-        <!-- MySQL Connector for MySQL database engine support -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>8.0.33</version>
-        </dependency>
 
         <!-- Apache POI for reading and writing Excel files -->
         <dependency>

@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -31,8 +31,6 @@ import java.util.Set;
 import com.jsdiff.xlsql.engine.model.AggregateFunction;
 import com.jsdiff.xlsql.engine.model.AggregateType;
 import com.jsdiff.xlsql.engine.plan.QueryPlan;
-import com.jsdiff.xlsql.engine.plan.TableInfo;
-import com.jsdiff.xlsql.engine.executor.ConditionEvaluator;
 
 /**
  * AggregationExecutor - 聚合执行器
@@ -97,9 +95,27 @@ public class AggregationExecutor {
             Map<String, Object> aggregateValues = new HashMap<>();
             for (AggregateFunction func : plan.getAggregateFunctions()) {
                 Object value = calculateAggregate(group, func, columnIndexMap);
-                String key = func.getAlias() != null ? func.getAlias() : func.getDisplayName();
-                aggregateValues.put(key, value);
-                aggregateValues.put(func.getDisplayName(), value); // 也使用显示名称作为键
+                String alias = func.getAlias();
+                String displayName = func.getDisplayName();
+                String functionExpression = func.getFunctionExpression();
+                
+                // 使用别名作为键（如果有）
+                if (alias != null && !alias.isEmpty()) {
+                    aggregateValues.put(alias, value);
+                    aggregateValues.put(alias.toUpperCase(), value); // 也存储大写版本
+                }
+                
+                // 使用显示名称作为键
+                aggregateValues.put(displayName, value);
+                aggregateValues.put(displayName.toUpperCase(), value); // 也存储大写版本
+                
+                // 使用函数表达式作为键（用于HAVING子句中的 COUNT(*) 等）
+                aggregateValues.put(functionExpression, value);
+                aggregateValues.put(functionExpression.toUpperCase(), value); // 也存储大写版本
+                
+                // 也存储去掉空格的版本（用于匹配）
+                aggregateValues.put(functionExpression.replaceAll("\\s+", ""), value);
+                aggregateValues.put(functionExpression.replaceAll("\\s+", "").toUpperCase(), value);
             }
             
             // 应用HAVING过滤
@@ -134,9 +150,27 @@ public class AggregationExecutor {
         Map<String, Object> aggregateValues = new HashMap<>();
         for (AggregateFunction func : plan.getAggregateFunctions()) {
             Object value = calculateAggregate(rows, func, columnIndexMap);
-            String key = func.getAlias() != null ? func.getAlias() : func.getDisplayName();
-            aggregateValues.put(key, value);
-            aggregateValues.put(func.getDisplayName(), value);
+            String alias = func.getAlias();
+            String displayName = func.getDisplayName();
+            String functionExpression = func.getFunctionExpression();
+            
+            // 使用别名作为键（如果有）
+            if (alias != null && !alias.isEmpty()) {
+                aggregateValues.put(alias, value);
+                aggregateValues.put(alias.toUpperCase(), value);
+            }
+            
+            // 使用显示名称作为键
+            aggregateValues.put(displayName, value);
+            aggregateValues.put(displayName.toUpperCase(), value);
+            
+            // 使用函数表达式作为键
+            aggregateValues.put(functionExpression, value);
+            aggregateValues.put(functionExpression.toUpperCase(), value);
+            
+            // 也存储去掉空格的版本
+            aggregateValues.put(functionExpression.replaceAll("\\s+", ""), value);
+            aggregateValues.put(functionExpression.replaceAll("\\s+", "").toUpperCase(), value);
         }
         
         // 构建结果行

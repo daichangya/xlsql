@@ -4,18 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.jsdiff.xlsql.engine.connection.xlConnectionNative;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.jsdiff.xlsql.database.xlInstance;
+import com.jsdiff.xlsql.base.NativeEngineTestBase;
+import com.jsdiff.xlsql.engine.connection.xlConnectionNative;
 
 /**
  * xlConnectionNativeTest - 自研SQL引擎连接测试
@@ -24,37 +20,7 @@ import com.jsdiff.xlsql.database.xlInstance;
  * 
  * @author daichangya
  */
-public class xlConnectionNativeTest {
-
-    private Connection con;
-    private xlInstance instance;
-
-    @BeforeEach
-    public void setUp() throws ClassNotFoundException, SQLException, com.jsdiff.xlsql.database.xlException {
-        // 确保xlDriver已注册
-        Class.forName(Constants.DRIVER);
-
-        instance = xlInstance.getInstance();
-        instance.setEngine("native"); // 设置引擎为自研引擎
-        // 自研引擎不需要驱动和URL配置
-
-        // 使用xlDriver连接，将自动使用xlConnectionNative
-        String url = Constants.URL_PFX_XLS + System.getProperty("user.dir");
-        con = DriverManager.getConnection(url);
-    }
-
-    @AfterEach
-    public void tearDown() throws SQLException {
-        if (con != null && !con.isClosed()) {
-            con.close();
-        }
-        // 重置xlInstance为默认引擎
-        try {
-            instance.setEngine("h2"); // 重置为H2，避免影响其他测试
-        } catch (com.jsdiff.xlsql.database.xlException e) {
-            // 忽略重置引擎时的异常
-        }
-    }
+public class xlConnectionNativeTest extends NativeEngineTestBase {
 
     @Test
     public void testConnection() throws SQLException {
@@ -82,7 +48,7 @@ public class xlConnectionNativeTest {
         try {
             // 尝试查询（如果目录中有Excel文件）
             // 这里只是测试连接是否正常工作，不保证有数据
-            ResultSet rs = stmt.executeQuery("SELECT * FROM \"SA\".\"Sheet1\"");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM SA_Sheet1");
             assertNotNull(rs, "ResultSet should not be null");
             // 如果查询成功，说明自研引擎正常工作
         } catch (SQLException e) {

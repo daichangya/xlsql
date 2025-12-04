@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it under 
@@ -30,7 +30,7 @@ import java.io.FilenameFilter;
  * <p>该类实现了FilenameFilter接口，用于过滤出Excel文件（.xls和.xlsx格式）。
  * 目录会被接受，以便递归搜索。</p>
  * 
- * <p>参考：https://excel.jsdiff.com/servlets/ProjectIssues issue 33</p>
+ * <p>参考：https://xlsql.jsdiff.com/servlets/ProjectIssues issue 33</p>
  * 
  * @author daichangya
  */

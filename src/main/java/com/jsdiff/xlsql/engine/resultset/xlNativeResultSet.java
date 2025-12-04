@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -22,7 +22,15 @@ package com.jsdiff.xlsql.engine.resultset;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.SQLType;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * xlNativeResultSet - 自研引擎的结果集实现
@@ -65,12 +73,17 @@ public class xlNativeResultSet implements ResultSet {
         this.columnNames = columnNames != null ? columnNames : new String[0];
         this.columnTypes = columnTypes != null ? columnTypes : new String[0];
         this.values = values != null ? values : new String[0][0];
+        // 直接使用传入的rowCount参数，因为它反映了实际的数据行数（来自selectedRows.size()）
         this.rowCount = rowCount;
     }
     
     @Override
     public boolean next() throws SQLException {
         checkClosed();
+        // 如果rowCount为0，直接返回false
+        if (rowCount == 0) {
+            return false;
+        }
         if (currentRow < rowCount - 1) {
             currentRow++;
             return true;

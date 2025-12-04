@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -19,19 +19,21 @@
 */
 package com.jsdiff.xlsql.engine;
 
-import com.jsdiff.xlsql.database.xlInstance;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static com.jsdiff.xlsql.jdbc.Constants.DRIVER;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.jsdiff.xlsql.database.xlInstance;
 
 /**
  * NativeAggregateQueryTest - Native引擎聚合查询测试
@@ -47,10 +49,10 @@ public class NativeAggregateQueryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+        Class.forName(DRIVER);
         instance = xlInstance.getInstance();
         instance.setEngine("native");
-        String url = "jdbc:xlsql:xls:" + System.getProperty("user.dir");
+        String url = "jdbc:xlsql:excel:" + System.getProperty("user.dir");
         con = DriverManager.getConnection(url);
     }
 
@@ -65,7 +67,7 @@ public class NativeAggregateQueryTest {
     @Test
     public void testCount() throws SQLException {
         Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT COUNT(*) as cnt FROM \"test1.Sheet1\"");
+        ResultSet rs = stmt.executeQuery("SELECT COUNT(*) as cnt FROM test1_Sheet1");
         assertNotNull(rs);
         
         assertTrue(rs.next());
@@ -80,7 +82,7 @@ public class NativeAggregateQueryTest {
     public void testGroupBy() throws SQLException {
         Statement stmt = con.createStatement();
         // 假设第一列可以用于分组
-        ResultSet rs = stmt.executeQuery("SELECT * FROM \"test1.Sheet1\" GROUP BY 1");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 GROUP BY 1");
         assertNotNull(rs);
         
         // GROUP BY应该返回分组后的行

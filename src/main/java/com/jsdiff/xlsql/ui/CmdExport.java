@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -19,25 +19,24 @@
 */
 package com.jsdiff.xlsql.ui;
 
-import com.jsdiff.xlsql.database.xlDatabaseException;
-import com.jsdiff.xlsql.database.xlException;
-import com.jsdiff.xlsql.util.xlFile;
-
 import java.io.File;
 import java.io.PrintStream;
 import java.sql.Connection;
 
+import com.jsdiff.xlsql.database.xlDatabaseException;
+import com.jsdiff.xlsql.database.xlException;
+import com.jsdiff.xlsql.util.xlFile;
+
 
 /**
- * export [ ALL|schema|table ] AS [hsqldb|mysql|XML] TO [out|File|jdbc:].
+ * export [ ALL|schema|table ] AS [hsqldb|XML] TO [out|File|jdbc:].
  * 
  * @author daichangya
  */
 public class CmdExport implements IStateCommand {
     private static final String EXPORT = "export";
     private static final int HSQLDB = 1;
-    private static final int MYSQL = 2;
-    private static final int XML = 3;
+    private static final int XML = 2;
     private static final int OUT = 1;
     private static final int FILE = 2;
     private static final int JDBC = 3;
@@ -150,13 +149,11 @@ public class CmdExport implements IStateCommand {
             }
         }
 
-        // [ hsqldb | mysql | XML ]
+        // [ hsqldb | XML ]
         String as = xldba.commandline.getOptionValues(EXPORT)[2];
 
         if ("hsqldb".equalsIgnoreCase(as)) {
             format = HSQLDB;
-        } else if ("mysql".equalsIgnoreCase(as)) {
-            format = MYSQL;
         } else if ("XML".equalsIgnoreCase(as)) {
             format = XML;
         } else {

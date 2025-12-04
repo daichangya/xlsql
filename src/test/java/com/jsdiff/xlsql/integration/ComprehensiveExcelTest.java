@@ -1,3 +1,24 @@
+/*jsdiff.com
+
+ Copyright (C) 2025 jsdiff
+   jsdiff Information Sciences
+   http://xlsql.jsdiff.com
+   daichangya@163.com
+
+ This program is free software; you can redistribute it and/or modify it 
+ under the terms of the GNU General Public License as published by the Free 
+ Software Foundation; either version 2 of the License, or (at your option) 
+ any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+ more details. You should have received a copy of the GNU General Public 
+ License along with this program; if not, write to the Free Software 
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*/
+package com.jsdiff.xlsql.integration;
+
 import static com.jsdiff.xlsql.jdbc.Constants.DRIVER;
 import static com.jsdiff.xlsql.jdbc.Constants.URL_PFX_XLS;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,8 +39,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Comprehensive unit tests for Excel JDBC functionality
- * Tests metadata, table listing, and data querying
+ * ComprehensiveExcelTest - Excel JDBC功能综合测试
+ * 
+ * <p>测试元数据、表列表和数据查询功能。
+ * 这是一个集成测试，使用真实的Excel文件。</p>
+ * 
+ * @author daichangya
  */
 public class ComprehensiveExcelTest {
 
@@ -33,8 +58,9 @@ public class ComprehensiveExcelTest {
         // 加载驱动
         Class.forName(DRIVER);
         
-        // 连接到当前目录
-        url = URL_PFX_XLS + System.getProperty("user.dir");
+        // 连接到database目录
+        String databaseDir = System.getProperty("user.dir") + File.separator + "database";
+        url = URL_PFX_XLS + databaseDir;
         con = DriverManager.getConnection(url);
     }
 
@@ -47,12 +73,11 @@ public class ComprehensiveExcelTest {
 
     @Test
     public void testTestFileExists() {
-        File testFile = new File(DATA_XLS);
-        // 如果文件不存在，跳过此测试（使用assumeTrue）
-        // 或者只是记录警告，不阻止测试继续
-        if (!testFile.exists()) {
-            System.out.println("警告: 测试文件 " + DATA_XLS + " 不存在，某些测试可能失败");
-        }
+        String databaseDir = System.getProperty("user.dir") + File.separator + "database";
+        File testFile = new File(databaseDir, DATA_XLS);
+        // 测试数据文件应该在@BeforeAll中已生成，如果不存在则抛出异常
+        assertTrue(testFile.exists(), 
+            "测试数据文件 database/" + DATA_XLS + " 不存在。这不应该发生，因为@BeforeAll应该已经生成了测试数据。");
     }
 
     @Test
@@ -96,8 +121,9 @@ public class ComprehensiveExcelTest {
 
     @Test
     public void testQueryExcelData() throws SQLException {
+        // 使用下划线分隔工作簿和工作表名称
         try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"test1.Sheet1\" LIMIT 1")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 LIMIT 1")) {
             
             assertNotNull(rs, "ResultSet should not be null");
             
@@ -129,9 +155,9 @@ public class ComprehensiveExcelTest {
 
     @Test
     public void testQueryWithAlternativeTable() throws SQLException {
-        // 尝试查询另一个可能的表名
+        // 尝试查询另一个可能的表名（使用下划线分隔）
         try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"test2.Sheet1\" LIMIT 1")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM test2_Sheet1 LIMIT 1")) {
             
             assertNotNull(rs, "ResultSet should not be null");
             
@@ -153,8 +179,9 @@ public class ComprehensiveExcelTest {
 
     @Test
     public void testResultSetNavigation() throws SQLException {
+        // 使用下划线分隔工作簿和工作表名称
         try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"test1.Sheet1\" LIMIT 5")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 LIMIT 5")) {
             
             assertNotNull(rs, "ResultSet should not be null");
             
@@ -175,3 +202,4 @@ public class ComprehensiveExcelTest {
         }
     }
 }
+

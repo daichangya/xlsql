@@ -1,6 +1,6 @@
 /*
  * x l S Q L  
- * (c) daichangya, excel.jsdiff.com
+ * (c) daichangya, xlsql.jsdiff.com
  * See xlSQL-license.txt for license details
  *
  */
@@ -145,6 +145,7 @@ public class xlStatement implements Statement {
     * Implements method in interface java.sql.Statement
     * @see Statement#executeQuery
     */
+    @Override
     public ResultSet executeQuery(String sql) throws SQLException {
         ResultSet dbRs = dbStm.executeQuery(sql);
         ResultSet rs = new xlResultSet(this, dbRs);
@@ -155,6 +156,7 @@ public class xlStatement implements Statement {
     * Implements method in interface java.sql.Statement
     * @see Statement#executeUpdate
     */
+    @Override
     public int executeUpdate(String sql) throws SQLException {
         int ret = 0;
         String[] sqlCommand = sql.split("[;]");

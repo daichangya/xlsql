@@ -14,7 +14,7 @@
 ### 2.2 获取 Excel JDBC 驱动
 获取驱动文件：
 ```
-https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/4.0-SNAPSHOT/xlsql-2.0-20250827.014816-1.jar 
+https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/5.0-SNAPSHOT/xlsql-2.0-20250827.014816-1.jar 
 ```
 
 
@@ -29,7 +29,7 @@ https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/4.0-SNA
 2. 在 **Settings** 标签页中填写以下信息：
     - **Driver Name**: Excel JDBC Driver
     - **Class Name**: `com.jsdiff.xlsql.jdbc.xlDriver`
-    - **URL Template**: `jdbc:jsdiff:excel:{path}`
+    - **URL Template**: `jdbc:xlsql:excel:{path}`
     - **Port**: (留空)
    
 ![dbeaver1](dbeaver1.png)
@@ -52,12 +52,12 @@ https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/4.0-SNA
 1. **Driver**: 选择之前创建的 "Excel JDBC Driver"
 2. **JDBC URL**: 输入 Excel 文件路径
    ```
-   jdbc:jsdiff:excel:/path
+   jdbc:xlsql:excel:/path
    ```
 
    示例：
    ```
-   jdbc:jsdiff:excel:/Users/username/Documents
+   jdbc:xlsql:excel:/Users/username/Documents
    ```
 
 
@@ -75,20 +75,20 @@ https://central.sonatype.com/repository/maven-snapshots/com/jsdiff/xlsql/4.0-SNA
 - 表的列对应 Excel 中的第一行标题
 
 ### 5.2 执行 SQL 查询
-在 SQL 编辑器中可以执行标准 SQL 查询：（特别注意标名称 and 字段名称都要加双引号）
+在 SQL 编辑器中可以执行标准 SQL 查询：（使用下划线格式，表名和字段名无需引号）
 
 ```sql
--- 查询所有数据
-SELECT * FROM "test.Sheet1";
+-- 查询所有数据（使用下划线格式，无需引号）
+SELECT * FROM test1_Sheet1;
 
 -- 条件查询
-SELECT * FROM "test.Sheet1" WHERE "column1" = 'value';
+SELECT * FROM test1_Sheet1 WHERE column1 = 'value';
 
 -- 聚合查询
-SELECT COUNT(*) FROM "test.Sheet1";
+SELECT COUNT(*) FROM test1_Sheet1;
 
 -- 排序查询
-SELECT * FROM "test.Sheet1" ORDER BY "column1";
+SELECT * FROM test1_Sheet1 ORDER BY column1;
 ```
 
 ![dbeaver2](dbeaver2.png)
@@ -194,12 +194,12 @@ dbeaver -vmargs -Dorg.jkiss.dbeaver.debug=true
 
 | DBeaver 版本 | Excel JDBC 驱动版本 | 兼容性 |
 |--------------|---------------------|--------|
-| 21.x         | 4.0-SNAPSHOT        | ✓      |
-| 22.x         | 4.0-SNAPSHOT        | ✓      |
+| 21.x         | 5.0-SNAPSHOT        | ✓      |
+| 22.x         | 5.0-SNAPSHOT        | ✓      |
 
 ## 12. 更新日志
 
-### 版本 4.0-SNAPSHOT
+### 版本 5.0-SNAPSHOT
 - 初始版本
 - 支持基本的 CRUD 操作
 - 支持 .xls .xlsx 格式文件
@@ -207,4 +207,4 @@ dbeaver -vmargs -Dorg.jkiss.dbeaver.debug=true
 
 ---
 
-**注意**: 本文档基于 Excel JDBC 驱动版本 4.0-SNAPSHOT 编写，具体功能可能因版本更新而有所变化。建议在使用前确认当前版本的功能特性。
+**注意**: 本文档基于 Excel JDBC 驱动版本 5.0-SNAPSHOT 编写，具体功能可能因版本更新而有所变化。建议在使用前确认当前版本的功能特性。

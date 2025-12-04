@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it under 
@@ -34,7 +34,7 @@ import com.jsdiff.xlsql.jdbc.DatabaseType;
  * xlSqlSelectFactory - SQL查询对象工厂类
  * 
  * <p>该类提供工厂方法用于创建不同类型的SQL查询对象。
- * 根据数据库类型（hsqldb或mysql）创建相应的查询实现。</p>
+ * 根据数据库类型（hsqldb或h2）创建相应的查询实现。</p>
  * 
  * @author daichangya
  */
@@ -46,11 +46,10 @@ public class xlSqlSelectFactory {
      * <ul>
      *   <li>"hsqldb" - 创建xlHsqldbSelect实例</li>
      *   <li>"h2" - 创建xlH2Select实例</li>
-     *   <li>"mysql" - 创建xlMySQLSelect实例</li>
      *   <li>"native" - 返回null（自研引擎不需要ASqlSelect）</li>
      * </ul>
      * 
-     * @param type 数据库类型（"hsqldb"、"h2"、"mysql"或"native"）
+     * @param type 数据库类型（"hsqldb"、"h2"或"native"）
      * @param con JDBC连接对象（native引擎时可以为null）
      * @return SQL查询对象（ASqlSelect实现），native引擎返回null
      * @throws IllegalArgumentException 如果类型不支持则抛出异常
@@ -67,10 +66,6 @@ public class xlSqlSelectFactory {
             case H2:
                 // 创建H2查询对象
                 ret = new xlH2Select(con);
-                break;
-            case MYSQL:
-                // 创建MySQL查询对象
-                ret = new xlMySQLSelect(con);
                 break;
             case NATIVE:
                 // 自研引擎不需要ASqlSelect，返回null

@@ -3,12 +3,11 @@ package com.jsdiff.xlsql.jdbc;
 /**
  * 数据库类型枚举
  * 
- * <p>定义了xlSQL支持的数据库类型，包括MySQL、H2、HSQLDB和自研NATIVE引擎。</p>
+ * <p>定义了xlSQL支持的数据库类型，包括H2、HSQLDB和自研NATIVE引擎。</p>
+ * 
+ * @author daichangya
  */
 public enum DatabaseType {
-    /** MySQL数据库类型 */
-    MYSQL("mysql","MySQL"),
-    
     /** H2数据库类型 */
     H2("h2","H2"),
     

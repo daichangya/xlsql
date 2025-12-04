@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
  * SQL formatter for H2 database engine.
  * Generates H2-compatible SQL statements for schema, table, and data operations.
  * 
- * <p>H2与HSQLDB在SQL语法上高度兼容，支持相同的表名引用格式（双引号）和数据类型。
- * 因此大部分SQL生成逻辑与HSQLDB相同。</p>
+ * <p>H2使用下划线分隔工作簿和工作表名称（如：workbook_sheet），
+ * 类似MySQL实现，避免使用双引号。SQL语法简洁易读。</p>
  *
  * @author daichangya
  */
@@ -69,7 +69,7 @@ public class xlH2Formatter extends ASqlFormatter {
                 sql = sql + ",";
             }
 
-            sql = sql + "\"" + co[i] + "\" ";
+            sql = sql + co[i] + " ";
 
             // 为 H2 处理 VARCHAR 类型，指定默认长度（与HSQLDB相同）
             if (ty[i].equalsIgnoreCase("VARCHAR")) {
@@ -103,21 +103,21 @@ public class xlH2Formatter extends ASqlFormatter {
     }
 
     /**
-     * Generates table name for H2 with double quote escaping.
-     * H2与HSQLDB使用相同的表名引用格式（双引号）。
+     * Generates table name for H2 using underscore separator.
+     * H2使用下划线分隔工作簿和工作表名称，类似MySQL，避免使用双引号。
      * 
-     * @param s schema name
-     * @param t table name
-     * @return formatted table name with double quotes: "schema.table" or "table"
+     * @param s schema name (workbook name)
+     * @param t table name (sheet name)
+     * @return formatted table name: schema_table or table
      */
     @Override
     protected String getTableName(String s, String t) {
         String tablename;
 
         if (s.equalsIgnoreCase("sa")) {
-            tablename = "\"" + t + "\"";
+            tablename = t;
         } else {
-            tablename = "\"" + s + "." + t + "\"";
+            tablename = s + "_" + t;
         }
 
         return tablename;

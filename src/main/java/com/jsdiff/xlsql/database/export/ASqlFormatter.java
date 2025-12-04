@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -65,7 +65,7 @@ public abstract class ASqlFormatter {
                 sql = sql + ",";
             }
 
-            sql = sql +"\"" +co[i] + "\" " + ty[i];
+            sql = sql + co[i]  + ty[i];
         }
 
         sql = sql + " );";

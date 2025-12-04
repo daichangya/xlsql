@@ -1,6 +1,6 @@
 /*
  * x l S Q L  
- * (c) daichangya, excel.jsdiff.com
+ * (c) daichangya, xlsql.jsdiff.com
  * See xlSQL-license.txt for license details
  *
  */

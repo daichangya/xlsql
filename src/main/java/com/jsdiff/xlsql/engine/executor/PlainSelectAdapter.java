@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -37,14 +37,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.select.AllColumns;
-import net.sf.jsqlparser.statement.select.AllTableColumns;
-import net.sf.jsqlparser.statement.select.Join;
-import net.sf.jsqlparser.statement.select.Limit;
-import net.sf.jsqlparser.statement.select.OrderByElement;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.SelectItem;
-import net.sf.jsqlparser.statement.select.SelectItemVisitorAdapter;
+import net.sf.jsqlparser.statement.select.*;
 
 /**
  * PlainSelectAdapter - PlainSelect到QueryPlan的适配器
@@ -104,18 +97,25 @@ public class PlainSelectAdapter {
             for (SelectItem item : plainSelect.getSelectItems()) {
                 // 使用访问者模式处理SelectItem
                 item.accept(new SelectItemVisitorAdapter() {
-                    public void visit(AllColumns allColumns) {
-                        // SELECT * - 暂时标记为空列表，后续处理
-                    }
-                    
-                    public void visit(AllTableColumns allTableColumns) {
-                        // SELECT table.* - 暂时标记为空列表
-                    }
+                    // 注意：SelectItemVisitorAdapter 可能没有 visit(AllColumns) 方法
+                    // 如果 AllColumns 会调用 visit(SelectItem)，我们在那里处理
                     
                     @Override
                     public void visit(SelectItem selectItem) {
                         // 处理表达式项 - 通过toString获取表达式字符串
                         String itemStr = selectItem.toString();
+                        
+                        // 如果toString返回"*"，说明是AllColumns，应该跳过
+                        // 这样ResultSetBuilder可以通过isEmpty()判断是SELECT *
+                        if ("*".equals(itemStr)) {
+                            return;
+                        }
+                        
+                        // 获取别名
+                        String alias = null;
+                        if (selectItem.getAlias() != null) {
+                            alias = selectItem.getAlias().getName();
+                        }
                         
                         // 尝试解析表达式（简化处理）
                         // 检查是否是聚合函数
@@ -127,7 +127,6 @@ public class PlainSelectAdapter {
                             AggregateType type = getAggregateTypeFromString(upper);
                             String column = extractColumnFromString(itemStr);
                             boolean distinct = upper.contains("DISTINCT");
-                            String alias = null; // 暂时不支持别名
                             
                             aggregates.add(new AggregateFunction(type, column, distinct, alias));
                         } else {
@@ -291,24 +290,25 @@ public class PlainSelectAdapter {
     private void convertLimit(PlainSelect plainSelect, QueryPlan plan) {
         Limit limit = plainSelect.getLimit();
         if (limit != null) {
-            if (limit.getRowCount() != null) {
+            Expression limitRowCount = limit.getRowCount();
+            if (limitRowCount != null) {
                 // JSqlParser 4.7的Limit API可能不同，尝试多种方式获取值
                 try {
                     // 尝试直接获取Long值
-                    if (limit.getRowCount() instanceof net.sf.jsqlparser.expression.LongValue) {
+                    if (limitRowCount instanceof net.sf.jsqlparser.expression.LongValue) {
                         net.sf.jsqlparser.expression.LongValue longValue = 
-                            (net.sf.jsqlparser.expression.LongValue) limit.getRowCount();
+                            (net.sf.jsqlparser.expression.LongValue) limitRowCount;
                         plan.setLimit((int) longValue.getValue());
                     } else {
                         // 尝试通过toString解析
-                        String rowCountStr = limit.getRowCount().toString();
+                        String rowCountStr = limitRowCount.toString();
                         plan.setLimit(Integer.parseInt(rowCountStr));
                     }
                 } catch (Exception e) {
                     // 如果失败，尝试使用反射
                     try {
-                        java.lang.reflect.Method getValue = limit.getRowCount().getClass().getMethod("getValue");
-                        Object value = getValue.invoke(limit.getRowCount());
+                        java.lang.reflect.Method getValue = limitRowCount.getClass().getMethod("getValue");
+                        Object value = getValue.invoke(limitRowCount);
                         if (value instanceof Number) {
                             plan.setLimit(((Number) value).intValue());
                         }
@@ -317,21 +317,23 @@ public class PlainSelectAdapter {
                     }
                 }
             }
-            if (limit.getOffset() != null) {
+            Offset offset = plainSelect.getOffset();
+            if (offset != null) {
                 // 类似处理offset
+                Expression offsetExp = offset.getOffset();
                 try {
-                    if (limit.getOffset() instanceof net.sf.jsqlparser.expression.LongValue) {
+                    if (offsetExp instanceof net.sf.jsqlparser.expression.LongValue) {
                         net.sf.jsqlparser.expression.LongValue longValue = 
-                            (net.sf.jsqlparser.expression.LongValue) limit.getOffset();
+                            (net.sf.jsqlparser.expression.LongValue) offsetExp;
                         plan.setOffset((int) longValue.getValue());
                     } else {
-                        String offsetStr = limit.getOffset().toString();
+                        String offsetStr = offsetExp.toString();
                         plan.setOffset(Integer.parseInt(offsetStr));
                     }
                 } catch (Exception e) {
                     try {
-                        java.lang.reflect.Method getValue = limit.getOffset().getClass().getMethod("getValue");
-                        Object value = getValue.invoke(limit.getOffset());
+                        java.lang.reflect.Method getValue = offsetExp.getClass().getMethod("getValue");
+                        Object value = getValue.invoke(offsetExp);
                         if (value instanceof Number) {
                             plan.setOffset(((Number) value).intValue());
                         }
@@ -349,7 +351,11 @@ public class PlainSelectAdapter {
      * 解析表名
      * 
      * <p>从JSqlParser的Table对象中提取工作簿和工作表名称。
-     * JSqlParser解析MySQL语法时，表名可能包含反引号（`），需要移除。</p>
+     * 支持多种格式：
+     * - MySQL格式：`workbook`.`sheet` (带反引号)
+     * - 标准格式：workbook.sheet (JSqlParser会分离为schema和name)
+     * - 下划线格式：workbook_sheet (会被解析为单个表名，需要拆分)
+     * </p>
      * 
      * @param table JSqlParser的Table对象
      * @return 数组，[0]=工作簿名，[1]=工作表名
@@ -366,9 +372,18 @@ public class PlainSelectAdapter {
             sheet = sheet.replace("`", "").trim();
         }
         
-        // 如果工作簿为空，使用默认值"SA"
+        // 如果工作簿为空，可能是下划线格式（如：test1_Sheet1）
         if (workbook == null || workbook.isEmpty()) {
-            workbook = "SA";
+            // 检查是否包含下划线
+            if (sheet != null && sheet.contains("_")) {
+                // 拆分下划线格式：workbook_sheet
+                int firstUnderscore = sheet.indexOf("_");
+                workbook = sheet.substring(0, firstUnderscore);
+                sheet = sheet.substring(firstUnderscore + 1);
+            } else {
+                // 没有schema，使用默认值"SA"
+                workbook = "SA";
+            }
         }
         
         // 如果工作表为空，使用空字符串
@@ -426,11 +441,14 @@ public class PlainSelectAdapter {
         // 后续ConditionEvaluator需要重构以直接支持Expression对象
         String exprStr = expr.toString();
         
-        // 尝试解析简单条件（col = value）
-        if (exprStr.contains("=")) {
-            String[] parts = exprStr.split("\\s*=\\s*", 2);
-            if (parts.length == 2) {
-                return new WhereCondition(parts[0].trim(), "=", parts[1].trim());
+        // 尝试解析简单条件（支持 =, !=, <>, >, >=, <, <=）
+        String[] operators = {">=", "<=", "!=", "<>", ">", "<", "="};
+        for (String op : operators) {
+            if (exprStr.contains(op)) {
+                String[] parts = exprStr.split("\\s*" + java.util.regex.Pattern.quote(op) + "\\s*", 2);
+                if (parts.length == 2) {
+                    return new WhereCondition(parts[0].trim(), op, parts[1].trim());
+                }
             }
         }
         

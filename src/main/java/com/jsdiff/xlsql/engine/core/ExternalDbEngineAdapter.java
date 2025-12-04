@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -30,7 +30,7 @@ import com.jsdiff.xlsql.jdbc.DatabaseType;
 /**
  * ExternalDbEngineAdapter - 外部数据库引擎适配器
  * 
- * <p>将HSQLDB/H2/MySQL等外部数据库连接包装为ISqlExecutionEngine接口。
+ * <p>将HSQLDB/H2等外部数据库连接包装为ISqlExecutionEngine接口。
  * 这样可以将外部数据库引擎统一到相同的接口下，便于管理和切换。</p>
  * 
  * @author daichangya

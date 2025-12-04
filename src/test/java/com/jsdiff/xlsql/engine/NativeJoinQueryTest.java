@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -19,10 +19,9 @@
 */
 package com.jsdiff.xlsql.engine;
 
-import com.jsdiff.xlsql.database.xlInstance;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static com.jsdiff.xlsql.jdbc.Constants.DRIVER;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,7 +30,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.jsdiff.xlsql.database.xlInstance;
 
 /**
  * NativeJoinQueryTest - Native引擎JOIN查询测试
@@ -47,10 +50,14 @@ public class NativeJoinQueryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+        // 确保xlDriver已注册
+        Class.forName(DRIVER);
+        
         instance = xlInstance.getInstance();
-        instance.setEngine("native");
-        String url = "jdbc:xlsql:xls:" + System.getProperty("user.dir");
+        instance.setEngine("native"); // 设置引擎为自研引擎
+        
+        // 使用xlDriver连接，将自动使用xlConnectionNative
+        String url = "jdbc:xlsql:excel:" + System.getProperty("user.dir");
         con = DriverManager.getConnection(url);
     }
 
@@ -65,7 +72,7 @@ public class NativeJoinQueryTest {
     @Test
     public void testSimpleSelect() throws SQLException {
         Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM \"test1.Sheet1\"");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1");
         assertNotNull(rs);
         
         ResultSetMetaData metaData = rs.getMetaData();
@@ -84,7 +91,7 @@ public class NativeJoinQueryTest {
     @Test
     public void testSelectWithWhere() throws SQLException {
         Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM \"test1.Sheet1\" WHERE 1=1");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 WHERE 1=1");
         assertNotNull(rs);
         
         int rowCount = 0;
@@ -100,7 +107,7 @@ public class NativeJoinQueryTest {
     @Test
     public void testSelectWithOrderBy() throws SQLException {
         Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM \"test1.Sheet1\" ORDER BY 1 ASC LIMIT 10");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 ORDER BY 1 ASC LIMIT 10");
         assertNotNull(rs);
         
         int rowCount = 0;

@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it under 
@@ -46,18 +46,18 @@ import java.util.logging.Logger;
 import com.jsdiff.xlsql.database.xlDatabaseException;
 import com.jsdiff.xlsql.database.xlDatabaseFactory;
 import com.jsdiff.xlsql.database.sql.xlSqlParserFactory;
+import com.jsdiff.xlsql.engine.core.NativeSqlEngine;
+import com.jsdiff.xlsql.engine.statement.xlNativePreparedStatement;
+import com.jsdiff.xlsql.engine.statement.xlNativeStatement;
 import com.jsdiff.xlsql.jdbc.DatabaseType;
 import com.jsdiff.xlsql.jdbc.xlConnection;
 import com.jsdiff.xlsql.jdbc.xlDatabaseMetaData;
-import com.jsdiff.xlsql.engine.core.NativeSqlEngine;
-import com.jsdiff.xlsql.engine.statement.xlNativeStatement;
-import com.jsdiff.xlsql.engine.statement.xlNativePreparedStatement;
 
 
 /**
  * xlConnectionNative - 自研SQL引擎的连接实现
  * 
- * <p>该类是xlConnection的自研引擎实现，不依赖外部数据库（HSQLDB/H2/MySQL）。
+ * <p>该类是xlConnection的自研引擎实现，不依赖外部数据库（HSQLDB/H2）。
  * 直接基于Excel数据执行SQL查询，提供完全的控制和优化能力。</p>
  * 
  * <p>特点：</p>
@@ -95,7 +95,7 @@ public class xlConnectionNative extends xlConnection {
         URL = url;
         
         try {
-            // 从URL中提取目录路径（去掉"jdbc:jsdiff:excel:"前缀）
+            // 从URL中提取目录路径（去掉"jdbc:xlsql:excel:"前缀）
             String dir = URL.substring(URL_PFX_XLS.length());
             logger.info(() -> "Mounting: " + dir + " using native SQL engine");
             
@@ -195,9 +195,8 @@ public class xlConnectionNative extends xlConnection {
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
         // 返回自研引擎的元数据
-        // 自研引擎没有外部数据库连接，创建一个虚拟的元数据对象
-        // 这里简化实现，返回一个基本的元数据对象
-        return new xlDatabaseMetaData(this, new xlNativeDatabaseMetaData());
+        // 传入datastore以便获取表、列等信息
+        return new xlDatabaseMetaData(this, new xlNativeDatabaseMetaData(datastore));
     }
 
     // 其他JDBC Connection接口方法的实现（简化实现）

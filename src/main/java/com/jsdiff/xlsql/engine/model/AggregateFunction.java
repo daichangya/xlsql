@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -96,7 +96,15 @@ public class AggregateFunction {
             return alias;
         }
         
-        // 生成函数表达式作为显示名称
+        return getFunctionExpression();
+    }
+    
+    /**
+     * 获取函数表达式（不管是否有别名）
+     * 
+     * @return 函数表达式，如 COUNT(*), SUM(column), AVG(column) 等
+     */
+    public String getFunctionExpression() {
         StringBuilder sb = new StringBuilder();
         sb.append(type.name());
         sb.append("(");

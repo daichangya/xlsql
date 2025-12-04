@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it under 
@@ -29,26 +29,22 @@ import com.jsdiff.xlsql.database.export.IExportHandler;
 import com.jsdiff.xlsql.database.export.XmlFormatter;
 import com.jsdiff.xlsql.database.export.xlExportHandlerFactory;
 import com.jsdiff.xlsql.database.export.xlHsqldbFormatter;
-import com.jsdiff.xlsql.database.export.xlMysqlFormatter;
 
 
 /**
  * AExporter - 导出器抽象基类
  * 
  * <p>该类继承自AReader，提供了将数据导出为不同格式的功能。
- * 支持导出为HSQLDB SQL、MySQL SQL和XML格式。</p>
+ * 支持导出为HSQLDB SQL和XML格式。</p>
  * 
- * @version $Revision: 1.11 $
- * @author $author$
+ * @author daichangya
  */
 public abstract class AExporter extends AReader {
 
     /** 导出格式：HSQLDB SQL */
     public static final int HSQLDB = 1;
-    /** 导出格式：MySQL SQL */
-    public static final int MYSQL = 2;
     /** 导出格式：XML */
-    public static final int XML = 3;
+    public static final int XML = 2;
     
     /** 数据读取器 */
     private AReader reader;
@@ -73,7 +69,7 @@ public abstract class AExporter extends AReader {
     /**
      * 导出所有数据到打印流
      * 
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param ps 输出打印流
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -89,7 +85,7 @@ public abstract class AExporter extends AReader {
      * 导出指定模式（工作簿）的数据到打印流
      * 
      * @param schema 模式名称（对应Excel文件名）
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param ps 输出打印流
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -106,7 +102,7 @@ public abstract class AExporter extends AReader {
      * 
      * @param schema 模式名称（对应Excel文件名）
      * @param table 表名称（对应Excel工作表名）
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param ps 输出打印流
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -121,7 +117,7 @@ public abstract class AExporter extends AReader {
     /**
      * 导出所有数据到文件
      * 
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param exportfile 导出文件对象
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -137,7 +133,7 @@ public abstract class AExporter extends AReader {
      * 导出指定模式（工作簿）的数据到文件
      * 
      * @param schema 模式名称（对应Excel文件名）
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param exportfile 导出文件对象
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -154,7 +150,7 @@ public abstract class AExporter extends AReader {
      * 
      * @param schema 模式名称（对应Excel文件名）
      * @param table 表名称（对应Excel工作表名）
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param exportfile 导出文件对象
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -170,7 +166,7 @@ public abstract class AExporter extends AReader {
     /**
      * 导出所有数据到JDBC连接
      * 
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param jdbc JDBC连接对象
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -186,7 +182,7 @@ public abstract class AExporter extends AReader {
      * 导出指定模式（工作簿）的数据到JDBC连接
      * 
      * @param schema 模式名称（对应Excel文件名）
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param jdbc JDBC连接对象
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -203,7 +199,7 @@ public abstract class AExporter extends AReader {
      * 
      * @param schema 模式名称（对应Excel文件名）
      * @param table 表名称（对应Excel工作表名）
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      * @param jdbc JDBC连接对象
      * @throws xlDatabaseException 如果导出失败则抛出异常
      */
@@ -218,21 +214,18 @@ public abstract class AExporter extends AReader {
     /**
      * 根据格式创建SQL格式化器
      * 
-     * @param format 导出格式（HSQLDB、MYSQL或XML）
+     * @param format 导出格式（HSQLDB或XML）
      */
     private void createFormatter(int format) {
         switch (format) {
             case HSQLDB:
                 this.formatter = new xlHsqldbFormatter();
                 break;
-            case MYSQL:
-                this.formatter = new xlMysqlFormatter();
-                break;
             case XML:
                 this.formatter = new XmlFormatter();
                 break;
             default:
-                throw new IllegalArgumentException(); //desc
+                throw new IllegalArgumentException("Unsupported export format: " + format);
         }
     }
 

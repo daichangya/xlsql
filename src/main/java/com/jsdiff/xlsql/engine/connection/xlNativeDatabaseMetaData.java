@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -24,6 +24,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jsdiff.xlsql.database.AReader;
+import com.jsdiff.xlsql.engine.resultset.xlNativeResultSet;
 
 /**
  * xlNativeDatabaseMetaData - 自研引擎的数据库元数据适配器
@@ -31,9 +37,21 @@ import java.sql.SQLException;
  * <p>为自研引擎提供基本的数据库元数据信息。
  * 由于自研引擎没有外部数据库连接，需要创建一个适配器来提供元数据。</p>
  * 
- * @author daichangya
+ * @author rzy
  */
 class xlNativeDatabaseMetaData implements DatabaseMetaData {
+    
+    /** 数据存储读取器 */
+    private final AReader datastore;
+    
+    /**
+     * 创建xlNativeDatabaseMetaData实例
+     * 
+     * @param datastore 数据存储读取器
+     */
+    public xlNativeDatabaseMetaData(AReader datastore) {
+        this.datastore = datastore;
+    }
     
     @Override
     public String getDatabaseProductName() throws SQLException {
@@ -125,19 +143,22 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     public java.sql.ResultSet getIndexInfo(String catalog, String schema, 
                                           String table, boolean unique, 
                                           boolean approximate) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有索引概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "NON_UNIQUE", "INDEX_QUALIFIER", "INDEX_NAME", "TYPE", "ORDINAL_POSITION", "COLUMN_NAME", "ASC_OR_DESC", "CARDINALITY", "PAGES", "FILTER_CONDITION"});
     }
     
     @Override
     public java.sql.ResultSet getImportedKeys(String catalog, String schema, 
                                              String table) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有外键概念，返回空结果集
+        return createEmptyResultSet(new String[]{"PKTABLE_CAT", "PKTABLE_SCHEM", "PKTABLE_NAME", "PKCOLUMN_NAME", "FKTABLE_CAT", "FKTABLE_SCHEM", "FKTABLE_NAME", "FKCOLUMN_NAME", "KEY_SEQ", "UPDATE_RULE", "DELETE_RULE", "FK_NAME", "PK_NAME", "DEFERRABILITY"});
     }
     
     @Override
     public java.sql.ResultSet getExportedKeys(String catalog, String schema, 
                                              String table) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有外键概念，返回空结果集
+        return createEmptyResultSet(new String[]{"PKTABLE_CAT", "PKTABLE_SCHEM", "PKTABLE_NAME", "PKCOLUMN_NAME", "FKTABLE_CAT", "FKTABLE_SCHEM", "FKTABLE_NAME", "FKCOLUMN_NAME", "KEY_SEQ", "UPDATE_RULE", "DELETE_RULE", "FK_NAME", "PK_NAME", "DEFERRABILITY"});
     }
     
     @Override
@@ -179,14 +200,16 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     public java.sql.ResultSet getAttributes(String catalog, String schemaPattern, 
                                            String typeNamePattern, 
                                            String attributeNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有UDT属性概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "ATTR_NAME", "DATA_TYPE", "ATTR_TYPE_NAME", "ATTR_SIZE", "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS", "ATTR_DEF", "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE", "SCOPE_CATALOG", "SCOPE_SCHEMA", "SCOPE_TABLE"});
     }
     
     @Override
     public java.sql.ResultSet getBestRowIdentifier(String catalog, String schema, 
                                                   String table, int scope, 
                                                   boolean nullable) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有行标识符概念，返回空结果集
+        return createEmptyResultSet(new String[]{"SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS", "PSEUDO_COLUMN"});
     }
     
     @Override
@@ -201,25 +224,124 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     
     @Override
     public java.sql.ResultSet getCatalogs() throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有catalog概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TABLE_CAT"});
     }
     
     @Override
     public java.sql.ResultSet getColumnPrivileges(String catalog, String schema, 
                                                  String table, String columnNamePattern) 
             throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有权限概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "GRANTOR", "GRANTEE", "PRIVILEGE", "IS_GRANTABLE"});
     }
     
     @Override
     public java.sql.ResultSet getColumns(String catalog, String schemaPattern, 
                                         String tableNamePattern, 
                                         String columnNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        try {
+            List<String[]> rows = new ArrayList<>();
+            
+            // 获取所有模式（工作簿）
+            String[] schemas = datastore.getSchemas();
+            
+            // 遍历所有模式
+            for (String schema : schemas) {
+//                // 检查模式是否匹配
+//                if (!matchesPattern(schema, schemaPattern)) {
+//                    continue;
+//                }
+                
+                try {
+                    // 获取该模式下的所有表
+                    String[] tables = datastore.getTables(schema);
+                    
+                    for (String table : tables) {
+                        String tableName = schema + "_" + table;
+                        // 检查表名是否匹配
+                        if (!matchesPattern(tableName, tableNamePattern)) {
+                            continue;
+                        }
+                        
+                        try {
+                            // 获取列信息
+                            String[] columnNames = datastore.getColumnNames(schema, table);
+                            String[] columnTypes = datastore.getColumnTypes(schema, table);
+                            
+                            for (int i = 0; i < columnNames.length; i++) {
+                                String columnName = columnNames[i];
+                                
+                                // 检查列名是否匹配
+                                if (!matchesPattern(columnName, columnNamePattern)) {
+                                    continue;
+                                }
+                                
+                                String sqlType = columnTypes != null && i < columnTypes.length ? columnTypes[i] : "VARCHAR";
+                                
+                                // 添加一行数据
+                                // TABLE_CAT, TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, COLUMN_SIZE, 
+                                // BUFFER_LENGTH, DECIMAL_DIGITS, NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEF, 
+                                // SQL_DATA_TYPE, SQL_DATETIME_SUB, CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE, 
+                                // SCOPE_CATALOG, SCOPE_SCHEMA, SCOPE_TABLE, SOURCE_DATA_TYPE, IS_AUTOINCREMENT, IS_GENERATEDCOLUMN
+                                String[] row = new String[24];
+                                row[0] = null; // TABLE_CAT
+                                row[1] = "schema"; // TABLE_SCHEM
+                                row[2] = tableName; // TABLE_NAME
+                                row[3] = columnName; // COLUMN_NAME
+                                row[4] = String.valueOf(mapSqlType(sqlType)); // DATA_TYPE
+                                row[5] = sqlType; // TYPE_NAME
+                                row[6] = getColumnSize(sqlType); // COLUMN_SIZE
+                                row[7] = null; // BUFFER_LENGTH
+                                row[8] = null; // DECIMAL_DIGITS
+                                row[9] = "10"; // NUM_PREC_RADIX
+                                row[10] = String.valueOf(DatabaseMetaData.columnNullable); // NULLABLE
+                                row[11] = null; // REMARKS
+                                row[12] = null; // COLUMN_DEF
+                                row[13] = null; // SQL_DATA_TYPE
+                                row[14] = null; // SQL_DATETIME_SUB
+                                row[15] = null; // CHAR_OCTET_LENGTH
+                                row[16] = String.valueOf(i + 1); // ORDINAL_POSITION
+                                row[17] = "YES"; // IS_NULLABLE
+                                row[18] = null; // SCOPE_CATALOG
+                                row[19] = null; // SCOPE_SCHEMA
+                                row[20] = null; // SCOPE_TABLE
+                                row[21] = null; // SOURCE_DATA_TYPE
+                                row[22] = "NO"; // IS_AUTOINCREMENT
+                                row[23] = "NO"; // IS_GENERATEDCOLUMN
+                                rows.add(row);
+                            }
+                        } catch (IllegalArgumentException e) {
+                            // 忽略不存在的表
+                            continue;
+                        }
+                    }
+                } catch (IllegalArgumentException e) {
+                    // 忽略不存在的模式
+                    continue;
+                }
+            }
+            
+            // 构建结果集
+            return buildResultSet(
+                new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", 
+                             "BUFFER_LENGTH", "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS", "COLUMN_DEF", 
+                             "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE", 
+                             "SCOPE_CATALOG", "SCOPE_SCHEMA", "SCOPE_TABLE", "SOURCE_DATA_TYPE", "IS_AUTOINCREMENT", "IS_GENERATEDCOLUMN"},
+                new String[]{"VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "INTEGER", "VARCHAR", "INTEGER", 
+                             "INTEGER", "INTEGER", "INTEGER", "INTEGER", "VARCHAR", "VARCHAR", 
+                             "INTEGER", "INTEGER", "INTEGER", "INTEGER", "VARCHAR", 
+                             "VARCHAR", "VARCHAR", "VARCHAR", "INTEGER", "VARCHAR", "VARCHAR"},
+                rows
+            );
+        } catch (Exception e) {
+            throw new SQLException("Failed to get columns: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public java.sql.Connection getConnection() throws SQLException {
+        // 返回null，因为自研引擎没有外部连接
         return null;
     }
     
@@ -228,7 +350,8 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
                                                String parentTable, String foreignCatalog, 
                                                String foreignSchema, 
                                                String foreignTable) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有外键概念，返回空结果集
+        return createEmptyResultSet(new String[]{"PKTABLE_CAT", "PKTABLE_SCHEM", "PKTABLE_NAME", "PKCOLUMN_NAME", "FKTABLE_CAT", "FKTABLE_SCHEM", "FKTABLE_NAME", "FKCOLUMN_NAME", "KEY_SEQ", "UPDATE_RULE", "DELETE_RULE", "FK_NAME", "PK_NAME", "DEFERRABILITY"});
     }
     
     @Override
@@ -359,14 +482,16 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     @Override
     public java.sql.ResultSet getPrimaryKeys(String catalog, String schema, 
                                             String table) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有主键概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"});
     }
     
     @Override
     public java.sql.ResultSet getProcedureColumns(String catalog, String schemaPattern, 
                                                  String procedureNamePattern, 
                                                  String columnNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有存储过程概念，返回空结果集
+        return createEmptyResultSet(new String[]{"PROCEDURE_CAT", "PROCEDURE_SCHEM", "PROCEDURE_NAME", "COLUMN_NAME", "COLUMN_TYPE", "DATA_TYPE", "TYPE_NAME", "PRECISION", "LENGTH", "SCALE", "RADIX", "NULLABLE", "REMARKS", "COLUMN_DEF", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE", "SPECIFIC_NAME"});
     }
     
     @Override
@@ -377,7 +502,8 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     @Override
     public java.sql.ResultSet getProcedures(String catalog, String schemaPattern, 
                                            String procedureNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有存储过程概念，返回空结果集
+        return createEmptyResultSet(new String[]{"PROCEDURE_CAT", "PROCEDURE_SCHEM", "PROCEDURE_NAME", "REMARKS", "PROCEDURE_TYPE", "SPECIFIC_NAME"});
     }
     
     @Override
@@ -387,7 +513,7 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     
     @Override
     public java.sql.ResultSet getSchemas() throws SQLException {
-        throw new SQLException("Method not supported");
+        return getSchemas(null, null);
     }
     
     @Override
@@ -418,13 +544,15 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     @Override
     public java.sql.ResultSet getSuperTables(String catalog, String schemaPattern, 
                                             String tableNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有超表概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "SUPERTABLE_NAME"});
     }
     
     @Override
     public java.sql.ResultSet getSuperTypes(String catalog, String schemaPattern, 
                                           String typeNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有超类型概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "SUPERTYPE_CAT", "SUPERTYPE_SCHEM", "SUPERTYPE_NAME"});
     }
     
     @Override
@@ -435,19 +563,105 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     @Override
     public java.sql.ResultSet getTablePrivileges(String catalog, String schemaPattern, 
                                                 String tableNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有权限概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "GRANTOR", "GRANTEE", "PRIVILEGE", "IS_GRANTABLE"});
     }
     
     @Override
     public java.sql.ResultSet getTables(String catalog, String schemaPattern, 
                                        String tableNamePattern, 
                                        String[] types) throws SQLException {
-        throw new SQLException("Method not supported");
+        try {
+            List<String[]> rows = new ArrayList<>();
+            
+            // 获取所有模式（工作簿）
+            String[] schemas = datastore.getSchemas();
+
+            // 检查是否接受TABLE类型
+            boolean acceptTable = (types == null || types.length == 0);
+            if (types != null) {
+                for (String type : types) {
+                    if ("TABLE".equalsIgnoreCase(type)) {
+                        acceptTable = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!acceptTable) {
+                // 如果不接受TABLE类型，返回空结果集
+                return createEmptyResultSet(new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS", "TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "SELF_REFERENCING_COL_NAME", "REF_GENERATION"});
+            }
+            
+            // 遍历所有模式
+            for (String schema : schemas) {
+//                // 检查模式是否匹配
+//                if (!matchesPattern(schema, schemaPattern)) {
+//                    continue;
+//                }
+                
+                try {
+                    // 获取该模式下的所有表
+                    String[] tables = datastore.getTables(schema);
+                    
+                    for (String table : tables) {
+                        String tablename = schema + "_" + table;
+                        // 检查表名是否匹配
+                        if (!matchesPattern(table, tableNamePattern)) {
+                            continue;
+                        }
+
+                        // 添加一行数据
+                        // TABLE_CAT, TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_CAT, TYPE_SCHEM, TYPE_NAME, SELF_REFERENCING_COL_NAME, REF_GENERATION
+                        String[] row = new String[10];
+                        row[0] = null; // TABLE_CAT
+                        row[1] = "schema"; // TABLE_SCHEM
+                        row[2] = tablename; // TABLE_NAME
+                        row[3] = "TABLE"; // TABLE_TYPE
+                        row[4] = null; // REMARKS
+                        row[5] = null; // TYPE_CAT
+                        row[6] = null; // TYPE_SCHEM
+                        row[7] = null; // TYPE_NAME
+                        row[8] = null; // SELF_REFERENCING_COL_NAME
+                        row[9] = null; // REF_GENERATION
+                        rows.add(row);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // 忽略不存在的模式
+                    continue;
+                }
+            }
+            
+            // 构建结果集
+            return buildResultSet(
+                new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS", "TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "SELF_REFERENCING_COL_NAME", "REF_GENERATION"},
+                new String[]{"VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR"},
+                rows
+            );
+        } catch (Exception e) {
+            throw new SQLException("Failed to get tables: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public java.sql.ResultSet getTableTypes() throws SQLException {
-        throw new SQLException("Method not supported");
+        try {
+            List<String[]> rows = new ArrayList<>();
+            
+            // Excel只支持TABLE类型
+            String[] row = new String[1];
+            row[0] = "TABLE"; // TABLE_TYPE
+            rows.add(row);
+            
+            // 构建结果集
+            return buildResultSet(
+                new String[]{"TABLE_TYPE"},
+                new String[]{"VARCHAR"},
+                rows
+            );
+        } catch (Exception e) {
+            throw new SQLException("Failed to get table types: " + e.getMessage(), e);
+        }
     }
     
     @Override
@@ -457,19 +671,53 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     
     @Override
     public java.sql.ResultSet getTypeInfo() throws SQLException {
-        throw new SQLException("Method not supported");
+        try {
+            List<String[]> rows = new ArrayList<>();
+            
+            // 定义支持的数据类型
+            // TYPE_NAME, DATA_TYPE, PRECISION, LITERAL_PREFIX, LITERAL_SUFFIX, CREATE_PARAMS, NULLABLE, 
+            // CASE_SENSITIVE, SEARCHABLE, UNSIGNED_ATTRIBUTE, FIXED_PREC_SCALE, AUTO_INCREMENT, LOCAL_TYPE_NAME, 
+            // MINIMUM_SCALE, MAXIMUM_SCALE, SQL_DATA_TYPE, SQL_DATETIME_SUB, NUM_PREC_RADIX
+            
+            // VARCHAR
+            addTypeInfoRow(rows, "VARCHAR", Types.VARCHAR, 65535, true, true, true);
+            // INTEGER
+            addTypeInfoRow(rows, "INTEGER", Types.INTEGER, 10, false, true, true);
+            // DOUBLE
+            addTypeInfoRow(rows, "DOUBLE", Types.DOUBLE, 15, false, true, true);
+            // DATE
+            addTypeInfoRow(rows, "DATE", Types.DATE, 10, false, true, true);
+            // TIMESTAMP
+            addTypeInfoRow(rows, "TIMESTAMP", Types.TIMESTAMP, 23, false, true, true);
+            // BOOLEAN
+            addTypeInfoRow(rows, "BOOLEAN", Types.BOOLEAN, 1, false, true, true);
+            
+            // 构建结果集
+            return buildResultSet(
+                new String[]{"TYPE_NAME", "DATA_TYPE", "PRECISION", "LITERAL_PREFIX", "LITERAL_SUFFIX", "CREATE_PARAMS", "NULLABLE", 
+                             "CASE_SENSITIVE", "SEARCHABLE", "UNSIGNED_ATTRIBUTE", "FIXED_PREC_SCALE", "AUTO_INCREMENT", "LOCAL_TYPE_NAME", 
+                             "MINIMUM_SCALE", "MAXIMUM_SCALE", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "NUM_PREC_RADIX"},
+                new String[]{"VARCHAR", "INTEGER", "INTEGER", "VARCHAR", "VARCHAR", "VARCHAR", "INTEGER", 
+                             "BOOLEAN", "INTEGER", "BOOLEAN", "BOOLEAN", "BOOLEAN", "VARCHAR", 
+                             "INTEGER", "INTEGER", "INTEGER", "INTEGER", "INTEGER"},
+                rows
+            );
+        } catch (Exception e) {
+            throw new SQLException("Failed to get type info: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public java.sql.ResultSet getUDTs(String catalog, String schemaPattern, 
                                      String typeNamePattern, 
                                      int[] types) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有UDT概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE", "REMARKS", "BASE_TYPE"});
     }
     
     @Override
     public String getURL() throws SQLException {
-        return "jdbc:jsdiff:excel:native";
+        return "jdbc:xlsql:excel:native";
     }
     
     @Override
@@ -480,7 +728,8 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     @Override
     public java.sql.ResultSet getVersionColumns(String catalog, String schema, 
                                                String table) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有版本列概念，返回空结果集
+        return createEmptyResultSet(new String[]{"SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS", "PSEUDO_COLUMN"});
     }
     
     @Override
@@ -911,7 +1160,35 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     
     @Override
     public java.sql.ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        try {
+            List<String[]> rows = new ArrayList<>();
+            
+//            // 获取所有模式（工作簿）
+//            String[] schemas = datastore.getSchemas();
+//
+//            for (String schema : schemas) {
+////                // 检查模式是否匹配
+////                if (!matchesPattern(schema, schemaPattern)) {
+////                    continue;
+////                }
+//
+//            }
+            // 添加一行数据
+            // TABLE_SCHEM, TABLE_CATALOG
+            String[] row = new String[2];
+            row[0] = "schema"; // TABLE_SCHEM
+            row[1] = null; // TABLE_CATALOG
+            rows.add(row);
+
+            // 构建结果集
+            return buildResultSet(
+                new String[]{"TABLE_SCHEM", "TABLE_CATALOG"},
+                new String[]{"VARCHAR", "VARCHAR"},
+                rows
+            );
+        } catch (Exception e) {
+            throw new SQLException("Failed to get schemas: " + e.getMessage(), e);
+        }
     }
     
     @Override
@@ -926,32 +1203,189 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     
     @Override
     public java.sql.ResultSet getClientInfoProperties() throws SQLException {
-        throw new SQLException("Method not supported");
+        // 返回空结果集
+        return createEmptyResultSet(new String[]{"NAME", "MAX_LEN", "DEFAULT_VALUE", "DESCRIPTION"});
     }
     
     @Override
     public java.sql.ResultSet getFunctions(String catalog, String schemaPattern, 
                                          String functionNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有用户定义函数概念，返回空结果集
+        return createEmptyResultSet(new String[]{"FUNCTION_CAT", "FUNCTION_SCHEM", "FUNCTION_NAME", "REMARKS", "FUNCTION_TYPE", "SPECIFIC_NAME"});
     }
     
     @Override
     public java.sql.ResultSet getFunctionColumns(String catalog, String schemaPattern, 
                                                String functionNamePattern, 
                                                String columnNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有用户定义函数概念，返回空结果集
+        return createEmptyResultSet(new String[]{"FUNCTION_CAT", "FUNCTION_SCHEM", "FUNCTION_NAME", "COLUMN_NAME", "COLUMN_TYPE", "DATA_TYPE", "TYPE_NAME", "PRECISION", "LENGTH", "SCALE", "RADIX", "NULLABLE", "REMARKS", "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE", "SPECIFIC_NAME"});
     }
     
     @Override
     public java.sql.ResultSet getPseudoColumns(String catalog, String schemaPattern, 
                                              String tableNamePattern, 
                                              String columnNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+        // Excel没有伪列概念，返回空结果集
+        return createEmptyResultSet(new String[]{"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "DATA_TYPE", "COLUMN_SIZE", "DECIMAL_DIGITS", "NUM_PREC_RADIX", "COLUMN_USAGE", "REMARKS", "CHAR_OCTET_LENGTH", "IS_NULLABLE"});
     }
     
     @Override
     public boolean generatedKeyAlwaysReturned() throws SQLException {
         return false;
+    }
+    
+    // ========== 辅助方法 ==========
+    
+    /**
+     * 模式匹配（支持%和_通配符）
+     * 
+     * @param value 要匹配的值
+     * @param pattern 模式（null表示匹配所有）
+     * @return 如果匹配返回true
+     */
+    private boolean matchesPattern(String value, String pattern) {
+        if (pattern == null || pattern.isEmpty()) {
+            return true;
+        }
+        if (value == null) {
+            return false;
+        }
+        
+        // 将SQL LIKE模式转换为正则表达式
+        String regex = pattern.replace("%", ".*").replace("_", ".");
+        return value.matches(regex);
+    }
+    
+    /**
+     * 构建结果集
+     * 
+     * @param columnNames 列名数组
+     * @param columnTypes 列类型数组
+     * @param rows 数据行列表
+     * @return ResultSet对象
+     */
+    private ResultSet buildResultSet(String[] columnNames, String[] columnTypes, List<String[]> rows) {
+        if (rows.isEmpty()) {
+            return createEmptyResultSet(columnNames);
+        }
+        
+        // 转换为列优先的数据矩阵
+        int colCount = columnNames.length;
+        int rowCount = rows.size();
+        String[][] values = new String[colCount][rowCount];
+        
+        for (int i = 0; i < rowCount; i++) {
+            String[] row = rows.get(i);
+            for (int j = 0; j < colCount && j < row.length; j++) {
+                values[j][i] = row[j];
+            }
+        }
+        
+        return new xlNativeResultSet(columnNames, columnTypes, values, rowCount);
+    }
+    
+    /**
+     * 创建空结果集
+     * 
+     * @param columnNames 列名数组
+     * @return 空结果集
+     */
+    private ResultSet createEmptyResultSet(String[] columnNames) {
+        String[] columnTypes = new String[columnNames.length];
+        for (int i = 0; i < columnTypes.length; i++) {
+            columnTypes[i] = "VARCHAR";
+        }
+        return new xlNativeResultSet(columnNames, columnTypes, new String[columnNames.length][0], 0);
+    }
+    
+    /**
+     * 映射SQL类型名称到JDBC类型代码
+     * 
+     * @param sqlType SQL类型名称
+     * @return JDBC类型代码
+     */
+    private int mapSqlType(String sqlType) {
+        if (sqlType == null) {
+            return Types.VARCHAR;
+        }
+        
+        String upperType = sqlType.toUpperCase();
+        if (upperType.contains("INT")) {
+            return Types.INTEGER;
+        } else if (upperType.contains("DOUBLE") || upperType.contains("FLOAT") || upperType.contains("DECIMAL") || upperType.contains("NUMERIC")) {
+            return Types.DOUBLE;
+        } else if (upperType.contains("DATE") && !upperType.contains("TIME")) {
+            return Types.DATE;
+        } else if (upperType.contains("TIMESTAMP") || upperType.contains("DATETIME")) {
+            return Types.TIMESTAMP;
+        } else if (upperType.contains("BOOLEAN") || upperType.contains("BIT")) {
+            return Types.BOOLEAN;
+        } else {
+            return Types.VARCHAR;
+        }
+    }
+    
+    /**
+     * 获取列大小
+     * 
+     * @param sqlType SQL类型名称
+     * @return 列大小
+     */
+    private String getColumnSize(String sqlType) {
+        if (sqlType == null) {
+            return "65535";
+        }
+        
+        String upperType = sqlType.toUpperCase();
+        if (upperType.contains("INT")) {
+            return "10";
+        } else if (upperType.contains("DOUBLE") || upperType.contains("FLOAT") || upperType.contains("DECIMAL") || upperType.contains("NUMERIC")) {
+            return "15";
+        } else if (upperType.contains("DATE")) {
+            return "10";
+        } else if (upperType.contains("TIMESTAMP") || upperType.contains("DATETIME")) {
+            return "23";
+        } else if (upperType.contains("BOOLEAN") || upperType.contains("BIT")) {
+            return "1";
+        } else {
+            return "65535";
+        }
+    }
+    
+    /**
+     * 添加类型信息行
+     * 
+     * @param rows 行列表
+     * @param typeName 类型名称
+     * @param dataType JDBC类型代码
+     * @param precision 精度
+     * @param nullable 是否可为空
+     * @param caseSensitive 是否大小写敏感
+     * @param searchable 是否可搜索
+     */
+    private void addTypeInfoRow(List<String[]> rows, String typeName, int dataType, int precision, 
+                                boolean nullable, boolean caseSensitive, boolean searchable) {
+        String[] row = new String[18];
+        row[0] = typeName; // TYPE_NAME
+        row[1] = String.valueOf(dataType); // DATA_TYPE
+        row[2] = String.valueOf(precision); // PRECISION
+        row[3] = null; // LITERAL_PREFIX
+        row[4] = null; // LITERAL_SUFFIX
+        row[5] = null; // CREATE_PARAMS
+        row[6] = String.valueOf(nullable ? DatabaseMetaData.typeNullable : DatabaseMetaData.typeNoNulls); // NULLABLE
+        row[7] = String.valueOf(caseSensitive); // CASE_SENSITIVE
+        row[8] = String.valueOf(searchable ? DatabaseMetaData.typeSearchable : DatabaseMetaData.typePredNone); // SEARCHABLE
+        row[9] = "false"; // UNSIGNED_ATTRIBUTE
+        row[10] = "false"; // FIXED_PREC_SCALE
+        row[11] = "false"; // AUTO_INCREMENT
+        row[12] = null; // LOCAL_TYPE_NAME
+        row[13] = "0"; // MINIMUM_SCALE
+        row[14] = "0"; // MAXIMUM_SCALE
+        row[15] = String.valueOf(dataType); // SQL_DATA_TYPE
+        row[16] = "0"; // SQL_DATETIME_SUB
+        row[17] = "10"; // NUM_PREC_RADIX
+        rows.add(row);
     }
 }
 

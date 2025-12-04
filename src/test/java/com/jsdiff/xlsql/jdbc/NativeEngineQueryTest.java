@@ -3,6 +3,7 @@ package com.jsdiff.xlsql.jdbc;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,12 +11,12 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.jsdiff.xlsql.engine.connection.xlConnectionNative;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.jsdiff.xlsql.database.xlInstance;
+import com.jsdiff.xlsql.engine.connection.xlConnectionNative;
 
 /**
  * NativeEngineQueryTest - 自研SQL引擎查询功能测试
@@ -37,8 +38,9 @@ public class NativeEngineQueryTest {
         instance = xlInstance.getInstance();
         instance.setEngine("native"); // 使用自研引擎
 
-        // 连接到当前目录
-        String url = Constants.URL_PFX_XLS + System.getProperty("user.dir");
+        // 连接到database目录
+        String databaseDir = System.getProperty("user.dir") + File.separator + "database";
+        String url = Constants.URL_PFX_XLS + databaseDir;
         con = DriverManager.getConnection(url);
     }
 
@@ -56,12 +58,12 @@ public class NativeEngineQueryTest {
 
     @Test
     public void testQueryWithWorkbookAndSheet() throws SQLException {
-        // 测试查询格式：SELECT * FROM "workbook.sheet"
+        // 测试查询格式：SELECT * FROM workbook_sheet（下划线格式）
         Statement stmt = con.createStatement();
         
         try {
             // 尝试查询test1.xls的Sheet1工作表
-            ResultSet rs = stmt.executeQuery("SELECT * FROM test1.Sheet1");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1");
             assertNotNull(rs, "ResultSet should not be null");
             
             // 验证可以获取元数据
@@ -90,11 +92,12 @@ public class NativeEngineQueryTest {
 
     @Test
     public void testQueryWithSheetOnly() throws SQLException {
-        // 测试查询格式：SELECT * FROM "sheet"（使用默认工作簿SA）
+        // 测试查询格式：SELECT * FROM sheet（使用默认工作簿SA，或使用 SA_sheet）
         Statement stmt = con.createStatement();
         
         try {
-            ResultSet rs = stmt.executeQuery("SELECT * FROM \"Sheet1\"");
+            // 使用下划线格式，SA 是默认 schema
+            ResultSet rs = stmt.executeQuery("SELECT * FROM SA_Sheet1");
             assertNotNull(rs, "ResultSet should not be null");
             
             ResultSetMetaData metaData = rs.getMetaData();

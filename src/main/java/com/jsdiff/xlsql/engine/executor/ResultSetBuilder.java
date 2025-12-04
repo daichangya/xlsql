@@ -2,7 +2,7 @@
 
  Copyright (C) 2025 jsdiff
    jsdiff Information Sciences
-   http://excel.jsdiff.com
+   http://xlsql.jsdiff.com
    daichangya@163.com
 
  This program is free software; you can redistribute it and/or modify it 
@@ -64,8 +64,9 @@ public class ResultSetBuilder {
             selectedRows = applyOrderBy(selectedRows, plan, columnIndexMap);
         }
         
-        // 应用LIMIT
-        if (plan.getLimit() != null) {
+        // 应用LIMIT和OFFSET
+        // 即使LIMIT为null，如果OFFSET存在，也需要应用OFFSET
+        if (plan.getLimit() != null || plan.getOffset() != null) {
             selectedRows = applyLimit(selectedRows, plan.getLimit(), plan.getOffset());
         }
         
@@ -73,11 +74,30 @@ public class ResultSetBuilder {
         String[] columnNames = buildColumnNames(plan, tables);
         String[] columnTypes = buildColumnTypes(plan, columnNames.length);
         
+        // 对于SELECT *，确保行数据长度与列数匹配
+        if (plan.getSelectColumns().isEmpty() && plan.getAggregateFunctions().isEmpty() && !selectedRows.isEmpty()) {
+            // 检查并修复行数据长度
+            int expectedLength = columnNames.length;
+            for (int i = 0; i < selectedRows.size(); i++) {
+                String[] row = selectedRows.get(i);
+                if (row != null && row.length < expectedLength) {
+                    // 扩展行数据以匹配列数
+                    String[] extendedRow = new String[expectedLength];
+                    System.arraycopy(row, 0, extendedRow, 0, row.length);
+                    // 剩余部分保持为null
+                    selectedRows.set(i, extendedRow);
+                }
+            }
+        }
+        
         // 转换为列优先的数据矩阵
         String[][] data = convertToColumnMatrix(selectedRows, columnNames.length);
         
+        // 确保rowCount与selectedRows.size()一致
+        int rowCount = selectedRows.size();
+        
         // 创建结果集
-        return new xlNativeResultSet(columnNames, columnTypes, data, selectedRows.size());
+        return new xlNativeResultSet(columnNames, columnTypes, data, rowCount);
     }
     
     /**
@@ -96,7 +116,6 @@ public class ResultSetBuilder {
         }
         
         List<String[]> result = new ArrayList<>();
-        ExpressionEvaluator evaluator = new ExpressionEvaluator();
         
         for (String[] row : rows) {
             List<String> selectedValues = new ArrayList<>();
@@ -275,17 +294,29 @@ public class ResultSetBuilder {
      */
     private List<String[]> applyLimit(List<String[]> rows, Integer limit, Integer offset) {
         int start = (offset != null && offset > 0) ? offset : 0;
-        int end = (limit != null && limit > 0) ? start + limit : rows.size();
         
+        // 如果LIMIT为0，返回空列表
+        if (limit != null && limit == 0) {
+            return new ArrayList<>();
+        }
+        
+        // 如果OFFSET超出范围，返回空列表
         if (start >= rows.size()) {
             return new ArrayList<>();
         }
+        
+        int end = (limit != null && limit > 0) ? start + limit : rows.size();
         
         if (end > rows.size()) {
             end = rows.size();
         }
         
-        return rows.subList(start, end);
+        // 使用subList可能导致问题，改为创建新列表
+        List<String[]> result = new ArrayList<>();
+        for (int i = start; i < end; i++) {
+            result.add(rows.get(i));
+        }
+        return result;
     }
     
     /**
@@ -310,8 +341,22 @@ public class ResultSetBuilder {
                 }
             }
         } else {
-            // 添加选择的列
-            columnNames.addAll(plan.getSelectColumns());
+            // 添加选择的列（排除"*"）
+            for (String col : plan.getSelectColumns()) {
+                if (!"*".equals(col)) {
+                    columnNames.add(col);
+                } else {
+                    // 如果遇到"*"，展开为所有表的列
+                    for (TableInfo table : tables) {
+                        String[] cols = table.getColumnNames();
+                        if (cols != null) {
+                            for (String c : cols) {
+                                columnNames.add(c);
+                            }
+                        }
+                    }
+                }
+            }
         }
         
         // 添加聚合函数列
@@ -354,8 +399,21 @@ public class ResultSetBuilder {
         
         for (int i = 0; i < rows.size(); i++) {
             String[] row = rows.get(i);
-            for (int j = 0; j < columnCount && j < row.length; j++) {
-                matrix[j][i] = row[j];
+            if (row == null) {
+                // 如果行数据为null，所有列都设为null
+                for (int j = 0; j < columnCount; j++) {
+                    matrix[j][i] = null;
+                }
+            } else {
+                // 复制行数据到矩阵
+                for (int j = 0; j < columnCount; j++) {
+                    if (j < row.length) {
+                        matrix[j][i] = row[j];
+                    } else {
+                        // 如果行长度小于列数，剩余列设为null
+                        matrix[j][i] = null;
+                    }
+                }
             }
         }
         

@@ -78,8 +78,8 @@ public class TestXlsql {
         try (Connection con = DriverManager.getConnection(url);
              Statement stm = con.createStatement()) {
             
-            String sql = "DROP TABLE \"demo.xlsqly8\" IF EXISTS;"
-                    + "CREATE TABLE \"demo.xlsqly8\" (v varchar(255));";
+            String sql = "DROP TABLE demo.xlsql IF EXISTS;"
+                    + "CREATE TABLE demo.xlsql (v varchar(255));";
             assertDoesNotThrow(() -> stm.execute(sql), 
                 "Table creation should succeed");
         } catch (SQLException e) {
@@ -99,20 +99,20 @@ public class TestXlsql {
             try (Statement stm = con.createStatement()) {
                 
                 // 创建表
-                String createSql = "DROP TABLE \"demo.xlsqly8\" IF EXISTS;"
-                        + "CREATE TABLE \"demo.xlsqly8\" (v varchar(255));";
+                String createSql = "DROP TABLE demo.xlsql IF EXISTS;"
+                        + "CREATE TABLE demo.xlsql (v varchar(255));";
                 stm.execute(createSql);
 
                 // 插入数据
                 int insertCount = 100; // 减少测试数据量以提高测试速度
                 for (int i = 0; i < insertCount; i++) {
-                    String insertSql = "INSERT INTO \"demo.xlsqly8\" VALUES ('xlSQL Y8 - daicy');";
+                    String insertSql = "INSERT INTO demo.xlsql VALUES ('xlSQL - daicy');";
                     int result = stm.executeUpdate(insertSql);
                     assertEquals(1, result, "Each insert should affect 1 row");
                 }
 
                 // 验证数据
-                ResultSet rs = stm.executeQuery("SELECT COUNT(*) FROM \"demo.xlsqly8\"");
+                ResultSet rs = stm.executeQuery("SELECT COUNT(*) FROM demo.xlsql");
                 assertTrue(rs.next(), "Result set should have data");
                 int count = rs.getInt(1);
                 assertEquals(insertCount, count, "Record count should match");
@@ -142,19 +142,19 @@ public class TestXlsql {
             try (Statement stm = con.createStatement()) {
                 
                 // 创建表
-                String createSql = "DROP TABLE \"demo.xlsqly8\" IF EXISTS;"
-                        + "CREATE TABLE \"demo.xlsqly8\" (v varchar(255));";
+                String createSql = "DROP TABLE demo.xlsql IF EXISTS;"
+                        + "CREATE TABLE demo.xlsql (v varchar(255));";
                 stm.execute(createSql);
 
                 // 插入8000条记录（原始测试的数据量）
                 int totalRecords = 8000;
                 for (int i = 0; i < totalRecords; i++) {
-                    String insertSql = "INSERT INTO \"demo.xlsqly8\" VALUES ('xlSQL Y8 - daicy');";
+                    String insertSql = "INSERT INTO demo.xlsql VALUES ('xlSQL - daicy');";
                     stm.executeUpdate(insertSql);
                 }
 
                 // 验证数据
-                ResultSet rs = stm.executeQuery("SELECT COUNT(*) FROM \"demo.xlsqly8\"");
+                ResultSet rs = stm.executeQuery("SELECT COUNT(*) FROM demo.xlsql");
                 assertTrue(rs.next(), "Result set should have data");
                 int count = rs.getInt(1);
                 assertEquals(totalRecords, count, "All records should be inserted");
