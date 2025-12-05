@@ -1,0 +1,72 @@
+package io.github.daichangya.xlsql.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.junit.jupiter.api.Test;
+
+import io.github.daichangya.xlsql.base.NativeEngineTestBase;
+import io.github.daichangya.xlsql.engine.connection.xlConnectionNative;
+
+/**
+ * xlConnectionNativeTest - 自研SQL引擎连接测试
+ * 
+ * <p>测试自研SQL引擎的连接和基本查询功能。</p>
+ * 
+ * @author daichangya
+ */
+public class xlConnectionNativeTest extends NativeEngineTestBase {
+
+    @Test
+    public void testConnection() throws SQLException {
+        assertNotNull(con, "Connection should be established");
+        assertFalse(con.isClosed(), "Connection should be open");
+        // 验证使用的是自研引擎连接实现
+        assertTrue(con instanceof xlConnectionNative,
+                  "Should be using Native connection implementation");
+    }
+
+    @Test
+    public void testNativeDatabaseMetaData() throws SQLException {
+        assertNotNull(con.getMetaData(), "DatabaseMetaData should not be null");
+        String productName = con.getMetaData().getDatabaseProductName();
+        assertTrue(productName.contains("Native") || productName.contains("XLSQL"), 
+                  "Database product name should contain Native or XLSQL");
+    }
+
+    @Test
+    public void testSimpleQuery() throws SQLException {
+        // 测试简单查询（如果有Excel文件）
+        // 注意：这个测试需要当前目录下有Excel文件
+        Statement stmt = con.createStatement();
+        
+        try {
+            // 尝试查询（如果目录中有Excel文件）
+            // 这里只是测试连接是否正常工作，不保证有数据
+            ResultSet rs = stmt.executeQuery("SELECT * FROM SA_Sheet1");
+            assertNotNull(rs, "ResultSet should not be null");
+            // 如果查询成功，说明自研引擎正常工作
+        } catch (SQLException e) {
+            // 如果没有Excel文件或表不存在，这是预期的
+            // 只要不是连接错误，就认为测试通过
+            assertFalse(e.getMessage().contains("Connection"), 
+                       "Should not be a connection error: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConnectionIsReadOnly() throws SQLException {
+        assertTrue(con.isReadOnly(), "Native engine connection should be read-only");
+    }
+
+    @Test
+    public void testAutoCommit() throws SQLException {
+        assertTrue(con.getAutoCommit(), "Native engine should have auto-commit enabled");
+    }
+}
+

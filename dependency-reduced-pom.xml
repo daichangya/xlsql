@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.jsdiff</groupId>
+  <groupId>io.github.daichangya</groupId>
   <artifactId>xlsql</artifactId>
   <name>XLSQL</name>
   <version>5.1.0</version>
@@ -58,13 +58,13 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.jsdiff.xlsql.ui.XlUi</mainClass>
+                  <mainClass>ui.io.github.daichangya.xlsql.XlUi</mainClass>
                 </transformer>
               </transformers>
               <relocations>
                 <relocation>
                   <pattern>net.sf.jsqlparser</pattern>
-                  <shadedPattern>com.jsdiff.xlsql.jdbc.jsqlparser</shadedPattern>
+                  <shadedPattern>io.github.daichangya.xlsql.jdbc.jsqlparser</shadedPattern>
                 </relocation>
               </relocations>
               <filters>

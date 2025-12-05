@@ -63,12 +63,12 @@
                     </div>
                     <p>在您的 <code>pom.xml</code> 中添加以下依赖：</p>
 <pre><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.jsdiff&lt;/groupId&gt;
+    &lt;groupId&gt;io.github.daichangya&lt;/groupId&gt;
     &lt;artifactId&gt;xlsql&lt;/artifactId&gt;
     &lt;version&gt;5.1.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
                     <p class="mt-2">
-                        <a href="https://search.maven.org/artifact/com.jsdiff/xlsql" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <a href="https://search.maven.org/artifact/io.github.daichangya/xlsql" target="_blank" class="btn btn-sm btn-outline-primary">
                             <i class="fas fa-external-link-alt me-2"></i>在 Maven Central 查看
                         </a>
                     </p>
@@ -85,7 +85,7 @@ import java.sql.Statement;
 public class ExcelQuery {
     public static void main(String[] args) throws Exception {
         // 1. 注册驱动
-        Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+        Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
 
         // 2. 创建连接
         // URL 格式: jdbc:xlsql:excel:/path/to/directory

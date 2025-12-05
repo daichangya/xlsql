@@ -132,11 +132,11 @@ mvn test -Dtest=QueryPerformanceTest
 # 方法1：使用Java命令
 mvn test-compile
 java -cp "target/test-classes:target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/dev/stdout)" \
-     com.jsdiff.xlsql.util.TestDataFileGenerator
+     util.io.github.daichangya.xlsql.TestDataFileGenerator
 
 # 方法2：使用Maven
 mvn test-compile exec:java \
-    -Dexec.mainClass="com.jsdiff.xlsql.util.TestDataFileGenerator" \
+    -Dexec.mainClass="util.io.github.daichangya.xlsql.TestDataFileGenerator" \
     -Dexec.classpathScope=test
 ```
 
@@ -146,7 +146,7 @@ mvn test-compile exec:java \
 
 ```
 java.lang.RuntimeException: 测试数据文件生成失败: test1.xls 不存在。请检查文件权限和磁盘空间。
-    at com.jsdiff.xlsql.base.NativeEngineTestBase.setUpTestData(NativeEngineTestBase.java:XX)
+    at base.io.github.daichangya.xlsql.NativeEngineTestBase.setUpTestData(NativeEngineTestBase.java:XX)
     ...
 ```
 

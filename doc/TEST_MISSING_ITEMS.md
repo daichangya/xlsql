@@ -243,47 +243,47 @@
 ### ResultSetBuilderTest模板
 
 ```java
-package com.jsdiff.xlsql.engine.executor;
+package io.github.daichangya.xlsql.engine.executor;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.jsdiff.xlsql.engine.plan.QueryPlan;
-import com.jsdiff.xlsql.engine.plan.TableInfo;
+import plan.engine.io.github.daichangya.xlsql.QueryPlan;
 // ... 其他import
 
 public class ResultSetBuilderTest {
-    
+
     private ResultSetBuilder builder;
     private QueryPlan plan;
-    
+
     @BeforeEach
     public void setUp() {
         builder = new ResultSetBuilder();
         plan = new QueryPlan();
         // ... 初始化
     }
-    
+
     @Test
     public void testBuildWithSelectAll() throws SQLException {
         // 测试SELECT *
     }
-    
+
     @Test
     public void testBuildWithSelectColumns() throws SQLException {
         // 测试SELECT column1, column2
     }
-    
+
     @Test
     public void testBuildWithOrderBy() throws SQLException {
         // 测试ORDER BY
     }
-    
+
     @Test
     public void testBuildWithLimit() throws SQLException {
         // 测试LIMIT
     }
-    
+
     // ... 更多测试
 }
 ```

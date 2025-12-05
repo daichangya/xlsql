@@ -1,5 +1,5 @@
-import static com.jsdiff.xlsql.jdbc.Constants.DRIVER;
-import static com.jsdiff.xlsql.jdbc.Constants.URL_PFX_XLS;
+import static io.github.daichangya.xlsql.jdbc.Constants.DRIVER;
+import static io.github.daichangya.xlsql.jdbc.Constants.URL_PFX_XLS;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

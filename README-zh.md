@@ -29,7 +29,7 @@ XLSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操
 
 ```xml
 <dependency>
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
 </dependency>
@@ -114,7 +114,7 @@ mvn javadoc:jar
 ```bash
 mvn install:install-file \
   -Dfile=target/xlsql-5.1.0-shaded.jar \
-  -DgroupId=com.jsdiff \
+  -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
   -Dversion=5.1.0 \
   -Dpackaging=jar
@@ -129,7 +129,7 @@ import java.sql.DriverManager;
 public class Main {
     public static void main(String[] args) throws Exception {
         // 注册驱动（通常不需要显式注册）
-        Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+        Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
 
         // 创建连接
         String url = "jdbc:xlsql:excel:/path/to/excel/files";

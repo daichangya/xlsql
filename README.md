@@ -1,6 +1,6 @@
 # XLSQL - Excel SQL Query Tool
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.jsdiff/xlsql.svg)](https://search.maven.org/artifact/com.jsdiff/xlsql)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.daichangya/xlsql.svg)](https://search.maven.org/artifact/io.github.daichangya/xlsql)
 [![License](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 XLSQL is a JDBC driver that enables querying Excel files using SQL statements. It treats Excel worksheets as database tables, allowing you to perform queries, inserts, updates, and deletes on Excel data using standard SQL syntax.
@@ -50,7 +50,7 @@ XLSQL 5.1.0 is available on Maven Central. Add the following to your `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
 </dependency>
@@ -72,7 +72,7 @@ Then add the dependency to your `pom.xml` (same as above).
 
 ```java
 // Register driver (usually not needed explicitly)
-Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
 
 // Create connection
 String url = "jdbc:xlsql:excel:/path/to/excel/files";
@@ -211,7 +211,7 @@ After running `mvn package`, you'll find:
 Add to your `pom.xml`:
 ```xml
 <dependency>
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
 </dependency>
@@ -225,7 +225,7 @@ Add to your `pom.xml`:
 ```bash
 mvn install:install-file \
   -Dfile=target/xlsql-5.1.0-shaded.jar \
-  -DgroupId=com.jsdiff \
+  -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
   -Dversion=5.1.0 \
   -Dpackaging=jar
@@ -309,7 +309,7 @@ mvn clean install
 3. Use in your project:
 ```xml
 <dependency>
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
 </dependency>
@@ -322,7 +322,7 @@ If you have the shaded JAR file:
 ```bash
 mvn install:install-file \
   -Dfile=xlsql-5.1.0-shaded.jar \
-  -DgroupId=com.jsdiff \
+  -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
   -Dversion=5.1.0 \
   -Dpackaging=jar

@@ -60,7 +60,7 @@ mvn install
 
 ```xml
 <dependency>
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
 </dependency>
@@ -187,7 +187,7 @@ mvn package source:jar javadoc:jar
 Shaded JAR 由 `maven-shade-plugin` 生成，配置在 `pom.xml` 中：
 - 合并所有依赖到单个 JAR
 - 排除签名文件（.SF, .DSA, .RSA）
-- 设置主类为 `com.jsdiff.xlsql.ui.XlUi`
+- 设置主类为 `ui.io.github.daichangya.xlsql.XlUi`
 
 ### 3. 源码 JAR
 
@@ -232,7 +232,7 @@ mvn install -DskipTests
 ```bash
 mvn install:install-file \
   -Dfile=target/xlsql-5.1.0-shaded.jar \
-  -DgroupId=com.jsdiff \
+  -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
   -Dversion=5.1.0 \
   -Dpackaging=jar \
@@ -243,7 +243,7 @@ mvn install:install-file \
 
 ```xml
 <dependency>
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
     <classifier>shaded</classifier>
@@ -281,7 +281,7 @@ mvn deploy -DaltDeploymentRepository=myrepo::default::http://your-repo-url/repos
 
 ```xml
 <dependency>
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
 </dependency>
@@ -361,7 +361,7 @@ import java.sql.*;
 
 public class TestConnection {
     public static void main(String[] args) throws Exception {
-        Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+        Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
         String url = "jdbc:xlsql:excel:/path/to/excel/files";
         Connection conn = DriverManager.getConnection(url);
         System.out.println("连接成功！");

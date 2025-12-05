@@ -18,14 +18,14 @@ mvn test-compile
 
 # 2. 生成测试数据文件
 java -cp "target/test-classes:target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/dev/stdout)" \
-     com.jsdiff.xlsql.util.TestDataFileGenerator
+     util.io.github.daichangya.xlsql.TestDataFileGenerator
 ```
 
 #### 方法2：使用Maven执行
 
 ```bash
 mvn test-compile exec:java \
-    -Dexec.mainClass="com.jsdiff.xlsql.util.TestDataFileGenerator" \
+    -Dexec.mainClass="util.io.github.daichangya.xlsql.TestDataFileGenerator" \
     -Dexec.classpathScope=test
 ```
 
@@ -152,7 +152,7 @@ xlSQL使用下划线分隔的表名格式：`workbook_sheet`
 测试完成后，可以清理生成的测试数据文件：
 
 ```java
-import com.jsdiff.xlsql.util.TestDataFileGenerator;
+import util.io.github.daichangya.xlsql.TestDataFileGenerator;
 
 // 清理测试数据文件（从database目录）
 TestDataFileGenerator.cleanupTestFiles(System.getProperty("user.dir"));
@@ -172,7 +172,7 @@ rm database/test1.xls database/test2.xls database/test3.xls
 - name: Generate test data
   run: |
     mvn test-compile exec:java \
-      -Dexec.mainClass="com.jsdiff.xlsql.util.TestDataFileGenerator" \
+      -Dexec.mainClass="util.io.github.daichangya.xlsql.TestDataFileGenerator" \
       -Dexec.classpathScope=test
 
 - name: Run tests

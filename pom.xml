@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jsdiff</groupId>
+    <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
     <version>5.1.0</version>
 
@@ -157,14 +157,14 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.jsdiff.xlsql.ui.XlUi</mainClass>
+                                    <mainClass>ui.io.github.daichangya.xlsql.XlUi</mainClass>
                                 </transformer>
                             </transformers>
                             <relocations>
                                 <!-- 重命名 JSqlParser 包名 -->
                                 <relocation>
                                     <pattern>net.sf.jsqlparser</pattern>
-                                    <shadedPattern>com.jsdiff.xlsql.jdbc.jsqlparser</shadedPattern>
+                                    <shadedPattern>io.github.daichangya.xlsql.jdbc.jsqlparser</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

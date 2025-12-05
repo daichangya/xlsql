@@ -39,8 +39,8 @@
             <p class="hero-tagline">像操作数据库一样查询 Excel 文件</p>
             <p class="lead mb-3">基于 Java 的 JDBC 驱动，支持 SQL 查询、插入、更新和删除操作。</p>
             <div class="mb-4">
-                <a href="https://search.maven.org/artifact/com.jsdiff/xlsql" target="_blank" class="badge bg-light text-dark me-2" style="font-size: 0.9rem;">
-                    <img src="https://img.shields.io/maven-central/v/com.jsdiff/xlsql.svg" alt="Maven Central">
+                <a href="https://search.maven.org/artifact/io.github.daichangya/xlsql" target="_blank" class="badge bg-light text-dark me-2" style="font-size: 0.9rem;">
+                    <img src="https://img.shields.io/maven-central/v/io.github.daichangya/xlsql.svg" alt="Maven Central">
                 </a>
                 <span class="badge bg-success" style="font-size: 0.9rem;">v5.1.0 已发布</span>
             </div>
@@ -113,13 +113,13 @@
                 <div class="col-lg-7">
 <pre><code class="language-java">// 1. 添加 Maven 依赖
 // &lt;dependency&gt;
-//     &lt;groupId&gt;com.jsdiff&lt;/groupId&gt;
+//     &lt;groupId&gt;io.github.daichangya&lt;/groupId&gt;
 //     &lt;artifactId&gt;xlsql&lt;/artifactId&gt;
 //     &lt;version&gt;5.1.0&lt;/version&gt;
 // &lt;/dependency&gt;
 
 // 2. 注册驱动
-Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
+Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
 
 // 3. 连接到 Excel 目录
 String url = "jdbc:xlsql:excel:/path/to/files";

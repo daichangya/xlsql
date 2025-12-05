@@ -267,13 +267,13 @@ mvn test-compile
 
 # 运行生成器（会自动生成到database目录）
 java -cp "target/test-classes:target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/dev/stdout)" \
-     com.jsdiff.xlsql.util.TestDataFileGenerator
+     util.io.github.daichangya.xlsql.TestDataFileGenerator
 ```
 
 **方法2：使用Maven执行**
 ```bash
 mvn test-compile exec:java \
-    -Dexec.mainClass="com.jsdiff.xlsql.util.TestDataFileGenerator" \
+    -Dexec.mainClass="util.io.github.daichangya.xlsql.TestDataFileGenerator" \
     -Dexec.classpathScope=test
 ```
 
