@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import com.jsdiff.xlsql.database.sql.ICommand;
 import com.jsdiff.xlsql.engine.connection.xlConnectionNative;
 import com.jsdiff.xlsql.engine.core.NativeSqlEngine;
+import com.jsdiff.xlsql.util.XlSqlLogger;
 
 /**
  * xlNativeStatement - 自研引擎的Statement实现
@@ -40,7 +41,8 @@ import com.jsdiff.xlsql.engine.core.NativeSqlEngine;
  */
 public class xlNativeStatement implements Statement {
     
-    /** 日志记录器 */
+    /** 日志记录器（保留用于向后兼容，已迁移到 XlSqlLogger） */
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger(xlNativeStatement.class.getName());
     
     /** 关联的xlConnectionNative对象 */
@@ -48,6 +50,12 @@ public class xlNativeStatement implements Statement {
     
     /** 语句是否已关闭 */
     private boolean closed = false;
+    
+    /** 当前结果集（用于支持 execute() + getResultSet() 模式，DBeaver 需要此功能） */
+    private ResultSet currentResultSet = null;
+    
+    /** 当前更新计数（用于支持 execute() + getUpdateCount() 模式） */
+    private int currentUpdateCount = -1;
     
     /**
      * 创建xlNativeStatement实例
@@ -65,34 +73,81 @@ public class xlNativeStatement implements Statement {
     public ResultSet executeQuery(String sql) throws SQLException {
         checkClosed();
         
+        // 关闭之前的结果集
+        closeCurrentResultSet();
+        
         // 使用自研引擎执行查询
         NativeSqlEngine engine = xlCon.getNativeEngine();
         if (engine == null) {
             throw new SQLException("Native engine not initialized");
         }
         
-        log.info("xlSQL: executeQuery " + sql);
-        return engine.executeQuery(sql);
+        long startTime = System.currentTimeMillis();
+        try {
+            ResultSet resultSet = engine.executeQuery(sql);
+            
+            // 保存结果集，用于 getResultSet() 调用
+            currentResultSet = resultSet;
+            currentUpdateCount = -1;
+            
+            long executionTime = System.currentTimeMillis() - startTime;
+            
+            // 获取结果行数（如果可能）
+            int rowCount = -1;
+            if (resultSet != null) {
+                try {
+                    resultSet.last();
+                    rowCount = resultSet.getRow();
+                    resultSet.beforeFirst();
+                } catch (SQLException e) {
+                    // 无法获取行数，忽略
+                }
+            }
+            
+            XlSqlLogger.logSql(xlNativeStatement.class, sql, executionTime, rowCount);
+            return resultSet;
+        } catch (SQLException e) {
+            long executionTime = System.currentTimeMillis() - startTime;
+            XlSqlLogger.logError(xlNativeStatement.class, 
+                String.format("SQL execution failed: %s | Time: %dms", sql, executionTime), e);
+            throw e;
+        }
     }
     
     @Override
     public int executeUpdate(String sql) throws SQLException {
         checkClosed();
         
+        // 关闭之前的结果集
+        closeCurrentResultSet();
+        
         // 解析SQL并执行命令
         ICommand cmd = xlCon.xlsql.parseSql(sql);
         if (cmd.execAllowed()) {
-            log.info("xlSQL: executeUpdate " + sql);
-            
-            // 使用自研引擎执行更新
-            NativeSqlEngine engine = xlCon.getNativeEngine();
-            if (engine == null) {
-                throw new SQLException("Native engine not initialized");
+            long startTime = System.currentTimeMillis();
+            try {
+                // 使用自研引擎执行更新
+                NativeSqlEngine engine = xlCon.getNativeEngine();
+                if (engine == null) {
+                    throw new SQLException("Native engine not initialized");
+                }
+                
+                int result = engine.executeUpdate(sql);
+                cmd.execute();
+                
+                // 清除结果集，保存更新计数
+                currentResultSet = null;
+                currentUpdateCount = result;
+                
+                long executionTime = System.currentTimeMillis() - startTime;
+                XlSqlLogger.logSql(xlNativeStatement.class, sql, executionTime, result);
+                return result;
+            } catch (SQLException e) {
+                long executionTime = System.currentTimeMillis() - startTime;
+                XlSqlLogger.logError(xlNativeStatement.class, 
+                    String.format("SQL update failed: %s | Time: %dms", sql, executionTime), e);
+                throw e;
             }
-            
-            int result = engine.executeUpdate(sql);
-            cmd.execute();
-            return result;
         } else {
             throw new SQLException("xlSQL: execute not allowed");
         }
@@ -101,6 +156,9 @@ public class xlNativeStatement implements Statement {
     @Override
     public boolean execute(String sql) throws SQLException {
         checkClosed();
+        
+        // 关闭之前的结果集
+        closeCurrentResultSet();
         
         String[] sqlCommands = sql.split("[;]");
         boolean ret = false;
@@ -113,28 +171,42 @@ public class xlNativeStatement implements Statement {
             
             ICommand cmd = xlCon.xlsql.parseSql(sqlCommand);
             if (cmd.execAllowed()) {
-                log.info("xlSQL: execute " + sqlCommand);
-                
-                // 判断是查询还是更新
-                String normalizedSql = sqlCommand.trim().toUpperCase();
-                if (normalizedSql.startsWith("SELECT")) {
-                    // 查询语句
-                    NativeSqlEngine engine = xlCon.getNativeEngine();
-                    if (engine == null) {
-                        throw new SQLException("Native engine not initialized");
+                long startTime = System.currentTimeMillis();
+                try {
+                    // 判断是查询还是更新
+                    String normalizedSql = sqlCommand.trim().toUpperCase();
+                    if (normalizedSql.startsWith("SELECT")) {
+                        // 查询语句
+                        NativeSqlEngine engine = xlCon.getNativeEngine();
+                        if (engine == null) {
+                            throw new SQLException("Native engine not initialized");
+                        }
+                        // 保存结果集，用于后续 getResultSet() 调用（DBeaver 需要）
+                        ResultSet rs = engine.executeQuery(sqlCommand);
+                        currentResultSet = rs;
+                        currentUpdateCount = -1;
+                        ret = true;
+                    } else {
+                        // 更新语句
+                        NativeSqlEngine engine = xlCon.getNativeEngine();
+                        if (engine == null) {
+                            throw new SQLException("Native engine not initialized");
+                        }
+                        int updateCount = engine.executeUpdate(sqlCommand);
+                        currentResultSet = null;
+                        currentUpdateCount = updateCount;
+                        ret = false;
                     }
-                    engine.executeQuery(sqlCommand);
-                    ret = true;
-                } else {
-                    // 更新语句
-                    NativeSqlEngine engine = xlCon.getNativeEngine();
-                    if (engine == null) {
-                        throw new SQLException("Native engine not initialized");
-                    }
-                    engine.executeUpdate(sqlCommand);
-                    ret = false;
+                    cmd.execute();
+                    
+                    long executionTime = System.currentTimeMillis() - startTime;
+                    XlSqlLogger.logSql(xlNativeStatement.class, sqlCommand, executionTime, -1);
+                } catch (SQLException e) {
+                    long executionTime = System.currentTimeMillis() - startTime;
+                    XlSqlLogger.logError(xlNativeStatement.class, 
+                        String.format("SQL execute failed: %s | Time: %dms", sqlCommand, executionTime), e);
+                    throw e;
                 }
-                cmd.execute();
             } else {
                 throw new SQLException("xlSQL: execute not allowed");
             }
@@ -145,6 +217,8 @@ public class xlNativeStatement implements Statement {
     
     @Override
     public void close() throws SQLException {
+        // 关闭当前结果集
+        closeCurrentResultSet();
         closed = true;
     }
     
@@ -156,6 +230,23 @@ public class xlNativeStatement implements Statement {
     private void checkClosed() throws SQLException {
         if (closed) {
             throw new SQLException("Statement is closed");
+        }
+    }
+    
+    /**
+     * 关闭当前结果集（如果存在）
+     * 用于资源管理和避免内存泄漏
+     */
+    private void closeCurrentResultSet() {
+        if (currentResultSet != null) {
+            try {
+                currentResultSet.close();
+            } catch (SQLException e) {
+                // 忽略关闭时的异常，记录日志即可
+                XlSqlLogger.logWarning(xlNativeStatement.class, 
+                    "Failed to close current ResultSet: " + e.getMessage());
+            }
+            currentResultSet = null;
         }
     }
     
@@ -212,12 +303,14 @@ public class xlNativeStatement implements Statement {
     
     @Override
     public ResultSet getResultSet() throws SQLException {
-        return null;
+        checkClosed();
+        return currentResultSet;
     }
     
     @Override
     public int getUpdateCount() throws SQLException {
-        return -1;
+        checkClosed();
+        return currentUpdateCount;
     }
     
     @Override

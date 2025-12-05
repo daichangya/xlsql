@@ -22,6 +22,8 @@ package com.jsdiff.xlsql.engine.parser;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import com.jsdiff.xlsql.util.XlSqlLogger;
+
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
@@ -52,7 +54,8 @@ import net.sf.jsqlparser.statement.select.Select;
  */
 public class MySQLSqlParser {
 
-    /** 日志记录器 */
+    /** 日志记录器（保留用于向后兼容，已迁移到 XlSqlLogger） */
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(MySQLSqlParser.class.getName());
 
     /**
@@ -67,7 +70,7 @@ public class MySQLSqlParser {
             throw new SQLException("SQL statement cannot be null or empty");
         }
 
-        logger.info("Parsing SQL with JSqlParser: " + sql);
+        XlSqlLogger.logSqlParse(MySQLSqlParser.class, sql);
 
         try {
             // 使用JSqlParser解析SQL
@@ -78,21 +81,21 @@ public class MySQLSqlParser {
                 throw new SQLException("Only SELECT statements are supported. Got: " +
                         statement.getClass().getSimpleName());
             }
+            Select select = (Select) statement;
 
-            // 检查是否是PlainSelect（普通SELECT，不是UNION等）
-            if (!(statement instanceof PlainSelect)) {
-                throw new SQLException("Complex SELECT statements (UNION, etc.) are not yet supported"+statement.getClass());
+            if (!(select instanceof PlainSelect)) {
+                throw new SQLException("Complex SELECT statements (UNION, etc.) are not yet supported. Got: " +
+                        select.getClass().getSimpleName());
             }
 
-            PlainSelect plainSelect = (PlainSelect) statement;
+            PlainSelect plainSelect = (PlainSelect) select;
 
-            logger.info("SQL parsed successfully");
+            XlSqlLogger.logInfo(MySQLSqlParser.class, "SQL parsed successfully");
             return plainSelect;
 
         } catch (JSQLParserException e) {
-            String errorMsg = "SQL parsing failed: " + e.getMessage();
-            logger.severe(errorMsg);
-            throw new SQLException(errorMsg, e);
+            XlSqlLogger.logSqlParseError(MySQLSqlParser.class, sql, e);
+            throw new SQLException("SQL parsing failed: " + e.getMessage(), e);
         }
     }
 

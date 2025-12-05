@@ -39,6 +39,8 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
+import static com.jsdiff.xlsql.engine.core.NativeSqlEngine.STATIC_TABLE_SCHEM;
+
 /**
  * PlainSelectAdapter - PlainSelect到QueryPlan的适配器
  * 
@@ -363,11 +365,17 @@ public class PlainSelectAdapter {
     private String[] parseTableName(Table table) {
         String workbook = table.getSchemaName();
         String sheet = table.getName();
-        
+
         // 移除反引号（MySQL语法中的标识符引号）
         if (workbook != null) {
             workbook = workbook.replace("`", "").trim();
+            workbook = workbook.replace("\"", "").trim();
         }
+
+        if(STATIC_TABLE_SCHEM.equalsIgnoreCase(workbook)){
+            workbook = null;
+        }
+
         if (sheet != null) {
             sheet = sheet.replace("`", "").trim();
         }

@@ -702,7 +702,7 @@ public class xlInstance {
         setProperty(getEngine() + ".password", password);
         if (configModified) {
             saveProperties();
-            logger.warning("安全警告：在配置文件中直接存储密码是不推荐的。建议使用更安全的方法，如环境变量或凭证管理系统。");
+//            logger.warning("安全警告：在配置文件中直接存储密码是不推荐的。建议使用更安全的方法，如环境变量或凭证管理系统。");
         }
     }
 }

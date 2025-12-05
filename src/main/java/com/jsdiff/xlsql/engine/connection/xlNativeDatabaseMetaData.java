@@ -31,6 +31,8 @@ import java.util.List;
 import com.jsdiff.xlsql.database.AReader;
 import com.jsdiff.xlsql.engine.resultset.xlNativeResultSet;
 
+import static com.jsdiff.xlsql.engine.core.NativeSqlEngine.STATIC_TABLE_SCHEM;
+
 /**
  * xlNativeDatabaseMetaData - 自研引擎的数据库元数据适配器
  * 
@@ -286,7 +288,7 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
                                 // SCOPE_CATALOG, SCOPE_SCHEMA, SCOPE_TABLE, SOURCE_DATA_TYPE, IS_AUTOINCREMENT, IS_GENERATEDCOLUMN
                                 String[] row = new String[24];
                                 row[0] = null; // TABLE_CAT
-                                row[1] = "schema"; // TABLE_SCHEM
+                                row[1] = STATIC_TABLE_SCHEM; // TABLE_SCHEM
                                 row[2] = tableName; // TABLE_NAME
                                 row[3] = columnName; // COLUMN_NAME
                                 row[4] = String.valueOf(mapSqlType(sqlType)); // DATA_TYPE
@@ -615,7 +617,7 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
                         // TABLE_CAT, TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_CAT, TYPE_SCHEM, TYPE_NAME, SELF_REFERENCING_COL_NAME, REF_GENERATION
                         String[] row = new String[10];
                         row[0] = null; // TABLE_CAT
-                        row[1] = "schema"; // TABLE_SCHEM
+                        row[1] = STATIC_TABLE_SCHEM; // TABLE_SCHEM
                         row[2] = tablename; // TABLE_NAME
                         row[3] = "TABLE"; // TABLE_TYPE
                         row[4] = null; // REMARKS
@@ -1176,7 +1178,7 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
             // 添加一行数据
             // TABLE_SCHEM, TABLE_CATALOG
             String[] row = new String[2];
-            row[0] = "schema"; // TABLE_SCHEM
+            row[0] = STATIC_TABLE_SCHEM; // TABLE_SCHEM
             row[1] = null; // TABLE_CATALOG
             rows.add(row);
 

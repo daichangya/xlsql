@@ -30,11 +30,11 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jsdiff.xlsql.database.xlException;
 import com.jsdiff.xlsql.database.xlInstance;
+import com.jsdiff.xlsql.util.XlSqlLogger;
 
 /**
  * xlDriver - Excel SQL操作的JDBC驱动主类
@@ -67,7 +67,8 @@ public class xlDriver implements Driver {
     /** JDBC兼容性标志，xlSQL不完全兼容JDBC标准 */
     private static final boolean JDBC_COMPLIANT = false;
     
-    /** 日志记录器 */
+    /** 日志记录器（保留用于向后兼容，已迁移到 XlSqlLogger） */
+    @SuppressWarnings("unused")
     private static final Logger LOGGER = Logger.getLogger(xlDriver.class.getName());
     /** 已注册的后端驱动缓存，避免重复加载 */
     private static final ConcurrentHashMap<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
@@ -79,9 +80,9 @@ public class xlDriver implements Driver {
         try {
             // 注册xlDriver到JDBC DriverManager
             DriverManager.registerDriver(new xlDriver());
-            LOGGER.info("xlDriver registered successfully");
+            XlSqlLogger.logInfo(xlDriver.class, "xlDriver registered successfully");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to register xlDriver", e);
+            XlSqlLogger.logError(xlDriver.class, "Failed to register xlDriver", e);
             throw new IllegalStateException("Failed to register xlDriver: " + e.getMessage(), e);
         }
     }
@@ -128,7 +129,7 @@ public class xlDriver implements Driver {
             return null;
         }
         
-        LOGGER.fine("Attempting to connect with URL: " + url);
+        XlSqlLogger.logConnection(xlDriver.class, () -> "Attempting to connect with URL: " + url);
         
         try {
             // 获取配置文件和实例
@@ -141,7 +142,7 @@ public class xlDriver implements Driver {
                 // 自研引擎不需要外部数据库连接
                 String databasePath = resolveDatabasePath(url, instance);
                 xlConnection connection = xlConnection.factory(databasePath, null, null);
-                LOGGER.info("Connection established to Native SQL Engine");
+                XlSqlLogger.logConnection(xlDriver.class, "Connection established to Native SQL Engine");
                 return connection;
             }
             
@@ -162,22 +163,22 @@ public class xlDriver implements Driver {
             String databasePath = resolveDatabasePath(url, instance);
             xlConnection connection = xlConnection.factory(databasePath, backendConnection, engineSchema);
             
-            LOGGER.info("Connection established to " + 
-                backendConnection.getMetaData().getDatabaseProductName());
+            String dbProductName = backendConnection.getMetaData().getDatabaseProductName();
+            XlSqlLogger.logConnection(xlDriver.class, "Connection established to " + dbProductName);
             
             return connection;
             
         } catch (xlException xe) {
             // xlSQL特定异常
-            LOGGER.log(Level.SEVERE, "xlSQL exception during connection", xe);
+            XlSqlLogger.logConnectionError(xlDriver.class, "xlSQL exception during connection", xe);
             throw new SQLException("xlSQL exception: " + xe.getMessage(), xe);
         } catch (SQLException sqe) {
             // SQL异常直接抛出
-            LOGGER.log(Level.SEVERE, "SQL exception during connection", sqe);
+            XlSqlLogger.logConnectionError(xlDriver.class, "SQL exception during connection", sqe);
             throw sqe;
         } catch (Exception e) {
             // 其他未预期的异常
-            LOGGER.log(Level.SEVERE, "Unexpected exception during connection", e);
+            XlSqlLogger.logConnectionError(xlDriver.class, "Unexpected exception during connection", e);
             throw new SQLException("Connection failed: " + e.getMessage(), e);
         }
     }
@@ -207,7 +208,7 @@ public class xlDriver implements Driver {
             // 如果驱动尚未注册到DriverManager，则注册
             if (!isDriverRegistered(driver)) {
                 DriverManager.registerDriver(driver);
-                LOGGER.info("Registered backend driver: " + className);
+                XlSqlLogger.logInfo(xlDriver.class, "Registered backend driver: " + className);
             }
             
             // 将驱动缓存起来，避免重复加载
@@ -215,7 +216,7 @@ public class xlDriver implements Driver {
             return driver;
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to load driver: " + className, e);
+            XlSqlLogger.logError(xlDriver.class, "Failed to load driver: " + className, e);
             throw new SQLException("Failed to load driver: " + className, e);
         }
     }

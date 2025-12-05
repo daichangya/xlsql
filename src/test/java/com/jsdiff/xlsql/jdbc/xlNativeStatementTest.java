@@ -330,5 +330,176 @@ public class xlNativeStatementTest extends NativeEngineTestBase {
         // 应该执行成功
         assertTrue(result || !result); // 结果可能是true或false
     }
+    
+    // ================== execute() + getResultSet() 模式测试（DBeaver 使用此模式）==================
+    
+    @Test
+    public void testExecuteAndGetResultSet() throws SQLException {
+        // 测试 DBeaver 使用的标准模式：execute() + getResultSet()
+        boolean isResultSet = stmt.execute("SELECT * FROM test1_Sheet1 LIMIT 5");
+        
+        assertTrue(isResultSet, "execute() should return true for SELECT");
+        
+        // 通过 getResultSet() 获取结果集
+        ResultSet rs = stmt.getResultSet();
+        assertNotNull(rs, "getResultSet() should return non-null ResultSet after execute() with SELECT");
+        
+        // 验证结果集可以正常读取
+        int rowCount = 0;
+        while (rs.next()) {
+            rowCount++;
+        }
+        assertTrue(rowCount > 0, "ResultSet should have data");
+        
+        // 验证 updateCount 为 -1（因为是 SELECT 查询）
+        assertEquals(-1, stmt.getUpdateCount(), "getUpdateCount() should return -1 for SELECT");
+        
+        rs.close();
+    }
+    
+    @Test
+    public void testExecuteQueryAndGetResultSet() throws SQLException {
+        // 测试 executeQuery() 后通过 getResultSet() 也能获取结果集
+        ResultSet queryRs = stmt.executeQuery("SELECT * FROM test1_Sheet1 LIMIT 3");
+        assertNotNull(queryRs);
+        
+        // getResultSet() 应该返回相同的结果集
+        ResultSet rs = stmt.getResultSet();
+        assertNotNull(rs, "getResultSet() should return non-null after executeQuery()");
+        
+        // 两者应该是同一个结果集引用
+        assertEquals(queryRs, rs, "getResultSet() should return the same ResultSet as executeQuery()");
+        
+        queryRs.close();
+    }
+    
+    @Test
+    public void testGetResultSetAfterClose() throws SQLException {
+        // 执行查询
+        stmt.execute("SELECT * FROM test1_Sheet1 LIMIT 1");
+        
+        // 关闭 Statement
+        stmt.close();
+        
+        // 关闭后 getResultSet() 应该抛出异常
+        assertThrows(SQLException.class, () -> {
+            stmt.getResultSet();
+        }, "getResultSet() should throw exception after Statement is closed");
+    }
+    
+    @Test
+    public void testGetUpdateCountAfterClose() throws SQLException {
+        // 执行查询
+        stmt.execute("SELECT * FROM test1_Sheet1 LIMIT 1");
+        
+        // 关闭 Statement
+        stmt.close();
+        
+        // 关闭后 getUpdateCount() 应该抛出异常
+        assertThrows(SQLException.class, () -> {
+            stmt.getUpdateCount();
+        }, "getUpdateCount() should throw exception after Statement is closed");
+    }
+    
+    @Test
+    public void testMultipleExecutionsResultSetSwitch() throws SQLException {
+        // 第一次执行查询
+        stmt.execute("SELECT * FROM test1_Sheet1 LIMIT 2");
+        ResultSet rs1 = stmt.getResultSet();
+        assertNotNull(rs1);
+        
+        // 遍历第一个结果集
+        int count1 = 0;
+        while (rs1.next()) {
+            count1++;
+        }
+        assertEquals(2, count1, "First query should return 2 rows");
+        
+        // 第二次执行查询 - 应该自动关闭第一个结果集
+        stmt.execute("SELECT * FROM test1_Sheet1 LIMIT 3");
+        ResultSet rs2 = stmt.getResultSet();
+        assertNotNull(rs2);
+        
+        // 验证第二个结果集
+        int count2 = 0;
+        while (rs2.next()) {
+            count2++;
+        }
+        assertEquals(3, count2, "Second query should return 3 rows");
+        
+        // 验证两个结果集是不同的对象
+        assertNotNull(rs2);
+        
+        rs2.close();
+    }
+    
+    @Test
+    public void testGetResultSetBeforeExecute() throws SQLException {
+        // 在执行任何查询之前，getResultSet() 应该返回 null
+        ResultSet rs = stmt.getResultSet();
+        assertNull(rs, "getResultSet() should return null before any execution");
+    }
+    
+    @Test
+    public void testGetUpdateCountBeforeExecute() throws SQLException {
+        // 在执行任何查询之前，getUpdateCount() 应该返回 -1
+        assertEquals(-1, stmt.getUpdateCount(), "getUpdateCount() should return -1 before any execution");
+    }
+    
+    @Test
+    public void testExecuteQueryResultSetReadable() throws SQLException {
+        // 测试通过 execute() 执行后，结果集可以正常读取数据
+        stmt.execute("SELECT * FROM test1_Sheet1 LIMIT 1");
+        
+        ResultSet rs = stmt.getResultSet();
+        assertNotNull(rs);
+        
+        // 验证可以获取元数据
+        assertNotNull(rs.getMetaData());
+        assertTrue(rs.getMetaData().getColumnCount() > 0);
+        
+        // 验证可以读取数据
+        assertTrue(rs.next());
+        
+        // 验证可以通过列索引读取
+        assertNotNull(rs.getString(1));
+        
+        rs.close();
+    }
+    
+    @Test
+    public void testStatementCloseClosesResultSet() throws SQLException {
+        // 执行查询
+        stmt.execute("SELECT * FROM test1_Sheet1 LIMIT 5");
+        ResultSet rs = stmt.getResultSet();
+        assertNotNull(rs);
+        
+        // 验证结果集未关闭
+        assertFalse(rs.isClosed());
+        
+        // 关闭 Statement
+        stmt.close();
+        
+        // 验证结果集也被关闭
+        assertTrue(rs.isClosed(), "ResultSet should be closed when Statement is closed");
+    }
+    
+    @Test
+    public void testExecuteQueryMultipleTimes() throws SQLException {
+        // 连续执行多次 executeQuery
+        for (int i = 1; i <= 3; i++) {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 LIMIT " + i);
+            assertNotNull(rs);
+            
+            int count = 0;
+            while (rs.next()) {
+                count++;
+            }
+            assertEquals(i, count, "Query " + i + " should return " + i + " rows");
+            
+            // 验证 getResultSet() 返回同一个结果集
+            assertEquals(rs, stmt.getResultSet());
+        }
+    }
 }
 

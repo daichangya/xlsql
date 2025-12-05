@@ -47,6 +47,8 @@ public class NativeSqlEngine implements ISqlExecutionEngine {
     
     /** 日志记录器 */
     private static final Logger logger = Logger.getLogger(NativeSqlEngine.class.getName());
+
+    public static final String STATIC_TABLE_SCHEM = "SA";
     
     /** Excel数据存储对象 */
     private ADatabase datastore;

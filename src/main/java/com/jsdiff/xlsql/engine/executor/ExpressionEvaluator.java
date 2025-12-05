@@ -461,7 +461,9 @@ public class ExpressionEvaluator extends ExpressionVisitorAdapter {
             return;
         }
         
-        List<Expression> params = function.getParameters().getExpressions();
+        // JSQLParser 4.9: getExpressions() 返回 List<?>，需要类型转换
+        @SuppressWarnings("unchecked")
+        List<Expression> params = (List<Expression>) (List<?>) function.getParameters().getExpressions();
         
         // 处理一些简单的函数
         switch (functionName) {

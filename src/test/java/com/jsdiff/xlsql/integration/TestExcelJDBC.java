@@ -75,7 +75,7 @@ public class TestExcelJDBC {
     public void testBasicQuery() throws SQLException {
         // 使用下划线分隔工作簿和工作表名称
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1 LIMIT 1")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM SA.test1_Sheet1 LIMIT 1")) {
 
             assertNotNull(rs, "ResultSet should not be null");
 

@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.224</version> <!-- Compatible with Java 8, better SQL compatibility and performance -->
+            <version>2.1.214</version> <!-- Compatible with Java 8, better SQL compatibility and performance -->
         </dependency>
 
 
@@ -67,6 +67,14 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.3</version>
         </dependency>
+        
+        <!-- log4j-api: POI 需要这个类存在，但我们不使用 log4j 日志系统 -->
+        <!-- 只包含 log4j-api，不包含 log4j-core，这样 POI 可以找到类但不会实际使用 log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.18.0</version>
+        </dependency>
 
         <!-- Apache Commons CLI for command line parsing -->
         <dependency>
@@ -79,7 +87,7 @@
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-            <version>4.7</version>
+            <version>4.9</version>
         </dependency>
 
         <!-- JUnit 5 for unit testing -->
@@ -96,6 +104,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 将 log4j-api 作为 compile 依赖，但不包含 log4j-core
+                 这样 POI 可以找到 log4j-api 类，但不会实际使用 log4j 日志系统 -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.18.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
@@ -140,6 +160,13 @@
                                     <mainClass>com.jsdiff.xlsql.ui.XlUi</mainClass>
                                 </transformer>
                             </transformers>
+                            <relocations>
+                                <!-- 重命名 JSqlParser 包名 -->
+                                <relocation>
+                                    <pattern>net.sf.jsqlparser</pattern>
+                                    <shadedPattern>com.jsdiff.xlsql.jdbc.jsqlparser</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
