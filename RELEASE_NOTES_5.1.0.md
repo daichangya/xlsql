@@ -1,17 +1,17 @@
-# XLSQL 5.1.0 发布说明
+# XLSQL 5.1.1 发布说明
 
 ## 发布日期
 2025-12-05
 
 ## 概述
 
-XLSQL 5.1.0 是一个重要的里程碑版本，正式发布了 **Native SQL 引擎**，这是一个完全自研的 SQL 执行引擎，不依赖任何外部数据库。此版本还修复了多个兼容性问题，特别是对 DBeaver 等数据库工具的完整支持。
+XLSQL 5.1.1 是一个重要的里程碑版本，正式发布了 **Native SQL 引擎**，这是一个完全自研的 SQL 执行引擎，不依赖任何外部数据库。此版本还修复了多个兼容性问题，特别是对 DBeaver 等数据库工具的完整支持。
 
 ## 主要特性
 
 ### 🚀 Native SQL 引擎
 
-XLSQL 5.1.0 的核心特性是 Native SQL 引擎，它提供了：
+XLSQL 5.1.1 的核心特性是 Native SQL 引擎，它提供了：
 
 - **零外部依赖**：不再需要 HSQLDB、H2 或 MySQL，减少系统资源占用
 - **按需加载**：只加载查询涉及的表数据，节省内存
@@ -50,7 +50,7 @@ XLSQL 5.1.0 的核心特性是 Native SQL 引擎，它提供了：
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
@@ -135,7 +135,7 @@ conn.close();
 
 ## 依赖项
 
-XLSQL 5.1.0 的主要依赖：
+XLSQL 5.1.1 的主要依赖：
 
 - Apache POI 5.2.3（Excel 文件读写）
 - JSQLParser 4.9（SQL 解析）
@@ -146,7 +146,7 @@ XLSQL 5.1.0 的主要依赖：
 
 从 4.0 版本升级：
 
-1. 更新 Maven 依赖版本为 `5.1.0`
+1. 更新 Maven 依赖版本为 `5.1.1`
 2. Native 引擎是默认引擎，无需额外配置
 3. JDBC URL 格式不变
 4. 可选：配置日志系统（系统属性或环境变量）

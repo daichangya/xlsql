@@ -31,7 +31,7 @@ XLSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
@@ -75,15 +75,15 @@ mvn package
 ```
 
 打包后会生成：
-- `target/xlsql-5.1.0.jar` - 标准 JAR 文件
-- `target/xlsql-5.1.0-shaded.jar` - 包含所有依赖的 Fat JAR
+- `target/xlsql-5.1.1.jar` - 标准 JAR 文件
+- `target/xlsql-5.1.1-shaded.jar` - 包含所有依赖的 Fat JAR
 
 **6. 安装到本地 Maven 仓库**
 ```bash
 mvn install
 ```
 
-这将把项目安装到本地 Maven 仓库（`~/.m2/repository/com/jsdiff/xlsql/5.1.0/`），供其他项目使用。
+这将把项目安装到本地 Maven 仓库（`~/.m2/repository/com/jsdiff/xlsql/5.1.1/`），供其他项目使用。
 
 **7. 跳过测试进行构建**
 ```bash
@@ -108,15 +108,15 @@ mvn javadoc:jar
 
 #### 方式二：直接使用 Shaded JAR（Fat JAR）
 
-1. 将 `xlsql-5.1.0-shaded.jar` 复制到项目
+1. 将 `xlsql-5.1.1-shaded.jar` 复制到项目
 2. 手动添加到 classpath
 3. 或安装到本地仓库：
 ```bash
 mvn install:install-file \
-  -Dfile=target/xlsql-5.1.0-shaded.jar \
+  -Dfile=target/xlsql-5.1.1-shaded.jar \
   -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
-  -Dversion=5.1.0 \
+  -Dversion=5.1.1 \
   -Dpackaging=jar
 ```
 

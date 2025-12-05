@@ -5,7 +5,7 @@
 
 XLSQL is a JDBC driver that enables querying Excel files using SQL statements. It treats Excel worksheets as database tables, allowing you to perform queries, inserts, updates, and deletes on Excel data using standard SQL syntax.
 
-**Version 5.1.0** introduces the **Native SQL Engine**, a fully self-developed SQL execution engine with zero external database dependencies.
+**Version 5.1.1** introduces the **Native SQL Engine**, a fully self-developed SQL execution engine with zero external database dependencies.
 
 ## Project Modernization
 
@@ -46,13 +46,13 @@ This project has been upgraded from JDK 1.4 codebase to modern Java 8+, with maj
 
 #### Maven Central (Recommended)
 
-XLSQL 5.1.0 is available on Maven Central. Add the following to your `pom.xml`:
+XLSQL 5.1.1 is available on Maven Central. Add the following to your `pom.xml`:
 
 ```xml
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
@@ -166,15 +166,15 @@ mvn package
 ```
 
 This will create:
-- `target/xlsql-5.1.0.jar` - Standard JAR file
-- `target/xlsql-5.1.0-shaded.jar` - Fat JAR with all dependencies
+- `target/xlsql-5.1.1.jar` - Standard JAR file
+- `target/xlsql-5.1.1-shaded.jar` - Fat JAR with all dependencies
 
 #### 5. Install to local Maven repository
 ```bash
 mvn install
 ```
 
-This installs the artifact to your local Maven repository (`~/.m2/repository/com/jsdiff/xlsql/5.1.0/`), making it available for other projects.
+This installs the artifact to your local Maven repository (`~/.m2/repository/com/jsdiff/xlsql/5.1.1/`), making it available for other projects.
 
 #### 6. Skip tests during build
 ```bash
@@ -195,11 +195,11 @@ mvn javadoc:jar
 
 After running `mvn package`, you'll find:
 
-- **Standard JAR**: `target/xlsql-5.1.0.jar`
+- **Standard JAR**: `target/xlsql-5.1.1.jar`
   - Contains only XLSQL classes
   - Requires dependencies to be provided separately
 
-- **Shaded JAR** (Fat JAR): `target/xlsql-5.1.0-shaded.jar`
+- **Shaded JAR** (Fat JAR): `target/xlsql-5.1.1-shaded.jar`
   - Contains all dependencies bundled
   - Can be used standalone
   - Recommended for distribution
@@ -213,21 +213,21 @@ Add to your `pom.xml`:
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
 #### Option 2: Use Shaded JAR Directly
 
-1. Copy `xlsql-5.1.0-shaded.jar` to your project
+1. Copy `xlsql-5.1.1-shaded.jar` to your project
 2. Add to classpath manually
 3. Or install to local repository:
 ```bash
 mvn install:install-file \
-  -Dfile=target/xlsql-5.1.0-shaded.jar \
+  -Dfile=target/xlsql-5.1.1-shaded.jar \
   -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
-  -Dversion=5.1.0 \
+  -Dversion=5.1.1 \
   -Dpackaging=jar
 ```
 
@@ -311,7 +311,7 @@ mvn clean install
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
@@ -321,10 +321,10 @@ If you have the shaded JAR file:
 
 ```bash
 mvn install:install-file \
-  -Dfile=xlsql-5.1.0-shaded.jar \
+  -Dfile=xlsql-5.1.1-shaded.jar \
   -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
-  -Dversion=5.1.0 \
+  -Dversion=5.1.1 \
   -Dpackaging=jar
 ```
 

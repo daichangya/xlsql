@@ -1,11 +1,11 @@
 # XLSQL 变更日志
 
-## [5.1.0] - 2025-12-05
+## [5.1.1] - 2025-12-05
 
 ### 重大更新
 
 #### Native SQL 引擎正式发布
-这是 XLSQL 5.1.0 的核心特性，提供了一个完全自研的 SQL 执行引擎，不依赖任何外部数据库（HSQLDB/H2/MySQL）。
+这是 XLSQL 5.1.1 的核心特性，提供了一个完全自研的 SQL 执行引擎，不依赖任何外部数据库（HSQLDB/H2/MySQL）。
 
 **主要优势：**
 - **零外部依赖**：不依赖 HSQLDB、H2 或 MySQL，减少系统资源占用
@@ -123,14 +123,14 @@
 
 ### Migration Guide
 
-从 4.0 版本升级到 5.1.0：
+从 4.0 版本升级到 5.1.1：
 
 1. **依赖更新**
    ```xml
    <dependency>
        <groupId>io.github.daichangya</groupId>
        <artifactId>xlsql</artifactId>
-       <version>5.1.0</version>
+       <version>5.1.1</version>
    </dependency>
    ```
 

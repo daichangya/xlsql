@@ -49,13 +49,13 @@
                     <h2 class="border-bottom pb-2 mb-4">Maven Central（推荐）</h2>
                     <div class="alert alert-success">
                         <i class="fas fa-check-circle me-2"></i>
-                        <strong>XLSQL 5.1.0 已发布到 Maven Central！</strong> 您可以直接通过 Maven 依赖使用，无需手动下载。
+                        <strong>XLSQL 5.1.1 已发布到 Maven Central！</strong> 您可以直接通过 Maven 依赖使用，无需手动下载。
                     </div>
                     <p>在您的 <code>pom.xml</code> 中添加以下依赖：</p>
                     <pre><code class="language-xml">&lt;dependency&gt;
     &lt;groupId&gt;io.github.daichangya&lt;/groupId&gt;
     &lt;artifactId&gt;xlsql&lt;/artifactId&gt;
-    &lt;version&gt;5.1.0&lt;/version&gt;
+    &lt;version&gt;5.1.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
                     <p class="mt-3">
                         <a href="https://search.maven.org/artifact/io.github.daichangya/xlsql" target="_blank" class="btn btn-primary">
@@ -95,7 +95,7 @@ cd xlsql</code></pre>
                             <div class="card h-100 border-primary">
                                 <div class="card-body">
                                     <h5 class="card-title text-primary">标准 JAR</h5>
-                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1.0.jar</p>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1.1.jar</p>
                                     <p class="card-text">仅包含 XLSQL 核心代码。使用时需要自行在 classpath 中添加所有依赖库。</p>
                                     <span class="badge bg-primary">适合 Maven 项目</span>
                                 </div>
@@ -105,7 +105,7 @@ cd xlsql</code></pre>
                             <div class="card h-100 border-success">
                                 <div class="card-body">
                                     <h5 class="card-title text-success">Shaded JAR (Fat JAR)</h5>
-                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1.0-shaded.jar</p>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1.1-shaded.jar</p>
                                     <p class="card-text">包含所有依赖库（POI, HSQLDB等）。可以直接作为单独的库使用，无需额外配置依赖。</p>
                                     <span class="badge bg-success">适合非 Maven 项目</span>
                                 </div>
@@ -118,10 +118,10 @@ cd xlsql</code></pre>
                     <h2 class="border-bottom pb-2 mb-4">手动安装 JAR</h2>
                     <p>如果您需要将 Shaded JAR 手动安装到本地 Maven 仓库：</p>
                     <pre><code>mvn install:install-file \
-  -Dfile=target/xlsql-5.1.0-shaded.jar \
+  -Dfile=target/xlsql-5.1.1-shaded.jar \
   -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
-  -Dversion=5.1.0 \
+  -Dversion=5.1.1 \
   -Dpackaging=jar</code></pre>
                 </section>
             </div>

@@ -62,7 +62,7 @@ mvn install
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
@@ -123,8 +123,8 @@ mvn package
 ```
 
 生成的文件：
-- `target/xlsql-5.1.0.jar` - 标准 JAR（不包含依赖）
-- `target/xlsql-5.1.0-shaded.jar` - Fat JAR（包含所有依赖）
+- `target/xlsql-5.1.1.jar` - 标准 JAR（不包含依赖）
+- `target/xlsql-5.1.1-shaded.jar` - Fat JAR（包含所有依赖）
 
 #### 跳过测试打包
 
@@ -138,7 +138,7 @@ mvn package -DskipTests
 mvn source:jar
 ```
 
-生成文件：`target/xlsql-5.1.0-sources.jar`
+生成文件：`target/xlsql-5.1.1-sources.jar`
 
 #### 生成 Javadoc JAR
 
@@ -146,7 +146,7 @@ mvn source:jar
 mvn javadoc:jar
 ```
 
-生成文件：`target/xlsql-5.1.0-javadoc.jar`
+生成文件：`target/xlsql-5.1.1-javadoc.jar`
 
 #### 生成所有 JAR（源码、文档、主 JAR）
 
@@ -158,7 +158,7 @@ mvn package source:jar javadoc:jar
 
 ### 1. 标准 JAR
 
-**文件**: `target/xlsql-5.1.0.jar`
+**文件**: `target/xlsql-5.1.1.jar`
 
 **特点**:
 - 只包含 XLSQL 的类文件
@@ -171,7 +171,7 @@ mvn package source:jar javadoc:jar
 
 ### 2. Shaded JAR (Fat JAR)
 
-**文件**: `target/xlsql-5.1.0-shaded.jar`
+**文件**: `target/xlsql-5.1.1-shaded.jar`
 
 **特点**:
 - 包含所有依赖库
@@ -191,7 +191,7 @@ Shaded JAR 由 `maven-shade-plugin` 生成，配置在 `pom.xml` 中：
 
 ### 3. 源码 JAR
 
-**文件**: `target/xlsql-5.1.0-sources.jar`
+**文件**: `target/xlsql-5.1.1-sources.jar`
 
 **用途**:
 - IDE 中查看源代码
@@ -199,7 +199,7 @@ Shaded JAR 由 `maven-shade-plugin` 生成，配置在 `pom.xml` 中：
 
 ### 4. Javadoc JAR
 
-**文件**: `target/xlsql-5.1.0-javadoc.jar`
+**文件**: `target/xlsql-5.1.1-javadoc.jar`
 
 **用途**:
 - IDE 中显示 API 文档
@@ -217,7 +217,7 @@ mvn install
 1. 编译项目
 2. 运行测试
 3. 打包 JAR
-4. 安装到本地 Maven 仓库：`~/.m2/repository/com/jsdiff/xlsql/5.1.0/`
+4. 安装到本地 Maven 仓库：`~/.m2/repository/com/jsdiff/xlsql/5.1.1/`
 
 ### 跳过测试安装
 
@@ -231,10 +231,10 @@ mvn install -DskipTests
 
 ```bash
 mvn install:install-file \
-  -Dfile=target/xlsql-5.1.0-shaded.jar \
+  -Dfile=target/xlsql-5.1.1-shaded.jar \
   -DgroupId=io.github.daichangya \
   -DartifactId=xlsql \
-  -Dversion=5.1.0 \
+  -Dversion=5.1.1 \
   -Dpackaging=jar \
   -Dclassifier=shaded
 ```
@@ -245,7 +245,7 @@ mvn install:install-file \
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
     <classifier>shaded</classifier>
 </dependency>
 ```
@@ -283,7 +283,7 @@ mvn deploy -DaltDeploymentRepository=myrepo::default::http://your-repo-url/repos
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
@@ -293,30 +293,30 @@ mvn deploy -DaltDeploymentRepository=myrepo::default::http://your-repo-url/repos
 
 1. 复制 JAR 到项目：
 ```bash
-cp target/xlsql-5.1.0.jar /path/to/your/project/lib/
+cp target/xlsql-5.1.1.jar /path/to/your/project/lib/
 ```
 
 2. 添加依赖 JAR（Apache POI、HSQLDB 等）
 
 3. 编译时包含在 classpath：
 ```bash
-javac -cp "lib/xlsql-5.1.0.jar:lib/poi-5.2.3.jar:..." YourClass.java
+javac -cp "lib/xlsql-5.1.1.jar:lib/poi-5.2.3.jar:..." YourClass.java
 ```
 
 #### 使用 Shaded JAR（推荐用于独立应用）
 
 1. 复制 Shaded JAR：
 ```bash
-cp target/xlsql-5.1.0-shaded.jar /path/to/your/project/lib/
+cp target/xlsql-5.1.1-shaded.jar /path/to/your/project/lib/
 ```
 
 2. 编译和运行：
 ```bash
 # 编译
-javac -cp "lib/xlsql-5.1.0-shaded.jar" YourClass.java
+javac -cp "lib/xlsql-5.1.1-shaded.jar" YourClass.java
 
 # 运行
-java -cp "lib/xlsql-5.1.0-shaded.jar:." YourClass
+java -cp "lib/xlsql-5.1.1-shaded.jar:." YourClass
 ```
 
 ### 方式三：作为命令行工具
@@ -324,7 +324,7 @@ java -cp "lib/xlsql-5.1.0-shaded.jar:." YourClass
 Shaded JAR 可以作为命令行工具运行：
 
 ```bash
-java -jar xlsql-5.1.0-shaded.jar [options]
+java -jar xlsql-5.1.1-shaded.jar [options]
 ```
 
 ## 验证安装
@@ -333,23 +333,23 @@ java -jar xlsql-5.1.0-shaded.jar [options]
 
 ```bash
 # 检查本地仓库
-ls ~/.m2/repository/com/jsdiff/xlsql/5.1.0/
+ls ~/.m2/repository/com/jsdiff/xlsql/5.1.1/
 
 # 应该看到：
-# - xlsql-5.1.0.jar
-# - xlsql-5.1.0.pom
-# - xlsql-5.1.0-sources.jar (如果生成了)
-# - xlsql-5.1.0-javadoc.jar (如果生成了)
+# - xlsql-5.1.1.jar
+# - xlsql-5.1.1.pom
+# - xlsql-5.1.1-sources.jar (如果生成了)
+# - xlsql-5.1.1-javadoc.jar (如果生成了)
 ```
 
 ### 验证 JAR 内容
 
 ```bash
 # 查看 JAR 内容
-jar -tf target/xlsql-5.1.0.jar | head -20
+jar -tf target/xlsql-5.1.1.jar | head -20
 
 # 查看 Shaded JAR 大小
-ls -lh target/xlsql-5.1.0-shaded.jar
+ls -lh target/xlsql-5.1.1-shaded.jar
 ```
 
 ### 测试连接
@@ -373,8 +373,8 @@ public class TestConnection {
 编译和运行：
 
 ```bash
-javac -cp "target/xlsql-5.1.0-shaded.jar" TestConnection.java
-java -cp "target/xlsql-5.1.0-shaded.jar:." TestConnection
+javac -cp "target/xlsql-5.1.1-shaded.jar" TestConnection.java
+java -cp "target/xlsql-5.1.1-shaded.jar:." TestConnection
 ```
 
 ## 常见问题

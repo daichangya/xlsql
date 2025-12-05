@@ -15,21 +15,21 @@
 
 #### 方式一：从 Maven Central 获取（推荐）
 
-XLSQL 5.1.0 已发布到 Maven Central，可以直接通过 Maven 依赖使用：
+XLSQL 5.1.1 已发布到 Maven Central，可以直接通过 Maven 依赖使用：
 
 ```xml
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
 #### 方式二：手动下载 JAR 文件
 
 从 Maven Central 下载：
-- 标准 JAR: https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.0/xlsql-5.1.0.jar
-- Shaded JAR (包含所有依赖): https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.0/xlsql-5.1.0-shaded.jar
+- 标准 JAR: https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.1/xlsql-5.1.1.jar
+- Shaded JAR (包含所有依赖): https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.1/xlsql-5.1.1-shaded.jar
 
 
 ## 3. 在 DBeaver 中配置 Excel JDBC 驱动
@@ -208,12 +208,12 @@ dbeaver -vmargs -Dorg.jkiss.dbeaver.debug=true
 
 | DBeaver 版本 | Excel JDBC 驱动版本 | 兼容性 |
 |--------------|---------------------|--------|
-| 21.x         | 5.1.0               | ✓      |
-| 22.x         | 5.1.0               | ✓      |
+| 21.x         | 5.1.1               | ✓      |
+| 22.x         | 5.1.1               | ✓      |
 
 ## 12. 更新日志
 
-### 版本 5.1.0
+### 版本 5.1.1
 - 初始版本
 - 支持基本的 CRUD 操作
 - 支持 .xls .xlsx 格式文件
@@ -221,4 +221,4 @@ dbeaver -vmargs -Dorg.jkiss.dbeaver.debug=true
 
 ---
 
-**注意**: 本文档基于 Excel JDBC 驱动版本 5.1.0 编写，具体功能可能因版本更新而有所变化。建议在使用前确认当前版本的功能特性。
+**注意**: 本文档基于 Excel JDBC 驱动版本 5.1.1 编写，具体功能可能因版本更新而有所变化。建议在使用前确认当前版本的功能特性。

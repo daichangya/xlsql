@@ -6,7 +6,7 @@
 
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 
     <name>XLSQL</name>
     <description>A JDBC driver for Excel files, allowing SQL operations on Excel worksheets.</description>

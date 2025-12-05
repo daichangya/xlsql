@@ -99,7 +99,7 @@ gpg --keyserver keys.openpgp.org --send-keys YOUR_KEY_ID
 确保 `pom.xml` 中的版本号已更新为正式版本（不是 SNAPSHOT）：
 
 ```xml
-<version>5.1.0</version>
+<version>5.1.1</version>
 ```
 
 ### 2. 验证项目配置
@@ -108,7 +108,7 @@ gpg --keyserver keys.openpgp.org --send-keys YOUR_KEY_ID
 
 - ✅ `groupId`: `io.github.daichangya`
 - ✅ `artifactId`: `xlsql`
-- ✅ `version`: `5.1.0`（非 SNAPSHOT）
+- ✅ `version`: `5.1.1`（非 SNAPSHOT）
 - ✅ `name`: `XLSQL`
 - ✅ `description`: 项目描述
 - ✅ `url`: 项目 URL
@@ -131,9 +131,9 @@ mvn clean package source:jar javadoc:jar
 ```
 
 验证生成的文件：
-- `target/xlsql-5.1.0.jar`
-- `target/xlsql-5.1.0-sources.jar`
-- `target/xlsql-5.1.0-javadoc.jar`
+- `target/xlsql-5.1.1.jar`
+- `target/xlsql-5.1.1-sources.jar`
+- `target/xlsql-5.1.1-javadoc.jar`
 
 ## 发布步骤
 
@@ -203,9 +203,9 @@ mvn gpg:sign
 mvn deploy:deploy-file \
   -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ \
   -DrepositoryId=central \
-  -Dfile=target/xlsql-5.1.0.jar \
+  -Dfile=target/xlsql-5.1.1.jar \
   -DpomFile=pom.xml \
-  -Dfiles=target/xlsql-5.1.0.jar,target/xlsql-5.1.0-sources.jar,target/xlsql-5.1.0-javadoc.jar \
+  -Dfiles=target/xlsql-5.1.1.jar,target/xlsql-5.1.1-sources.jar,target/xlsql-5.1.1-javadoc.jar \
   -Dclassifiers=sources,javadoc \
   -Dtypes=jar,jar,jar
 ```
@@ -222,15 +222,15 @@ mvn deploy:deploy-file \
 ### 2. 检查 Maven Central
 
 等待同步后，检查：
-- https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.0/
+- https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.1/
 - 应该包含：
-  - `xlsql-5.1.0.pom`
-  - `xlsql-5.1.0.jar`
-  - `xlsql-5.1.0.jar.asc` (GPG 签名)
-  - `xlsql-5.1.0-sources.jar`
-  - `xlsql-5.1.0-sources.jar.asc`
-  - `xlsql-5.1.0-javadoc.jar`
-  - `xlsql-5.1.0-javadoc.jar.asc`
+  - `xlsql-5.1.1.pom`
+  - `xlsql-5.1.1.jar`
+  - `xlsql-5.1.1.jar.asc` (GPG 签名)
+  - `xlsql-5.1.1-sources.jar`
+  - `xlsql-5.1.1-sources.jar.asc`
+  - `xlsql-5.1.1-javadoc.jar`
+  - `xlsql-5.1.1-javadoc.jar.asc`
 
 ### 3. 测试依赖
 
@@ -240,7 +240,7 @@ mvn deploy:deploy-file \
 <dependency>
     <groupId>io.github.daichangya</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
@@ -257,7 +257,7 @@ mvn dependency:resolve
 **解决**：
 - 检查 GPG 密钥是否正确配置
 - 确认 `gpg.passphrase` 在 `settings.xml` 中正确设置
-- 尝试手动签名：`gpg -ab target/xlsql-5.1.0.jar`
+- 尝试手动签名：`gpg -ab target/xlsql-5.1.1.jar`
 
 ### 2. 401 Unauthorized
 
