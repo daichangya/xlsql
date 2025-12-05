@@ -146,7 +146,7 @@ public class TableInfoTest {
     
     @Test
     public void testGetFullName() {
-        assertEquals("test1.Sheet1", table.getFullName());
+        assertEquals("test1_Sheet1", table.getFullName());
     }
     
     @Test

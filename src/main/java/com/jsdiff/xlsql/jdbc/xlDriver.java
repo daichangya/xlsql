@@ -170,8 +170,8 @@ public class xlDriver implements Driver {
             
         } catch (xlException xe) {
             // xlSQL特定异常
-            XlSqlLogger.logConnectionError(xlDriver.class, "xlSQL exception during connection", xe);
-            throw new SQLException("xlSQL exception: " + xe.getMessage(), xe);
+            XlSqlLogger.logConnectionError(xlDriver.class, "XLSQL exception during connection", xe);
+            throw new SQLException("XLSQL exception: " + xe.getMessage(), xe);
         } catch (SQLException sqe) {
             // SQL异常直接抛出
             XlSqlLogger.logConnectionError(xlDriver.class, "SQL exception during connection", sqe);

@@ -2,7 +2,7 @@
 
 ## 概述
 
-Native 引擎是 xlSQL 项目中的自研 SQL 执行引擎，不依赖任何外部数据库（HSQLDB/H2），直接基于 Excel 数据执行 SQL 查询。本文档详细说明 Native 引擎如何读取 Excel 文件并进行查询。
+Native 引擎是 XLSQL 项目中的自研 SQL 执行引擎，不依赖任何外部数据库（HSQLDB/H2），直接基于 Excel 数据执行 SQL 查询。本文档详细说明 Native 引擎如何读取 Excel 文件并进行查询。
 
 ## 目录
 
@@ -557,5 +557,5 @@ Native 引擎通过以下方式实现 Excel 数据的 SQL 查询：
 
 **文档版本：** 1.0  
 **最后更新：** 2025-11-25  
-**作者：** xlSQL 开发团队
+**作者：** XLSQL 开发团队
 

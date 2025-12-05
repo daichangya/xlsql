@@ -55,7 +55,7 @@ public class xlSqlAlterTable implements ICommand {
             _table = table;
         }
         else {
-            throw new IllegalArgumentException("xlSQL: null argument(s)");
+            throw new IllegalArgumentException("XLSQL: null argument(s)");
         }
     }
 

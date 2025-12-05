@@ -15,7 +15,7 @@ public enum DatabaseType {
     HSQLDB("hsqldb","HSQL Database Engine"),
     
     /** 自研SQL引擎（不依赖外部数据库） */
-    NATIVE("native","xlSQL Native Engine");
+    NATIVE("native","XLSQL Native Engine");
 
     private final String name;
 

@@ -14,7 +14,7 @@ package com.jsdiff.xlsql.database.sql;
 import java.util.regex.Pattern;
 
 /**
- * xlSql class translates SQL to native xlSQL
+ * xlSql class translates SQL to native XLSQL
  * 
  * @author daichangya
  */
@@ -36,26 +36,26 @@ public abstract class ASqlParser {
     /**
      * Creates a new instance of type xlSql.
      *
-     * @param database xlSQL instance
+     * @param database XLSQL instance
      */
     public ASqlParser(com.jsdiff.xlsql.database.ADatabase database) {
         if (database == null) {
-            throw new NullPointerException("xlSQL: database null");
+            throw new NullPointerException("XLSQL: database null");
         } else {
             db = database;
         }
     }
 
     /**
-     * Translate foreign SQL string to xlSQL Command
+     * Translate foreign SQL string to XLSQL Command
      *
      * @param sql foreign SQL string
      *
-     * @return native xlSQL command object
+     * @return native XLSQL command object
      */
     public ICommand parseSql(String sql) {
         if (sql == null) {
-            throw new NullPointerException("xlSQL: sql string null");
+            throw new NullPointerException("XLSQL: sql string null");
         }
 
         ICommand command;

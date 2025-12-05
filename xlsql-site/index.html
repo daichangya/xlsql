@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xlSQL - Excel SQL 查询工具</title>
-    <meta name="description" content="xlSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操作 Excel 文件。">
+    <title>XLSQL - Excel SQL 查询工具</title>
+    <meta name="description" content="XLSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操作 Excel 文件。">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdnjs.loli.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome -->
@@ -16,7 +16,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><i class="fas fa-database me-2"></i>xlSQL</a>
+            <a class="navbar-brand" href="index.html"><i class="fas fa-database me-2"></i>XLSQL</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -35,9 +35,15 @@
     <!-- Hero Section -->
     <section class="hero-section text-center">
         <div class="container">
-            <h1 class="hero-title">xlSQL</h1>
+            <h1 class="hero-title">XLSQL</h1>
             <p class="hero-tagline">像操作数据库一样查询 Excel 文件</p>
-            <p class="lead mb-4">基于 Java 的 JDBC 驱动，支持 SQL 查询、插入、更新和删除操作。</p>
+            <p class="lead mb-3">基于 Java 的 JDBC 驱动，支持 SQL 查询、插入、更新和删除操作。</p>
+            <div class="mb-4">
+                <a href="https://search.maven.org/artifact/com.jsdiff/xlsql" target="_blank" class="badge bg-light text-dark me-2" style="font-size: 0.9rem;">
+                    <img src="https://img.shields.io/maven-central/v/com.jsdiff/xlsql.svg" alt="Maven Central">
+                </a>
+                <span class="badge bg-success" style="font-size: 0.9rem;">v5.1.0 已发布</span>
+            </div>
             <div class="d-flex justify-content-center gap-3">
                 <a href="download.html" class="btn btn-light btn-lg px-4">立即下载</a>
                 <a href="usage.html" class="btn btn-outline-light btn-lg px-4">查看文档</a>
@@ -62,8 +68,9 @@
                 <div class="card feature-card h-100 text-center p-4">
                     <div class="card-body">
                         <div class="feature-icon"><i class="fas fa-cogs"></i></div>
-                        <h5 class="card-title">多引擎支持</h5>
-                        <p class="card-text">内置 HSQLDB、H2 和 Native 引擎支持，提供灵活的底层数据库引擎选择。</p>
+                        <h5 class="card-title">Native SQL 引擎</h5>
+                        <p class="card-text">全新的自研 SQL 引擎，零外部依赖，专为 Excel 场景优化。支持完整的 SQL 查询功能。</p>
+                        <span class="badge bg-success">v5.1.0 新特性</span>
                     </div>
                 </div>
             </div>
@@ -97,22 +104,30 @@
                     <p class="lead">只需几行代码，即可开始使用 SQL 操作 Excel。</p>
                     <ul class="list-unstyled">
                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 标准 JDBC API</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 自动资源管理</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 支持复杂查询</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Native SQL 引擎（零依赖）</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 支持复杂查询（JOIN、聚合等）</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Maven Central 可用</li>
                     </ul>
                     <a href="usage.html" class="btn btn-primary mt-3">查看完整示例</a>
                 </div>
                 <div class="col-lg-7">
-<pre><code class="language-java">// 注册驱动
+<pre><code class="language-java">// 1. 添加 Maven 依赖
+// &lt;dependency&gt;
+//     &lt;groupId&gt;com.jsdiff&lt;/groupId&gt;
+//     &lt;artifactId&gt;xlsql&lt;/artifactId&gt;
+//     &lt;version&gt;5.1.0&lt;/version&gt;
+// &lt;/dependency&gt;
+
+// 2. 注册驱动
 Class.forName("com.jsdiff.xlsql.jdbc.xlDriver");
 
-// 连接到 Excel 目录
+// 3. 连接到 Excel 目录
 String url = "jdbc:xlsql:excel:/path/to/files";
 Connection conn = DriverManager.getConnection(url);
 
-// 执行 SQL 查询
+// 4. 执行 SQL 查询
 Statement stmt = conn.createStatement();
-ResultSet rs = stmt.executeQuery("SELECT * FROM data.Sheet1");
+ResultSet rs = stmt.executeQuery("SELECT * FROM test1_Sheet1");
 
 while (rs.next()) {
     System.out.println(rs.getString(1));
@@ -128,7 +143,7 @@ while (rs.next()) {
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <h5>xlSQL</h5>
+                    <h5>XLSQL</h5>
                     <p class="small">基于 Java 的 Excel SQL 引擎，让数据处理更简单。</p>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -145,7 +160,7 @@ while (rs.next()) {
                 </div>
             </div>
             <hr class="border-secondary">
-            <p class="mb-0">&copy; <span id="current-year">2025</span> xlSQL Project. Released under GPL License.</p>
+            <p class="mb-0">&copy; <span id="current-year">2025</span> XLSQL Project. Released under GPL License.</p>
         </div>
     </footer>
 

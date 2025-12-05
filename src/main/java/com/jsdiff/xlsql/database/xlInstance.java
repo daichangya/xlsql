@@ -201,7 +201,7 @@ public class xlInstance {
     private void saveProperties() {
         try {
             try (FileOutputStream fos = new FileOutputStream(file)) {
-                configProps.store(fos, "xlSQL Configuration");
+                configProps.store(fos, "XLSQL Configuration");
             }
             configModified = false;
         } catch (IOException e) {
@@ -389,7 +389,7 @@ public class xlInstance {
             try {
                 ret = xlDatabaseFactory.createExporter(f);
             } catch (xlDatabaseException xde) {
-                throw new xlException("xlSQL/db reports '" + xde.getMessage()
+                throw new xlException("XLSQL/db reports '" + xde.getMessage()
                         + "'");
             }
         } else {

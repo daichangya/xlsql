@@ -218,7 +218,7 @@ public class xlNativePreparedStatementTest extends NativeEngineTestBase {
                       msg.contains("not yet supported") ||
                       msg.contains("execute not allowed") ||
                       msg.contains("UPDATE") ||
-                      msg.contains("xlSQL"),
+                      msg.contains("XLSQL"),
                       "Expected error message about UPDATE not supported, got: " + msg);
         } finally {
             updateStmt.close();

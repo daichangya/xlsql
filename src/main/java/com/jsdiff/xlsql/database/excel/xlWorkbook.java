@@ -108,7 +108,7 @@ public class xlWorkbook extends ASubFolder {
                 // Excel 97-2003格式使用HSSFWorkbook
                 wb = new HSSFWorkbook(new FileInputStream(getWorkbookFile()));
             } else {
-                logger.warning("xlSQL: Unsupported file format for: " + getWorkbookFile().getPath());
+                logger.warning("XLSQL: Unsupported file format for: " + getWorkbookFile().getPath());
                 return;
             }
 
@@ -121,7 +121,7 @@ public class xlWorkbook extends ASubFolder {
                 }
             }
         } catch (IOException | InvalidFormatException e) {
-            logger.warning("xlSQL: ERR on:" + getWorkbookFile().getPath() + " , NOT mounted.");
+            logger.warning("XLSQL: ERR on:" + getWorkbookFile().getPath() + " , NOT mounted.");
         }finally {
             IOUtils.closeQuietly(wb);
         }

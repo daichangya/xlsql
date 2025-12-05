@@ -1,7 +1,7 @@
-# xlSQL 架构文档
+# XLSQL 架构文档
 
 ## 1. 概述
-xlSQL 是一个基于 Java 的 JDBC 驱动，用于通过 SQL 查询和操作 Excel 文件。它支持将 Excel 文件作为数据库表进行查询和操作，提供了丰富的 JDBC 接口实现。
+XLSQL 是一个基于 Java 的 JDBC 驱动，用于通过 SQL 查询和操作 Excel 文件。它支持将 Excel 文件作为数据库表进行查询和操作，提供了丰富的 JDBC 接口实现。
 
 ## 2. 核心模块
 

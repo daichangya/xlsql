@@ -39,7 +39,7 @@ import com.jsdiff.xlsql.database.xlInstance;
 
 
 /**
- * Main xlSQL commandline interface.
+ * Main XLSQL commandline interface.
  * 
  * @version $Revision: 1.4 $
  * @author $author$

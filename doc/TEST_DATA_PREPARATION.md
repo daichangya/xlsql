@@ -208,7 +208,7 @@ public static void setUpTestData() throws IOException {
 
 ### 问题2：测试找不到表
 
-**错误信息**：`Table not found: test1.Sheet1` 或 `Table not found: test1_Sheet1`
+**错误信息**：`Table not found: test1_Sheet1` 或 `Table not found: test1_Sheet1`
 
 **可能原因**：
 1. 测试数据文件不存在（应该在`database`目录下）

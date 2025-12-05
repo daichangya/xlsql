@@ -126,7 +126,7 @@ public class NativeEngineQueryTest {
         
         // 验证元数据
         String productName = con.getMetaData().getDatabaseProductName();
-        assertTrue(productName.contains("Native") || productName.contains("xlSQL"),
+        assertTrue(productName.contains("Native") || productName.contains("XLSQL"),
                   "Product name should indicate Native engine");
         
         System.out.println("Native engine features verified:");

@@ -35,8 +35,8 @@ public class xlConnectionNativeTest extends NativeEngineTestBase {
     public void testNativeDatabaseMetaData() throws SQLException {
         assertNotNull(con.getMetaData(), "DatabaseMetaData should not be null");
         String productName = con.getMetaData().getDatabaseProductName();
-        assertTrue(productName.contains("Native") || productName.contains("xlSQL"), 
-                  "Database product name should contain Native or xlSQL");
+        assertTrue(productName.contains("Native") || productName.contains("XLSQL"), 
+                  "Database product name should contain Native or XLSQL");
     }
 
     @Test

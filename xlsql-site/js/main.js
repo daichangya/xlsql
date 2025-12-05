@@ -1,4 +1,4 @@
-// Main JavaScript for xlSQL Site
+// Main JavaScript for XLSQL Site
 
 document.addEventListener('DOMContentLoaded', function() {
     // Update current year in footer

@@ -41,7 +41,7 @@ public abstract class AFolder {
     /** 日志记录器 */
     protected static final Logger logger = Logger.getAnonymousLogger();
     /** 错误消息：参数不存在 */
-    protected static final String NOARGS = "xlSQL: no such argument(s).";
+    protected static final String NOARGS = "XLSQL: no such argument(s).";
     /** 子文件夹映射表，键为文件夹名称（大写），值为ASubFolder对象 */
     private Map<String,ASubFolder> subfolders = new HashMap<String,ASubFolder>();
 

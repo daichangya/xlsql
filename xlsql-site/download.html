@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>下载安装 - xlSQL</title>
-    <meta name="description" content="下载 xlSQL，获取源代码，查看构建指南和安装说明。">
+    <title>下载安装 - XLSQL</title>
+    <meta name="description" content="下载 XLSQL，获取源代码，查看构建指南和安装说明。">
     <link href="https://cdnjs.loli.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.loli.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
@@ -13,7 +13,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><i class="fas fa-database me-2"></i>xlSQL</a>
+            <a class="navbar-brand" href="index.html"><i class="fas fa-database me-2"></i>XLSQL</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -34,7 +34,7 @@
         <div class="row">
             <div class="col-lg-8 mx-auto">
                 <h1 class="mb-4 text-center">下载安装</h1>
-                <p class="lead text-center mb-5">获取最新版本的 xlSQL，开始您的数据集成之旅。</p>
+                <p class="lead text-center mb-5">获取最新版本的 XLSQL，开始您的数据集成之旅。</p>
 
                 <section class="mb-5">
                     <h2 class="border-bottom pb-2 mb-4">系统要求</h2>
@@ -46,8 +46,27 @@
                 </section>
 
                 <section class="mb-5">
+                    <h2 class="border-bottom pb-2 mb-4">Maven Central（推荐）</h2>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>XLSQL 5.1.0 已发布到 Maven Central！</strong> 您可以直接通过 Maven 依赖使用，无需手动下载。
+                    </div>
+                    <p>在您的 <code>pom.xml</code> 中添加以下依赖：</p>
+                    <pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.jsdiff&lt;/groupId&gt;
+    &lt;artifactId&gt;xlsql&lt;/artifactId&gt;
+    &lt;version&gt;5.1.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                    <p class="mt-3">
+                        <a href="https://search.maven.org/artifact/com.jsdiff/xlsql" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-2"></i>在 Maven Central 查看
+                        </a>
+                    </p>
+                </section>
+
+                <section class="mb-5">
                     <h2 class="border-bottom pb-2 mb-4">从源码构建</h2>
-                    <p>目前推荐从源码构建以获取最新功能。</p>
+                    <p>如果您需要从源码构建或获取最新开发版本：</p>
 
                     <div class="card mb-4">
                         <div class="card-header bg-light">
@@ -76,8 +95,8 @@ cd xlsql</code></pre>
                             <div class="card h-100 border-primary">
                                 <div class="card-body">
                                     <h5 class="card-title text-primary">标准 JAR</h5>
-                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1-SNAPSHOT.jar</p>
-                                    <p class="card-text">仅包含 xlSQL 核心代码。使用时需要自行在 classpath 中添加所有依赖库。</p>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1.0.jar</p>
+                                    <p class="card-text">仅包含 XLSQL 核心代码。使用时需要自行在 classpath 中添加所有依赖库。</p>
                                     <span class="badge bg-primary">适合 Maven 项目</span>
                                 </div>
                             </div>
@@ -86,7 +105,7 @@ cd xlsql</code></pre>
                             <div class="card h-100 border-success">
                                 <div class="card-body">
                                     <h5 class="card-title text-success">Shaded JAR (Fat JAR)</h5>
-                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1-SNAPSHOT-shaded.jar</p>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1.0-shaded.jar</p>
                                     <p class="card-text">包含所有依赖库（POI, HSQLDB等）。可以直接作为单独的库使用，无需额外配置依赖。</p>
                                     <span class="badge bg-success">适合非 Maven 项目</span>
                                 </div>
@@ -99,10 +118,10 @@ cd xlsql</code></pre>
                     <h2 class="border-bottom pb-2 mb-4">手动安装 JAR</h2>
                     <p>如果您需要将 Shaded JAR 手动安装到本地 Maven 仓库：</p>
                     <pre><code>mvn install:install-file \
-  -Dfile=target/xlsql-5.1-SNAPSHOT-shaded.jar \
+  -Dfile=target/xlsql-5.1.0-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=5.1-SNAPSHOT \
+  -Dversion=5.1.0 \
   -Dpackaging=jar</code></pre>
                 </section>
             </div>
@@ -114,7 +133,7 @@ cd xlsql</code></pre>
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <h5>xlSQL</h5>
+                    <h5>XLSQL</h5>
                     <p class="small">基于 Java 的 Excel SQL 引擎，让数据处理更简单。</p>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -131,7 +150,7 @@ cd xlsql</code></pre>
                 </div>
             </div>
             <hr class="border-secondary">
-            <p class="mb-0">&copy; <span id="current-year">2025</span> xlSQL Project. Released under GPL License.</p>
+            <p class="mb-0">&copy; <span id="current-year">2025</span> XLSQL Project. Released under GPL License.</p>
         </div>
     </footer>
 

@@ -72,10 +72,10 @@
 - **状态**: ⚠️ 6个错误
 - **测试数**: 6
 - **通过率**: 0%
-- **失败原因**: `Table not found: test1.Sheet1`
+- **失败原因**: `Table not found: test1_Sheet1`
 - **问题分析**: 
   - SQL使用`test1_Sheet1`（下划线格式）
-  - Native引擎解析为`test1.Sheet1`（点号格式）
+  - Native引擎解析为`test1_Sheet1`（点号格式）
   - 表名解析逻辑需要修复
 
 ##### JoinQueryIntegrationTest
@@ -88,7 +88,7 @@
 
 ##### ComplexQueryIntegrationTest
 - **状态**: ⚠️ 1个错误
-- **失败原因**: `Table not found: test1.Sheet1`
+- **失败原因**: `Table not found: test1_Sheet1`
 
 #### H2引擎集成测试 ✅ 全部通过
 
@@ -146,7 +146,7 @@
 - **状态**: ⚠️ 10个错误
 - **测试数**: 10
 - **通过率**: 0%
-- **失败原因**: `Table not found: test1.Sheet1`
+- **失败原因**: `Table not found: test1_Sheet1`
 - **问题**: 与Native引擎表名解析问题相同
 
 **跨引擎测试总结**: 
@@ -244,7 +244,7 @@
 
 **问题描述**: 
 - SQL使用`test1_Sheet1`（下划线格式）
-- Native引擎解析为`test1.Sheet1`（点号格式）
+- Native引擎解析为`test1_Sheet1`（点号格式）
 - 导致表找不到错误
 
 **影响范围**:

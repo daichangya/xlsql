@@ -112,7 +112,7 @@ public class xlSheet extends AFile {
     private Sheet getSheet() throws xlDatabaseException {
         Workbook wb = openWorkbook();
         if (wb == null) {
-            throw new xlDatabaseException("xlSQL: -excel> ERR: Unable to open workbook");
+            throw new xlDatabaseException("XLSQL: -excel> ERR: Unable to open workbook");
         }
         return wb.getSheet(getSheetName());
     }
@@ -135,11 +135,11 @@ public class xlSheet extends AFile {
                     return new HSSFWorkbook(fis);
                 }
             } else {
-                logger.warning("xlSQL: Unsupported file format for: " + getFile().getPath());
+                logger.warning("XLSQL: Unsupported file format for: " + getFile().getPath());
                 return null;
             }
         } catch (IOException | InvalidFormatException e) {
-            throw new xlDatabaseException("xlSQL: -excel> ERR: " + e.getMessage());
+            throw new xlDatabaseException("XLSQL: -excel> ERR: " + e.getMessage());
         }
     }
 
@@ -159,7 +159,7 @@ public class xlSheet extends AFile {
         try {
             wb = openWorkbook();
             if (wb == null) {
-                throw new xlDatabaseException("xlSQL: -excel> ERR: Unable to open workbook");
+                throw new xlDatabaseException("XLSQL: -excel> ERR: Unable to open workbook");
             }
             return operation.apply(wb);
         } finally {

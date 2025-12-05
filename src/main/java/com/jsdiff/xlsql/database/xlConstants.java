@@ -31,7 +31,7 @@ public class xlConstants {
     public static final int DELETE = 2;
 
     /** 错误消息：参数不存在 */
-    public static final String NOARGS = "xlSQL: no such argument(s).";
+    public static final String NOARGS = "XLSQL: no such argument(s).";
 
     /**
      * 将SQL类型转换为xlSQL内部类型

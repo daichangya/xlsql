@@ -55,7 +55,7 @@ public class DropTable implements ICommand {
             sch = schema;
             tbl = table;
         } else {
-            throw new IllegalArgumentException("xlSQL: null argument(s)");
+            throw new IllegalArgumentException("XLSQL: null argument(s)");
         }
     }
 

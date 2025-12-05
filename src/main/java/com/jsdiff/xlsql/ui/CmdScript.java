@@ -103,7 +103,7 @@ public class CmdScript implements IStateCommand {
             }
 
             System.out.println(count
-                               + " statements processed: close to commit to xlSQL");
+                               + " statements processed: close to commit to XLSQL");
     }
 }
 

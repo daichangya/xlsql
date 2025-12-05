@@ -57,7 +57,7 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     
     @Override
     public String getDatabaseProductName() throws SQLException {
-        return "xlSQL Native Engine";
+        return "XLSQL Native Engine";
     }
     
     @Override
@@ -67,7 +67,7 @@ class xlNativeDatabaseMetaData implements DatabaseMetaData {
     
     @Override
     public String getDriverName() throws SQLException {
-        return "xlSQL Native Driver";
+        return "XLSQL Native Driver";
     }
     
     @Override

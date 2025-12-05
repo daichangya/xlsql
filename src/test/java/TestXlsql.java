@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit tests for xlSQL JDBC driver functionality
+ * Unit tests for XLSQL JDBC driver functionality
  * Tests driver loading, registration, connection, and data operations
  */
 public class TestXlsql {
@@ -106,7 +106,7 @@ public class TestXlsql {
                 // 插入数据
                 int insertCount = 100; // 减少测试数据量以提高测试速度
                 for (int i = 0; i < insertCount; i++) {
-                    String insertSql = "INSERT INTO demo.xlsql VALUES ('xlSQL - daicy');";
+                    String insertSql = "INSERT INTO demo.xlsql VALUES ('XLSQL - daicy');";
                     int result = stm.executeUpdate(insertSql);
                     assertEquals(1, result, "Each insert should affect 1 row");
                 }
@@ -149,7 +149,7 @@ public class TestXlsql {
                 // 插入8000条记录（原始测试的数据量）
                 int totalRecords = 8000;
                 for (int i = 0; i < totalRecords; i++) {
-                    String insertSql = "INSERT INTO demo.xlsql VALUES ('xlSQL - daicy');";
+                    String insertSql = "INSERT INTO demo.xlsql VALUES ('XLSQL - daicy');";
                     stm.executeUpdate(insertSql);
                 }
 

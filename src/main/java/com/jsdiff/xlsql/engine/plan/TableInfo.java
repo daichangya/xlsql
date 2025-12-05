@@ -171,7 +171,7 @@ public class TableInfo {
         if (workbook == null || workbook.isEmpty() || workbook.equals("SA")) {
             return sheet;
         }
-        return workbook + "." + sheet;
+        return workbook + "_" + sheet;
     }
 }
 

@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 
 /**
- * Represents an xlSQL sql engine
+ * Represents an XLSQL sql engine
  * 
  * @version $Revision: 1.1 $
  * @author $author$

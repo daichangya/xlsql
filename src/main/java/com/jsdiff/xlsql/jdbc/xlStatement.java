@@ -1,7 +1,7 @@
 /*
  * x l S Q L  
  * (c) daichangya, xlsql.jsdiff.com
- * See xlSQL-license.txt for license details
+ * See XLSQL-license.txt for license details
  *
  */
 package com.jsdiff.xlsql.jdbc;
@@ -95,12 +95,12 @@ public class xlStatement implements Statement {
             ICommand cmd = xlCon.xlsql.parseSql(sqlCommand[i]);
             if (cmd.execAllowed()) {
                 // dbStm may throw an SQLException..., pass on to client
-                log.info("xlSQL: execute " + sqlCommand[i]);
+                log.info("XLSQL: execute " + sqlCommand[i]);
                 ret = dbStm.execute(sqlCommand[i]);
                 cmd.execute();
             }
             else {
-                throw new SQLException("xlSQL: execute not allowed");
+                throw new SQLException("XLSQL: execute not allowed");
             }
         }
         return ret;
@@ -168,7 +168,7 @@ public class xlStatement implements Statement {
                 cmd.execute();
             }
             else {
-                throw new SQLException("xlSQL: execute not allowed");
+                throw new SQLException("XLSQL: execute not allowed");
             }
         }
         return ret;

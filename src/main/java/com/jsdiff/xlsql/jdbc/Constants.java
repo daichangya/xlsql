@@ -27,11 +27,11 @@ package com.jsdiff.xlsql.jdbc;
  * Changed by Csongor Nyulas (csny): Release constants changed
  */
 public interface Constants {
-    public static final String APP = "xlSQL> ";
+    public static final String APP = "XLSQL> ";
 
     public static final String DRIVER = "com.jsdiff.xlsql.jdbc.xlDriver";
 
-    public static final String DRIVER_NAME = "xlSQL Excel JDBC Driver";
+    public static final String DRIVER_NAME = "XLSQL Excel JDBC Driver";
     public static final String DRIVER_RELEASE = "beta:Y8";
     public static final String DRIVER_CLASS = "com.jsdiff.xlsql.jdbc.jdbcDriverXls";
     public static final int MAJOR_VERSION = 0;
@@ -44,7 +44,7 @@ public interface Constants {
     
     public static final int MAJOR_XLSQL_VERSION = 0;
     public static final int MINOR_XLSQL_VERSION = 0;
-    public static final String XLSQL = "xlSQL (with HSQL database engine)";
+    public static final String XLSQL = "XLSQL (with HSQL database engine)";
     public static final String XLSQL_RELEASE = "beta:X1";
     
     public static final String URL = "url";

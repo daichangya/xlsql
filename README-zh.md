@@ -1,4 +1,4 @@
-# xlSQL
+# XLSQL
 ## 微信公众号
 
 扫码关注微信公众号，Java码界探秘。
@@ -7,7 +7,7 @@
 [https://blog.jsdiff.com/](https://blog.jsdiff.com/)
 
 ## 项目概述
-xlSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操作 Excel 文件。它将 Excel 文件视为数据库表，支持标准的 JDBC 接口，方便开发者集成到现有项目中。
+XLSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操作 Excel 文件。它将 Excel 文件视为数据库表，支持标准的 JDBC 接口，方便开发者集成到现有项目中。
 
 ## 功能特性
 - **支持 SQL 查询**：通过 JDBC 接口执行 SQL 查询，操作 Excel 数据。
@@ -31,7 +31,7 @@ xlSQL 是一个基于 Java 的 JDBC 驱动，允许用户通过 SQL 查询和操
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.1-SNAPSHOT</version>
+    <version>5.1.0</version>
 </dependency>
 ```
 
@@ -75,15 +75,15 @@ mvn package
 ```
 
 打包后会生成：
-- `target/xlsql-5.1-SNAPSHOT.jar` - 标准 JAR 文件
-- `target/xlsql-5.1-SNAPSHOT-shaded.jar` - 包含所有依赖的 Fat JAR
+- `target/xlsql-5.1.0.jar` - 标准 JAR 文件
+- `target/xlsql-5.1.0-shaded.jar` - 包含所有依赖的 Fat JAR
 
 **6. 安装到本地 Maven 仓库**
 ```bash
 mvn install
 ```
 
-这将把项目安装到本地 Maven 仓库（`~/.m2/repository/com/jsdiff/xlsql/5.1-SNAPSHOT/`），供其他项目使用。
+这将把项目安装到本地 Maven 仓库（`~/.m2/repository/com/jsdiff/xlsql/5.1.0/`），供其他项目使用。
 
 **7. 跳过测试进行构建**
 ```bash
@@ -108,15 +108,15 @@ mvn javadoc:jar
 
 #### 方式二：直接使用 Shaded JAR（Fat JAR）
 
-1. 将 `xlsql-5.1-SNAPSHOT-shaded.jar` 复制到项目
+1. 将 `xlsql-5.1.0-shaded.jar` 复制到项目
 2. 手动添加到 classpath
 3. 或安装到本地仓库：
 ```bash
 mvn install:install-file \
-  -Dfile=target/xlsql-5.1-SNAPSHOT-shaded.jar \
+  -Dfile=target/xlsql-5.1.0-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=5.1-SNAPSHOT \
+  -Dversion=5.1.0 \
   -Dpackaging=jar
 ```
 
@@ -147,7 +147,7 @@ import java.sql.Statement;
 
 // 创建 Statement
 Statement stmt = conn.createStatement();
-ResultSet rs = stmt.executeQuery("SELECT * FROM test2.Sheet1 LIMIT 10");
+ResultSet rs = stmt.executeQuery("SELECT * FROM test2_Sheet1 LIMIT 10");
 
 // 遍历结果集
 while (rs.next()) {
@@ -309,7 +309,7 @@ h2.password=
 - [开发指南](doc/DEVELOPMENT_GUIDE.md) - 开发环境设置和指南
 - [命令行使用说明](doc/命令行使用说明.md) - 命令行工具文档
 - [DBeaver 集成指南](doc/Dbeaver结合exceljdbc使用文档.md) - DBeaver 集成说明
-- [架构设计文档](doc/xlSQL%20架构设计文档V2.md) - 系统架构说明
+- [架构设计文档](doc/XLSQL%20架构设计文档V2.md) - 系统架构说明
 - [更新日志](doc/CHANGELOG_4.0.md) - 版本历史
 
 ## 相关链接

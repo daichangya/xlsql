@@ -39,31 +39,31 @@ public class xlSqlRenameTable implements ICommand {
     public xlSqlRenameTable(com.jsdiff.xlsql.database.ADatabase database, String schema, String table,
                             String schema_old, String table_old) {
         if (database == null) {
-            throw new NullPointerException("xlSQL: database null");
+            throw new NullPointerException("XLSQL: database null");
         } else {
             db = database;
         }
 
         if (schema == null) {
-            throw new NullPointerException("xlSQL: schema null");
+            throw new NullPointerException("XLSQL: schema null");
         } else {
             _schema = schema;
         }
 
         if (table == null) {
-            throw new NullPointerException("xlSQL: table null");
+            throw new NullPointerException("XLSQL: table null");
         } else {
             _table = table;
         }
 
         if (schema_old == null) {
-            throw new NullPointerException("xlSQL: schema_old null");
+            throw new NullPointerException("XLSQL: schema_old null");
         } else {
             _schema_old = schema_old;
         }
 
         if (table_old == null) {
-            throw new NullPointerException("xlSQL: table_old null");
+            throw new NullPointerException("XLSQL: table_old null");
         } else {
             _table_old = table_old;
         }

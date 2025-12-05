@@ -149,7 +149,7 @@ public class xlNativeStatement implements Statement {
                 throw e;
             }
         } else {
-            throw new SQLException("xlSQL: execute not allowed");
+            throw new SQLException("XLSQL: execute not allowed");
         }
     }
     
@@ -208,7 +208,7 @@ public class xlNativeStatement implements Statement {
                     throw e;
                 }
             } else {
-                throw new SQLException("xlSQL: execute not allowed");
+                throw new SQLException("XLSQL: execute not allowed");
             }
         }
         

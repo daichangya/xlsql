@@ -36,21 +36,21 @@ public class xlSqlCreateTable implements ICommand {
     public xlSqlCreateTable(com.jsdiff.xlsql.database.ADatabase database, String schema, String table) {
         // 验证并设置数据库对象
         if (database == null) {
-            throw new NullPointerException("xlSQL: database null");
+            throw new NullPointerException("XLSQL: database null");
         } else {
             db = database;
         }
 
         // 验证并设置模式名称
         if (schema == null) {
-            throw new NullPointerException("xlSQL: schema null");
+            throw new NullPointerException("XLSQL: schema null");
         } else {
             _schema = schema;
         }
 
         // 验证并设置表名称
         if (table == null) {
-            throw new NullPointerException("xlSQL: table null");
+            throw new NullPointerException("XLSQL: table null");
         } else {
             _table = table;
         }

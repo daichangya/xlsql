@@ -1,7 +1,7 @@
 /*
  * x l S Q L  
  * (c) daichangya, xlsql.jsdiff.com
- * See xlSQL-license.txt for license details
+ * See XLSQL-license.txt for license details
  *
  */
 
