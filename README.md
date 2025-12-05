@@ -43,7 +43,7 @@ Add the following to your `pom.xml`:
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -145,15 +145,15 @@ mvn package
 ```
 
 This will create:
-- `target/xlsql-5.0-SNAPSHOT.jar` - Standard JAR file
-- `target/xlsql-5.0-SNAPSHOT-shaded.jar` - Fat JAR with all dependencies
+- `target/xlsql-5.1-SNAPSHOT.jar` - Standard JAR file
+- `target/xlsql-5.1-SNAPSHOT-shaded.jar` - Fat JAR with all dependencies
 
 #### 5. Install to local Maven repository
 ```bash
 mvn install
 ```
 
-This installs the artifact to your local Maven repository (`~/.m2/repository/com/jsdiff/xlsql/5.0-SNAPSHOT/`), making it available for other projects.
+This installs the artifact to your local Maven repository (`~/.m2/repository/com/jsdiff/xlsql/5.1-SNAPSHOT/`), making it available for other projects.
 
 #### 6. Skip tests during build
 ```bash
@@ -174,11 +174,11 @@ mvn javadoc:jar
 
 After running `mvn package`, you'll find:
 
-- **Standard JAR**: `target/xlsql-5.0-SNAPSHOT.jar`
+- **Standard JAR**: `target/xlsql-5.1-SNAPSHOT.jar`
   - Contains only xlSQL classes
   - Requires dependencies to be provided separately
 
-- **Shaded JAR** (Fat JAR): `target/xlsql-5.0-SNAPSHOT-shaded.jar`
+- **Shaded JAR** (Fat JAR): `target/xlsql-5.1-SNAPSHOT-shaded.jar`
   - Contains all dependencies bundled
   - Can be used standalone
   - Recommended for distribution
@@ -192,21 +192,21 @@ Add to your `pom.xml`:
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.1-SNAPSHOT</version>
 </dependency>
 ```
 
 #### Option 2: Use Shaded JAR Directly
 
-1. Copy `xlsql-5.0-SNAPSHOT-shaded.jar` to your project
+1. Copy `xlsql-5.1-SNAPSHOT-shaded.jar` to your project
 2. Add to classpath manually
 3. Or install to local repository:
 ```bash
 mvn install:install-file \
-  -Dfile=target/xlsql-5.0-SNAPSHOT-shaded.jar \
+  -Dfile=target/xlsql-5.1-SNAPSHOT-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=5.0-SNAPSHOT \
+  -Dversion=5.1-SNAPSHOT \
   -Dpackaging=jar
 ```
 
@@ -290,7 +290,7 @@ mvn clean install
 <dependency>
     <groupId>com.jsdiff</groupId>
     <artifactId>xlsql</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -300,10 +300,10 @@ If you have the shaded JAR file:
 
 ```bash
 mvn install:install-file \
-  -Dfile=xlsql-5.0-SNAPSHOT-shaded.jar \
+  -Dfile=xlsql-5.1-SNAPSHOT-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=5.0-SNAPSHOT \
+  -Dversion=5.1-SNAPSHOT \
   -Dpackaging=jar
 ```
 

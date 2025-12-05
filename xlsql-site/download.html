@@ -76,7 +76,7 @@ cd xlsql</code></pre>
                             <div class="card h-100 border-primary">
                                 <div class="card-body">
                                     <h5 class="card-title text-primary">标准 JAR</h5>
-                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.0-SNAPSHOT.jar</p>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1-SNAPSHOT.jar</p>
                                     <p class="card-text">仅包含 xlSQL 核心代码。使用时需要自行在 classpath 中添加所有依赖库。</p>
                                     <span class="badge bg-primary">适合 Maven 项目</span>
                                 </div>
@@ -86,7 +86,7 @@ cd xlsql</code></pre>
                             <div class="card h-100 border-success">
                                 <div class="card-body">
                                     <h5 class="card-title text-success">Shaded JAR (Fat JAR)</h5>
-                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.0-SNAPSHOT-shaded.jar</p>
+                                    <p class="card-subtitle mb-2 text-muted">xlsql-5.1-SNAPSHOT-shaded.jar</p>
                                     <p class="card-text">包含所有依赖库（POI, HSQLDB等）。可以直接作为单独的库使用，无需额外配置依赖。</p>
                                     <span class="badge bg-success">适合非 Maven 项目</span>
                                 </div>
@@ -99,10 +99,10 @@ cd xlsql</code></pre>
                     <h2 class="border-bottom pb-2 mb-4">手动安装 JAR</h2>
                     <p>如果您需要将 Shaded JAR 手动安装到本地 Maven 仓库：</p>
                     <pre><code>mvn install:install-file \
-  -Dfile=target/xlsql-5.0-SNAPSHOT-shaded.jar \
+  -Dfile=target/xlsql-5.1-SNAPSHOT-shaded.jar \
   -DgroupId=com.jsdiff \
   -DartifactId=xlsql \
-  -Dversion=5.0-SNAPSHOT \
+  -Dversion=5.1-SNAPSHOT \
   -Dpackaging=jar</code></pre>
                 </section>
             </div>
