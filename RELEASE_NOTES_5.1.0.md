@@ -58,7 +58,7 @@ XLSQL 5.1.1 的核心特性是 Native SQL 引擎，它提供了：
 
 ```java
 // 注册驱动
-Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
+Class.forName("io.github.daichangya.xlsql.jdbc.xlDriver");
 
 // 创建连接
 String url = "jdbc:xlsql:excel:/path/to/excel/files";

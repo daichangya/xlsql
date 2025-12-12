@@ -42,7 +42,7 @@ XLSQL 5.1.1 已发布到 Maven Central，可以直接通过 Maven 依赖使用�
 1. 点击 **New** 按钮创建新驱动
 2. 在 **Settings** 标签页中填写以下信息：
     - **Driver Name**: Excel JDBC Driver
-    - **Class Name**: `jdbc.io.github.daichangya.xlsql.xlDriver`
+    - **Class Name**: `io.github.daichangya.xlsql.jdbc.xlDriver`
     - **URL Template**: `jdbc:xlsql:excel:{path}`
     - **Port**: (留空)
    
@@ -52,7 +52,7 @@ XLSQL 5.1.1 已发布到 Maven Central，可以直接通过 Maven 依赖使用�
 1. 切换到 **Libraries** 标签页
 2. 点击 **Add File** 按钮
 3. 选择你的 Excel JDBC 驱动 JAR 文件
-    - 路径示例：`/path/to/xlsql-2.0-20250827.014816-1.jar `
+    - 路径示例：`/path/to/xlsql-5.1.1.jar `
 4. 点击 **OK** 保存驱动配置
 
 ## 4. 创建数据库连接
@@ -139,7 +139,7 @@ SELECT * FROM test1_Sheet1 ORDER BY column1;
 **问题**: `Driver class not found`
 **解决方案**:
 - 确认驱动 JAR 文件已正确添加到驱动配置中
-- 检查驱动类名是否正确：`jdbc.io.github.daichangya.xlsql.xlDriver`
+- 检查驱动类名是否正确：`io.github.daichangya.xlsql.jdbc.xlDriver`
 
 ### 7.3 权限问题
 **问题**: `Permission denied` 访问 Excel 文件

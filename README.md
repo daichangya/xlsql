@@ -72,7 +72,7 @@ Then add the dependency to your `pom.xml` (same as above).
 
 ```java
 // Register driver (usually not needed explicitly)
-Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
+Class.forName("io.github.daichangya.xlsql.jdbc.xlDriver");
 
 // Create connection
 String url = "jdbc:xlsql:excel:/path/to/excel/files";

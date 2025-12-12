@@ -361,7 +361,7 @@ import java.sql.*;
 
 public class TestConnection {
     public static void main(String[] args) throws Exception {
-        Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
+        Class.forName("io.github.daichangya.xlsql.jdbc.xlDriver");
         String url = "jdbc:xlsql:excel:/path/to/excel/files";
         Connection conn = DriverManager.getConnection(url);
         System.out.println("连接成功！");
