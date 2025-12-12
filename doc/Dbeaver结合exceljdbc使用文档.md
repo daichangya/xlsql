@@ -28,8 +28,8 @@ XLSQL 5.1.1 已发布到 Maven Central，可以直接通过 Maven 依赖使用�
 #### 方式二：手动下载 JAR 文件
 
 从 Maven Central 下载：
-- 标准 JAR: https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.1/xlsql-5.1.1.jar
-- Shaded JAR (包含所有依赖): https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.1/xlsql-5.1.1-shaded.jar
+- 标准 JAR: https://repo1.maven.org/maven2/io/github/daichangya/xlsql/5.1.1/xlsql-5.1.1.jar
+- Shaded JAR (包含所有依赖): https://repo1.maven.org/maven2/io/github/daichangya/xlsql/5.1.1/xlsql-5.1.1-shaded.jar
 
 
 ## 3. 在 DBeaver 中配置 Excel JDBC 驱动

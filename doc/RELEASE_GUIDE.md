@@ -163,7 +163,7 @@ mvn -P release deploy
 1. 访问 https://oss.sonatype.org/
 2. 使用 OSSRH 账号登录
 3. 进入 "Staging Repositories"
-4. 找到你的仓库（`comjsdiff-xxxx`）
+4. 找到你的仓库（`iogithubdaichangya-xxxx`）
 5. 点击 "Close" 按钮
    - 系统会验证所有文件
    - 等待验证完成（可能需要几分钟）
@@ -174,7 +174,7 @@ mvn -P release deploy
 
 发布后，需要等待同步到 Maven Central：
 - 通常需要 **1-2 小时** 同步到中央仓库
-- 可以在 https://repo1.maven.org/maven2/com/jsdiff/xlsql/ 查看
+- 可以在 https://repo1.maven.org/maven2/io/github/daichangya/xlsql/ 查看
 
 ### 方法 2: 使用 maven-release-plugin
 
@@ -222,7 +222,7 @@ mvn deploy:deploy-file \
 ### 2. 检查 Maven Central
 
 等待同步后，检查：
-- https://repo1.maven.org/maven2/com/jsdiff/xlsql/5.1.1/
+- https://repo1.maven.org/maven2/io/github/daichangya/xlsql/5.1.1/
 - 应该包含：
   - `xlsql-5.1.1.pom`
   - `xlsql-5.1.1.jar`

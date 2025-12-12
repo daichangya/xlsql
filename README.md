@@ -174,7 +174,7 @@ This will create:
 mvn install
 ```
 
-This installs the artifact to your local Maven repository (`~/.m2/repository/com/jsdiff/xlsql/5.1.1/`), making it available for other projects.
+This installs the artifact to your local Maven repository (`~/.m2/repository/io/github/daichangya/xlsql/5.1.1/`), making it available for other projects.
 
 #### 6. Skip tests during build
 ```bash

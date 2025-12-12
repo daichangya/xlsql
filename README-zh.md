@@ -83,7 +83,7 @@ mvn package
 mvn install
 ```
 
-这将把项目安装到本地 Maven 仓库（`~/.m2/repository/com/jsdiff/xlsql/5.1.1/`），供其他项目使用。
+这将把项目安装到本地 Maven 仓库（`~/.m2/repository/io/github/daichangya/xlsql/5.1.1/`），供其他项目使用。
 
 **7. 跳过测试进行构建**
 ```bash
