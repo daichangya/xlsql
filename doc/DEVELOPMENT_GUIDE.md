@@ -36,7 +36,7 @@ mvn clean install
 ### JDBC驱动模块 (`xlDriver`)
 - **职责**：实现 `java.sql.Driver` 接口
 - **规范**：
-  - 驱动类名：`jdbc.io.github.daichangya.xlsql.xlDriver`
+  - 驱动类名：`io.github.daichangya.xlsql.jdbc.xlDriver`
   - URL格式：`jdbc:xlsql:excel:/path/`
 
 ## 4. 测试指南

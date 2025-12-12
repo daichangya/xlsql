@@ -129,7 +129,7 @@ import java.sql.DriverManager;
 public class Main {
     public static void main(String[] args) throws Exception {
         // 注册驱动（通常不需要显式注册）
-        Class.forName("jdbc.io.github.daichangya.xlsql.xlDriver");
+        Class.forName("io.github.daichangya.xlsql.jdbc.xlDriver");
 
         // 创建连接
         String url = "jdbc:xlsql:excel:/path/to/excel/files";
