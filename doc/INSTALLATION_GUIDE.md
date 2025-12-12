@@ -217,7 +217,7 @@ mvn install
 1. 编译项目
 2. 运行测试
 3. 打包 JAR
-4. 安装到本地 Maven 仓库：`~/.m2/repository/com/jsdiff/xlsql/5.1.1/`
+4. 安装到本地 Maven 仓库：`~/.m2/repository/io/github/daichangya/xlsql/5.1.1/`
 
 ### 跳过测试安装
 
@@ -333,7 +333,7 @@ java -jar xlsql-5.1.1-shaded.jar [options]
 
 ```bash
 # 检查本地仓库
-ls ~/.m2/repository/com/jsdiff/xlsql/5.1.1/
+ls ~/.m2/repository/io/github/daichangya/xlsql/5.1.1/
 
 # 应该看到：
 # - xlsql-5.1.1.jar
