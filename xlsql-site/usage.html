@@ -50,6 +50,7 @@
                         <a class="nav-link" href="#quick-start">快速开始</a>
                         <a class="nav-link" href="#dependency">依赖配置</a>
                         <a class="nav-link" href="#jdbc-usage">JDBC 使用</a>
+                        <a class="nav-link" href="#dbeaver-guide">DBeaver 使用</a>
                         <a class="nav-link" href="#configuration">配置说明</a>
                         <a class="nav-link" href="#troubleshooting">常见问题</a>
                     </nav>
@@ -115,6 +116,139 @@ public class ExcelQuery {
         }
     }
 }</code></pre>
+                </section>
+
+                <section id="dbeaver-guide" class="mb-5">
+                    <h2>DBeaver 使用指南</h2>
+                    <p>DBeaver 是一个免费的通用数据库管理工具，您可以使用它来可视化查询和管理 Excel 文件。</p>
+
+                    <h3 class="mt-4">下载 DBeaver</h3>
+                    <p>DBeaver 是一个免费的通用数据库管理工具，支持多种数据库系统。</p>
+                    <ul>
+                        <li><strong>官方网站</strong>：<a href="https://dbeaver.io/download/" target="_blank">https://dbeaver.io/download/</a></li>
+                        <li><strong>社区版（免费）</strong>：<a href="https://dbeaver.io/product/community/" target="_blank">https://dbeaver.io/product/community/</a></li>
+                    </ul>
+                    <p class="mt-3">
+                        <a href="https://dbeaver.io/download/" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-download me-2"></i>下载 DBeaver
+                        </a>
+                    </p>
+
+                    <h3 class="mt-4">配置 Excel JDBC 驱动</h3>
+                    
+                    <h4 class="mt-3">步骤 1：下载驱动 JAR 文件</h4>
+                    <p>从 Maven Central 下载 Shaded JAR（推荐，包含所有依赖）：</p>
+                    <ul>
+                        <li><strong>Shaded JAR</strong>：<a href="https://repo1.maven.org/maven2/io/github/daichangya/xlsql/5.1.1/xlsql-5.1.1-shaded.jar" target="_blank">xlsql-5.1.1-shaded.jar</a></li>
+                    </ul>
+
+                    <h4 class="mt-3">步骤 2：在 DBeaver 中配置驱动</h4>
+                    <ol>
+                        <li>启动 DBeaver，点击菜单栏 <strong>Database</strong> → <strong>Driver Manager</strong></li>
+                        <li>点击 <strong>New</strong> 按钮创建新驱动</li>
+                        <li>在 <strong>Settings</strong> 标签页中填写：
+                            <ul>
+                                <li><strong>Driver Name</strong>: Excel JDBC Driver</li>
+                                <li><strong>Class Name</strong>: <code>io.github.daichangya.xlsql.jdbc.xlDriver</code></li>
+                                <li><strong>URL Template</strong>: <code>jdbc:xlsql:excel:{path}</code></li>
+                            </ul>
+                        </li>
+                        <li>切换到 <strong>Libraries</strong> 标签页，点击 <strong>Add File</strong>，选择下载的 JAR 文件</li>
+                        <li>点击 <strong>OK</strong> 保存驱动配置</li>
+                    </ol>
+
+                    <h4 class="mt-3">步骤 3：创建数据库连接</h4>
+                    <ol>
+                        <li>点击 <strong>Database</strong> → <strong>New Database Connection</strong></li>
+                        <li>选择 <strong>Generic</strong> → <strong>Generic JDBC</strong></li>
+                        <li>选择之前创建的 "Excel JDBC Driver"</li>
+                        <li>在 <strong>JDBC URL</strong> 中输入 Excel 文件所在目录路径：
+                            <pre><code>jdbc:xlsql:excel:/path/to/your/excel/files</code></pre>
+                            <p class="small text-muted">示例：<code>jdbc:xlsql:excel:/Users/username/Documents</code></p>
+                        </li>
+                        <li>点击 <strong>Test Connection</strong> 测试连接</li>
+                        <li>连接成功后点击 <strong>Finish</strong></li>
+                    </ol>
+
+                    <h3 class="mt-4">使用 DBeaver 查询 Excel</h3>
+                    <p>连接成功后，您可以在 DBeaver 中：</p>
+                    <ul>
+                        <li>浏览 Excel 文件结构（文件作为数据库，工作表作为表）</li>
+                        <li>在 SQL 编辑器中执行 SQL 查询</li>
+                        <li>查看和编辑数据</li>
+                        <li>导出查询结果</li>
+                    </ul>
+
+                    <h4 class="mt-3">SQL 查询示例</h4>
+                    <pre><code class="language-sql">-- 查询所有数据（表名格式：文件名_工作表名）
+SELECT * FROM test1_Sheet1;
+
+-- 条件查询
+SELECT * FROM test1_Sheet1 WHERE column1 = 'value';
+
+-- 聚合查询
+SELECT COUNT(*) FROM test1_Sheet1;
+
+-- 排序查询
+SELECT * FROM test1_Sheet1 ORDER BY column1;
+
+-- JOIN 查询
+SELECT 
+    c.customer_name,
+    o.order_id,
+    o.amount
+FROM customers_Sheet1 c
+JOIN orders_Sheet1 o ON c.customer_id = o.customer_id;</code></pre>
+
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>表名格式说明</strong>：表名格式为 <code>文件名_工作表名</code>（使用下划线连接，文件名不包含扩展名）。
+                    </div>
+
+                    <h3 class="mt-4">常见问题</h3>
+                    <div class="accordion mt-3" id="dbeaverFAQ">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dbeaverFAQ1">
+                                    驱动类找不到
+                                </button>
+                            </h2>
+                            <div id="dbeaverFAQ1" class="accordion-collapse collapse" data-bs-parent="#dbeaverFAQ">
+                                <div class="accordion-body">
+                                    <strong>解决：</strong> 确认驱动 JAR 文件已正确添加到驱动配置的 Libraries 标签页中，建议使用 Shaded JAR（包含所有依赖）。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dbeaverFAQ2">
+                                    连接失败
+                                </button>
+                            </h2>
+                            <div id="dbeaverFAQ2" class="accordion-collapse collapse" data-bs-parent="#dbeaverFAQ">
+                                <div class="accordion-body">
+                                    <strong>解决：</strong> 检查 JDBC URL 中的文件路径是否正确，确保路径存在且 DBeaver 有访问权限。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dbeaverFAQ3">
+                                    表名找不到
+                                </button>
+                            </h2>
+                            <div id="dbeaverFAQ3" class="accordion-collapse collapse" data-bs-parent="#dbeaverFAQ">
+                                <div class="accordion-body">
+                                    <strong>解决：</strong> 确认表名格式为 <code>文件名_工作表名</code>（下划线连接，文件名不包含扩展名），例如文件 <code>sales.xlsx</code> 的工作表 <code>Sheet1</code> 表示为 <code>sales_Sheet1</code>。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success mt-4">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>提示</strong>：DBeaver 提供了强大的可视化界面，让您无需编写代码即可查询和管理 Excel 数据。更多详细信息请参考 <a href="https://dbeaver.io/docs/" target="_blank">DBeaver 官方文档</a>。
+                    </div>
                 </section>
 
                 <section id="configuration" class="mb-5">

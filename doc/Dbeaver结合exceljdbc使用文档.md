@@ -1,4 +1,4 @@
-# DBeaver 与 Excel JDBC 驱动使用说明文档
+项目地址github: https://github.com/daichangya/xlsql
 
 ## 1. 概述
 
@@ -11,7 +11,48 @@
 - DBeaver 21.0 或更高版本
 - Excel JDBC 驱动 JAR 文件
 
-### 2.2 获取 Excel JDBC 驱动
+### 2.2 下载和安装 DBeaver
+
+DBeaver 是一个免费的通用数据库管理工具，支持多种数据库系统。
+
+#### 下载地址
+
+**官方网站**：https://dbeaver.io/download/
+
+**直接下载链接**：
+- **Windows**: https://dbeaver.io/files/dbeaver-ce-latest-win32.win32.x86_64.zip
+- **macOS**: https://dbeaver.io/files/dbeaver-ce-latest-macos-x86_64.dmg
+- **Linux**: https://dbeaver.io/files/dbeaver-ce-latest-linux.gtk.x86_64.tar.gz
+
+**其他版本**：
+- **企业版（付费）**: https://dbeaver.io/product/enterprise/
+- **社区版（免费）**: https://dbeaver.io/product/community/
+
+#### 安装步骤
+
+**Windows**:
+1. 下载 Windows 安装包（.zip 或 .exe）
+2. 解压到目标目录或运行安装程序
+3. 运行 `dbeaver.exe` 启动 DBeaver
+
+**macOS**:
+1. 下载 .dmg 文件
+2. 双击打开，将 DBeaver 拖拽到 Applications 文件夹
+3. 从应用程序中启动 DBeaver
+
+**Linux**:
+1. 下载 .tar.gz 文件
+2. 解压：`tar -xzf dbeaver-ce-*.tar.gz`
+3. 进入解压目录，运行：`./dbeaver`
+
+#### 系统要求
+
+- **Java**: DBeaver 自带 Java 运行时，无需单独安装 Java（但建议系统有 Java 8+ 以支持 Excel JDBC 驱动）
+- **操作系统**: Windows 7+, macOS 10.12+, Linux (大多数发行版)
+- **内存**: 建议至少 2GB RAM
+- **磁盘空间**: 至少 500MB 可用空间
+
+### 2.3 获取 Excel JDBC 驱动
 
 #### 方式一：从 Maven Central 获取（推荐）
 
@@ -46,7 +87,7 @@ XLSQL 5.1.1 已发布到 Maven Central，可以直接通过 Maven 依赖使用�
     - **URL Template**: `jdbc:xlsql:excel:{path}`
     - **Port**: (留空)
    
-![dbeaver1](dbeaver1.png)
+![dbeaver1](https://images.jsdiff.com/dbeaver1-sukw.png)
 
 ### 3.3 添加驱动文件
 1. 切换到 **Libraries** 标签页
@@ -105,7 +146,7 @@ SELECT COUNT(*) FROM test1_Sheet1;
 SELECT * FROM test1_Sheet1 ORDER BY column1;
 ```
 
-![dbeaver2](dbeaver2.png)
+![dbeaver2-n9ho.png](https://images.jsdiff.com/dbeaver2-n9ho.png)
 
 ## 6. Excel 文件要求
 
